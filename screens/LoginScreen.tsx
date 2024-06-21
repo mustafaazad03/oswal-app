@@ -9,10 +9,15 @@ import {
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 
-type Props = {};
+type Props = {
+	navigation?: any;
+	route?: any;
+	routeName: string;
+};
 export default (props: Props) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [username, setUsername] = useState("");
 	return (
 		<SafeAreaView
 			style={{
@@ -65,9 +70,10 @@ export default (props: Props) => {
 						fontSize: 16,
 						marginBottom: 10,
 						textAlign: "center",
+						fontWeight: "bold",
 					}}
 				>
-					{"Login"}
+					{props.routeName}
 				</Text>
 				<Text
 					style={{
@@ -77,8 +83,46 @@ export default (props: Props) => {
 						textAlign: "center",
 					}}
 				>
-					{"Login to continue using the app."}
+					{`${props.routeName} to continue using the app.`}
 				</Text>
+				{props.routeName === "Login" ? null : (
+					<View
+						style={{
+							flexDirection: "row",
+							justifyContent: "space-between",
+							alignItems: "center",
+							borderColor: "#EEC0C8",
+							borderRadius: 8,
+							borderWidth: 1,
+							marginHorizontal: 20,
+						}}
+					>
+						<Image
+							source={{ uri: "assets/images/passkey.png" }}
+							resizeMode={"contain"}
+							style={{
+								width: 24,
+								height: 24,
+								marginLeft: 16,
+								marginRight: 16,
+								marginTop: 12,
+								marginBottom: 12,
+							}}
+						/>
+						<TextInput
+							placeholder={`Enter Username`}
+							value={username}
+							onChangeText={setUsername}
+							style={{
+								borderWidth: 0,
+								flex: 1,
+								height: "100%",
+								width: "100%",
+								borderColor: "transparent",
+							}}
+						/>
+					</View>
+				)}
 				<View
 					style={{
 						flexDirection: "row",
@@ -103,7 +147,9 @@ export default (props: Props) => {
 						}}
 					/>
 					<TextInput
-						placeholder="Log in with E-mail/Username"
+						placeholder={`"${props.routeName} with ${
+							props.routeName === "Login" ? "E-mail/Username" : "E-mail"
+						}`}
 						value={email}
 						onChangeText={setEmail}
 						style={{
@@ -270,7 +316,7 @@ export default (props: Props) => {
 							fontSize: 14,
 						}}
 					>
-						{"Log in with Google"}
+						{`${props.routeName} with Google`}
 					</Text>
 				</View>
 			</ScrollView>
