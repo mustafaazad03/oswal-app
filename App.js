@@ -4,6 +4,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CreateAccount from "./screens/CreateAccountScreen";
 import LoginScreen from "./screens/LoginScreen";
 import AuthScreen from "./screens/AuthScreen";
+import ProfileDetailsScreen from "./screens/PersonalDetailScreen";
+import FeedScreen from "./screens/FeedScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +26,16 @@ function App() {
 				<Stack.Screen
 					name="Login"
 					component={LoginScreen}
+					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				<Stack.Screen
+					name="PersonalDetails"
+					component={ProfileDetailsScreen}
+					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				<Stack.Screen
+					name="Home"
+					component={FeedScreen}
 					options={{ headerShown: false, presentation: "fullScreenModal" }}
 				/>
 			</Stack.Navigator>
