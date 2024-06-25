@@ -18,6 +18,16 @@ export default function LoginScreen() {
 	});
 	return (
 		<SafeAreaView className=" bg-white h-screen ">
+			{/* Back Icon */}
+			<TouchableOpacity
+				onPress={() => navigation.goBack()}
+				className="absolute top-12 left-5 z-50"
+			>
+				<Image
+					source={require("../assets/arrow_back.png")}
+					className="w-6 h-6"
+				/>
+			</TouchableOpacity>
 			<Header />
 			<View className="space-y-2 mb-6 text-dark flex flex-col justify-center text-center">
 				<Text className="font-bold capitalize text-base text-center">

@@ -9,6 +9,7 @@ import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import InputField from "../components/InputField";
 import Header from "../components/Header";
+import Button from "../components/Button";
 
 export default function CreateAccount() {
 	const navigation = useNavigation();
@@ -18,6 +19,16 @@ export default function CreateAccount() {
 	});
 	return (
 		<SafeAreaView className=" bg-white h-screen ">
+			{/* Back Icon */}
+			<TouchableOpacity
+				onPress={() => navigation.goBack()}
+				className="absolute top-12 left-5 z-50"
+			>
+				<Image
+					source={require("../assets/arrow_back.png")}
+					className="w-6 h-6"
+				/>
+			</TouchableOpacity>
 			<Header />
 			<View className="space-y-2 mb-6 text-dark flex flex-col justify-center text-center">
 				<Text className="font-bold capitalize text-base text-center">
@@ -59,11 +70,7 @@ export default function CreateAccount() {
 					<Text className="font-medium">Number</Text> and a{" "}
 					<Text className="font-medium">Special Character</Text>.
 				</Text>
-				<TouchableOpacity className=" p-3 bg-primary rounded-lg mt-6">
-					<Text className=" text-dark text-center font-bold text-base">
-						Sign up
-					</Text>
-				</TouchableOpacity>
+				<Button title="Sign Up" onPress={() => navigation.navigate("Home")} />
 				<View className=" mt-3 mx-3 flex-row items-center space-x-2 justify-center">
 					<Text className=" text-grayish text-xs">
 						Already have an account?
