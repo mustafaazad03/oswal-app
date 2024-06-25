@@ -70,7 +70,10 @@ export default function CreateAccount() {
 					<Text className="font-medium">Number</Text> and a{" "}
 					<Text className="font-medium">Special Character</Text>.
 				</Text>
-				<Button title="Sign Up" onPress={() => navigation.navigate("Home")} />
+				<Button
+					title="Sign Up"
+					onPress={() => navigation.navigate("PersonalDetails")}
+				/>
 				<View className=" mt-3 mx-3 flex-row items-center space-x-2 justify-center">
 					<Text className=" text-grayish text-xs">
 						Already have an account?

@@ -68,7 +68,10 @@ export default function LoginScreen() {
 						<Text className="text-xs text-gray-500">Forget Password?</Text>
 					</TouchableOpacity>
 				</View>
-				<TouchableOpacity className=" p-3 bg-primary rounded-lg mt-6">
+				<TouchableOpacity
+					className=" p-3 bg-primary rounded-lg mt-6"
+					onPress={() => navigation.navigate("PersonalDetails")}
+				>
 					<Text className=" text-dark text-center font-bold text-base">
 						Log in
 					</Text>
