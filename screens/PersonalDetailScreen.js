@@ -52,7 +52,7 @@ export default function ProfileDetailsScreen() {
 	};
 
 	return (
-		<SafeAreaView className="flex-1 bg-white p-4">
+		<SafeAreaView className="flex-1 bg-white">
 			{/* Back Icon */}
 			<TouchableOpacity
 				className="absolute top-10 left-4 z-50"
@@ -64,7 +64,7 @@ export default function ProfileDetailsScreen() {
 				/>
 			</TouchableOpacity>
 
-			<ScrollView className="mt-16">
+			<ScrollView className="mt-16 w-full p-4">
 				<Text className="text-2xl font-bold mb-2">
 					Enter your Personal Details
 				</Text>
@@ -152,7 +152,10 @@ export default function ProfileDetailsScreen() {
 					onChangeText={(text) => setFormData({ ...formData, bio: text })}
 					multiline
 				/>
-				<Button title="Next" onPress={() => navigation.navigate("Home")} />
+				<Button
+					title="Next"
+					onPress={() => navigation.navigate("BusinessDetails")}
+				/>
 			</ScrollView>
 
 			<Modal

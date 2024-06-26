@@ -134,6 +134,7 @@ export default function FeedScreen() {
 					className={`rounded-full p-3 ${
 						route.name == "Home" ? "bg-primary " : ""
 					}`}
+					onPress={() => navigation.navigate("Home")}
 				>
 					<Image
 						source={require("../assets/home_icon.png")}
@@ -144,6 +145,7 @@ export default function FeedScreen() {
 					className={`rounded-full p-3 ${
 						route.name == "Search" ? "bg-primary " : ""
 					}`}
+					onPress={() => navigation.navigate("Search")}
 				>
 					<Image
 						source={require("../assets/search_icon.png")}
