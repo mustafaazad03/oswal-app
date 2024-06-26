@@ -9,7 +9,14 @@ export default function AuthScreen() {
 	return (
 		<SafeAreaView className=" bg-white h-screen px-4">
 			<Header />
-			<Button title="Log in" onPress={() => navigation.navigate("Login")} />
+			<TouchableOpacity
+				className=" p-3 bg-primary rounded-lg mt-6"
+				onPress={() => navigation.navigate("Login")}
+			>
+				<Text className=" text-dark text-center font-bold text-base">
+					Log in
+				</Text>
+			</TouchableOpacity>
 			<TouchableOpacity
 				className=" p-3 bg-white border border-primary rounded-lg mt-6"
 				onPress={() => navigation.navigate("Register")}
