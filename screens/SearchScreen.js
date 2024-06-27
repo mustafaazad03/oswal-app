@@ -118,11 +118,12 @@ export default function SearchScreen() {
 				</TouchableOpacity>
 				<TouchableOpacity
 					className={`rounded-full p-3 ${
-						route.name == "Notify" ? "bg-primary " : ""
+						route.name == "Setting" ? "bg-primary " : ""
 					}`}
+					onPress={() => navigation.navigate("Setting")}
 				>
 					<Image
-						source={require("../assets/notify_icon.png")}
+						source={require("../assets/user_icon.png")}
 						className="w-6 h-6"
 					/>
 				</TouchableOpacity>
