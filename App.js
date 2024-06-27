@@ -11,6 +11,7 @@ import BusinessContactScreen from "./screens/BuisnessContactDetailScreen";
 import CreateAlbumScreen from "./screens/CreateAlbumScreen";
 import ExploreScreen from "./screens/ExploreScreen";
 import SearchScreen from "./screens/SearchScreen";
+import ProfileScreen from "./screens/ProfileScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -71,6 +72,12 @@ function App() {
 				<Stack.Screen
 					name="Search"
 					component={SearchScreen}
+					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				{/* Profile Screen */}
+				<Stack.Screen
+					name="Info"
+					component={ProfileScreen}
 					options={{ headerShown: false, presentation: "fullScreenModal" }}
 				/>
 			</Stack.Navigator>

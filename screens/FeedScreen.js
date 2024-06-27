@@ -167,6 +167,7 @@ export default function FeedScreen() {
 					className={`rounded-full p-3 ${
 						route.name == "Info" ? "bg-primary " : ""
 					}`}
+					onPress={() => navigation.navigate("Info")}
 				>
 					<Image
 						source={require("../assets/info_icon.png")}
