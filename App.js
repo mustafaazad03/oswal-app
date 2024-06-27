@@ -12,6 +12,12 @@ import CreateAlbumScreen from "./screens/CreateAlbumScreen";
 import ExploreScreen from "./screens/ExploreScreen";
 import SearchScreen from "./screens/SearchScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import SettingsScreen from "./screens/SettingsScreen";
+import EditProfileScreen from "./screens/EditProfileScreen";
+import ProfileDetailsSettingScreen from "./screens/PersonalDetailSetting";
+import BusinessDetailsSettingScreen from "./screens/BuisnessDetailSetting";
+import ContactDetailSettingScreen from "./screens/ContactDetailSetting";
+import MyAlbumScreen from "./screens/MyAlbumSeting";
 
 const Stack = createNativeStackNavigator();
 
@@ -78,6 +84,42 @@ function App() {
 				<Stack.Screen
 					name="Info"
 					component={ProfileScreen}
+					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				{/* Setting  screen*/}
+				<Stack.Screen
+					name="Setting"
+					component={SettingsScreen}
+					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				{/* Edit Profile Screen */}
+				<Stack.Screen
+					name="EditProfile"
+					component={EditProfileScreen}
+					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				{/* Personal Detail Setting */}
+				<Stack.Screen
+					name="PersonalDetailSetting"
+					component={ProfileDetailsSettingScreen}
+					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				{/* Buisness Detail Setting Screen */}
+				<Stack.Screen
+					name="BusinessDetailSetting"
+					component={BusinessDetailsSettingScreen}
+					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				{/* Contact Detail Setting */}
+				<Stack.Screen
+					name="ContactDetailSetting"
+					component={ContactDetailSettingScreen}
+					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				{/* My Album */}
+				<Stack.Screen
+					name="MyAlbum"
+					component={MyAlbumScreen}
 					options={{ headerShown: false, presentation: "fullScreenModal" }}
 				/>
 			</Stack.Navigator>
