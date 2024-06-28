@@ -18,6 +18,13 @@ import ProfileDetailsSettingScreen from "./screens/PersonalDetailSetting";
 import BusinessDetailsSettingScreen from "./screens/BuisnessDetailSetting";
 import ContactDetailSettingScreen from "./screens/ContactDetailSetting";
 import MyAlbumScreen from "./screens/MyAlbumSeting";
+import ExploreSettingScreen from "./screens/ExploreSettingScreen";
+import NotificationsSettingScreen from "./screens/NotificationSettingScreen";
+import EnquiriesScreen from "./screens/EnquiryScreen";
+import PasswordSecurityScreen from "./screens/PasswordSecurityScreen";
+import AccountPrivacyScreen from "./screens/AccountPrivacy";
+import DeletedFeedsScreen from "./screens/DeletedFeedScreen";
+import DeactivationDeletionScreen from "./screens/DeactivationDeletionScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -120,6 +127,48 @@ function App() {
 				<Stack.Screen
 					name="MyAlbum"
 					component={MyAlbumScreen}
+					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				{/* Notification Settings Screen */}
+				<Stack.Screen
+					name="NotificationSetting"
+					component={NotificationsSettingScreen}
+					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				{/* Explore Setting Screen */}
+				<Stack.Screen
+					name="ExploreSetting"
+					component={ExploreSettingScreen}
+					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				{/* Enquiries Screen */}
+				<Stack.Screen
+					name="EnquiriesSetting"
+					component={EnquiriesScreen}
+					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				{/* Password Security Screen */}
+				<Stack.Screen
+					name="PasswordSecurity"
+					component={PasswordSecurityScreen}
+					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				{/* Account Privacy Screen */}
+				<Stack.Screen
+					name="AccountPrivacy"
+					component={AccountPrivacyScreen}
+					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				{/* Deleted Feed Screen */}
+				<Stack.Screen
+					name="DeletedFeed"
+					component={DeletedFeedsScreen}
+					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				{/* Deactivation and Deletion Screen */}
+				<Stack.Screen
+					name="DeactivationDeletion"
+					component={DeactivationDeletionScreen}
 					options={{ headerShown: false, presentation: "fullScreenModal" }}
 				/>
 			</Stack.Navigator>
