@@ -8,6 +8,7 @@ import {
 	Image,
 	FlatList,
 } from "react-native";
+import FilterComponent from "../components/FilterComponent";
 
 const posts = [
 	{
@@ -129,6 +130,7 @@ export default function FeedScreen() {
 				keyExtractor={(item) => item.id}
 				contentContainerStyle={{ padding: 16 }}
 			/>
+			<FilterComponent />
 			<View className="flex-row justify-around items-center p-4 py-2 border-t border-gray-300 bg-[#FCF2F4]">
 				<TouchableOpacity
 					className={`rounded-full p-3 ${
