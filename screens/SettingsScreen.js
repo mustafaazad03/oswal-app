@@ -29,7 +29,7 @@ export default function SettingsScreen() {
 
 	return (
 		<SafeAreaView className="flex-1 bg-white">
-			<View className="bg-[#FFD1DC] p-4 flex-row items-center pt-8">
+			<View className="bg-[#FFD1DC] p-4 flex-row items-center">
 				<TouchableOpacity onPress={() => navigation.goBack()}>
 					<Image
 						source={require("../assets/arrow_back.png")}
@@ -54,27 +54,37 @@ export default function SettingsScreen() {
 				<SettingItem
 					icon={require("../assets/Settings/travel_explore.png")}
 					title="Explore Feed"
-					onPress={() => {}}
+					onPress={() => {
+						navigation.navigate("ExploreSetting");
+					}}
 				/>
 				<SettingItem
 					icon={require("../assets/Settings/notifications.png")}
 					title="Notifications"
-					onPress={() => {}}
+					onPress={() => {
+						navigation.navigate("NotificationSetting");
+					}}
 				/>
 				<SettingItem
 					icon={require("../assets/Settings/error.png")}
 					title="Enquiries"
-					onPress={() => {}}
+					onPress={() => {
+						navigation.navigate("EnquiriesSetting");
+					}}
 				/>
 				<SettingItem
 					icon={require("../assets/Settings/encrypted.png")}
 					title="Password & Security"
-					onPress={() => {}}
+					onPress={() => {
+						navigation.navigate("PasswordSecurity");
+					}}
 				/>
 				<SettingItem
 					icon={require("../assets/Settings/shield_person.png")}
 					title="Account Privacy"
-					onPress={() => {}}
+					onPress={() => {
+						navigation.navigate("AccountPrivacy");
+					}}
 				/>
 				<SettingItem
 					icon={require("../assets/Settings/comment.png")}
@@ -84,7 +94,9 @@ export default function SettingsScreen() {
 				<SettingItem
 					icon={require("../assets/Settings/auto_delete.png")}
 					title="Deleted Feeds"
-					onPress={() => {}}
+					onPress={() => {
+						navigation.navigate("DeletedFeed");
+					}}
 				/>
 				<SettingItem
 					icon={require("../assets/Settings/block.png")}
@@ -94,7 +106,9 @@ export default function SettingsScreen() {
 				<SettingItem
 					icon={require("../assets/Settings/person_remove.png")}
 					title="Deactivation & Deletion"
-					onPress={() => {}}
+					onPress={() => {
+						navigation.navigate("DeactivationDeletion");
+					}}
 				/>
 				<SettingItem
 					icon={require("../assets/Settings/workspace_premium.png")}
