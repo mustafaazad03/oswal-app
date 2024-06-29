@@ -34,7 +34,9 @@ export default function PasswordSecurityScreen() {
 						<Text className="text-lg font-bold">Viraj Shah</Text>
 						<Text className="text-gray-600">@iamvirajshah</Text>
 					</View>
-					<TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => navigation.navigate("ChangePassword")}
+					>
 						<Image
 							source={require("../assets/chevron_right.png")}
 							className="w-6 h-6"
