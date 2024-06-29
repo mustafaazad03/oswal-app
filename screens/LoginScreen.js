@@ -89,7 +89,7 @@ export default function LoginScreen() {
 				</View>
 				<View className=" flex items-center">
 					<View className="flex-row items-center space-x-3">
-						<TouchableOpacity className="w-full flex flex-row items-center p-4 bg-primary rounded-lg">
+						<TouchableOpacity className="w-full flex flex-row items-center p-4 bg-primary rounded-lg mb-4">
 							<Image
 								source={require("../assets/Logo/google-9646e5e7.png")}
 								className="w-6 h-6"

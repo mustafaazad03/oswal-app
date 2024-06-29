@@ -18,7 +18,7 @@ export default function AuthScreen() {
 				</Text>
 			</TouchableOpacity>
 			<TouchableOpacity
-				className=" p-3 bg-white border border-primary rounded-lg mt-6"
+				className=" p-3 bg-white border border-primary rounded-lg mt-6 mb-4"
 				onPress={() => navigation.navigate("Register")}
 			>
 				<Text className=" text-dark text-center font-bold text-base">
