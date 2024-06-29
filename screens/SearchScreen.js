@@ -10,6 +10,7 @@ import {
 	FlatList,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import ExpandableButton from "../components/ExtendeblePlusButton";
 
 const sampleData = [
 	{ id: "1", image: require("../assets/random.png") },
@@ -94,16 +95,20 @@ export default function SearchScreen() {
 						className="w-6 h-6"
 					/>
 				</TouchableOpacity>
-				<TouchableOpacity
-					className={`rounded-full p-3 ${
-						route.name == "Add" ? "bg-primary " : ""
-					}`}
-				>
-					<Image
-						source={require("../assets/add_icon.png")}
-						className="w-6 h-6"
-					/>
-				</TouchableOpacity>
+				<ExpandableButton
+					onRaiseEnquiry={() => {
+						// Handle Raise Enquiry
+						navigation.navigate("RaiseEnquiry");
+					}}
+					onUploadMedia={() => {
+						// Handle Upload Media
+						navigation.navigate("UploadMedia");
+					}}
+					onUploadPDF={() => {
+						// Handle Upload PDF
+						navigation.navigate("EnquirySetting");
+					}}
+				/>
 				{/* Info  */}
 				<TouchableOpacity
 					className={`rounded-full p-3 ${

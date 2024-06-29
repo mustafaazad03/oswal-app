@@ -7,6 +7,7 @@ import {
 	Image,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import ExpandableButton from "../components/ExtendeblePlusButton";
 
 export default function PasswordSecurityScreen() {
 	const navigation = useNavigation();
@@ -68,16 +69,20 @@ export default function PasswordSecurityScreen() {
 						className="w-6 h-6"
 					/>
 				</TouchableOpacity>
-				<TouchableOpacity
-					className={`rounded-full p-3 ${
-						route.name == "Add" ? "bg-primary " : ""
-					}`}
-				>
-					<Image
-						source={require("../assets/add_icon.png")}
-						className="w-6 h-6"
-					/>
-				</TouchableOpacity>
+				<ExpandableButton
+					onRaiseEnquiry={() => {
+						// Handle Raise Enquiry
+						navigation.navigate("RaiseEnquiry");
+					}}
+					onUploadMedia={() => {
+						// Handle Upload Media
+						navigation.navigate("UploadMedia");
+					}}
+					onUploadPDF={() => {
+						// Handle Upload PDF
+						navigation.navigate("EnquirySetting");
+					}}
+				/>
 				<TouchableOpacity
 					className={`rounded-full p-3 ${
 						route.name == "Info" ? "bg-primary " : ""
