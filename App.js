@@ -25,6 +25,9 @@ import PasswordSecurityScreen from "./screens/PasswordSecurityScreen";
 import AccountPrivacyScreen from "./screens/AccountPrivacy";
 import DeletedFeedsScreen from "./screens/DeletedFeedScreen";
 import DeactivationDeletionScreen from "./screens/DeactivationDeletionScreen";
+import ChangePasswordModal from "./components/ChangePasswordModal";
+import EnquirySettingScreen from "./screens/EnquirySettingScreen";
+import DeletedFeedsSettingModal from "./components/DeletedFeedModal";
 
 const Stack = createNativeStackNavigator();
 
@@ -170,6 +173,18 @@ function App() {
 					name="DeactivationDeletion"
 					component={DeactivationDeletionScreen}
 					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				{/* Enquiry Setting Screen */}
+				<Stack.Screen
+					name="EnquirySetting"
+					component={EnquirySettingScreen}
+					options={{ headerShown: false, presentation: "fullScreenModal" }}
+				/>
+				{/* Change Password Modal */}
+				<Stack.Screen
+					name="ChangePassword"
+					component={ChangePasswordModal}
+					options={{ headerShown: false, presentation: "modal" }}
 				/>
 			</Stack.Navigator>
 		</NavigationContainer>
