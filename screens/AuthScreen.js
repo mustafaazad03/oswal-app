@@ -1,7 +1,6 @@
 import React from "react";
 import { SafeAreaView, Text, TouchableOpacity } from "react-native";
 import Header from "../components/Header";
-import Button from "../components/Button";
 import { useNavigation } from "@react-navigation/native";
 
 export default function AuthScreen() {

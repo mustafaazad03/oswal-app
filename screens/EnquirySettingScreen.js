@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function EnquirySettingScreen() {
 	const navigation = useNavigation();
@@ -28,7 +29,7 @@ export default function EnquirySettingScreen() {
 
 	return (
 		<SafeAreaView className="flex-1 bg-white">
-			<View className="bg-pink-200 py-4 px-4 flex-row items-center">
+			<View className="bg-primary/80 py-4 px-4 flex-row items-center">
 				<TouchableOpacity onPress={() => navigation.goBack()}>
 					<Image
 						source={require("../assets/arrow_back.png")}
@@ -48,15 +49,15 @@ export default function EnquirySettingScreen() {
 						<Text className="font-semibold">Alias Grace</Text>
 						<Text className="text-gray-500">@alias_grace21</Text>
 					</View>
-					<TouchableOpacity className="ml-auto bg-white border border-pink-500 rounded-full px-4 py-1">
-						<Text className="text-pink-500">Following</Text>
+					<TouchableOpacity className="ml-auto bg-white border border-primary rounded-full px-4 py-1">
+						<Text className="text-primary">Following</Text>
 					</TouchableOpacity>
 				</View>
 
 				<View className="space-y-4">
 					<View>
 						<Text className="text-gray-600 mb-1">Category</Text>
-						<View className="border border-gray-300 rounded-md">
+						<View className="border border-primary rounded-md">
 							<Picker
 								selectedValue={formData.category}
 								onValueChange={(value) => handleInputChange("category", value)}
@@ -69,7 +70,7 @@ export default function EnquirySettingScreen() {
 
 					<View>
 						<Text className="text-gray-600 mb-1">Sub-Category</Text>
-						<View className="border border-gray-300 rounded-md">
+						<View className="border border-primary rounded-md">
 							<Picker
 								selectedValue={formData.subCategory}
 								onValueChange={(value) =>
@@ -85,7 +86,7 @@ export default function EnquirySettingScreen() {
 					<View>
 						<Text className="text-gray-600 mb-1">Address</Text>
 						<TextInput
-							className="border border-gray-300 rounded-md p-2"
+							className="border border-primary rounded-md p-2"
 							value={formData.address}
 							onChangeText={(text) => handleInputChange("address", text)}
 							placeholder="Enter Address"
@@ -94,7 +95,7 @@ export default function EnquirySettingScreen() {
 
 					<View>
 						<Text className="text-gray-600 mb-1">Gender</Text>
-						<View className="border border-gray-300 rounded-md">
+						<View className="border border-primary rounded-md">
 							<Picker
 								selectedValue={formData.gender}
 								onValueChange={(value) => handleInputChange("gender", value)}
@@ -109,7 +110,7 @@ export default function EnquirySettingScreen() {
 
 					<View>
 						<Text className="text-gray-600 mb-1">Age Group</Text>
-						<View className="border border-gray-300 rounded-md">
+						<View className="border border-primary rounded-md">
 							<Picker
 								selectedValue={formData.ageGroup}
 								onValueChange={(value) => handleInputChange("ageGroup", value)}
@@ -126,7 +127,7 @@ export default function EnquirySettingScreen() {
 					<View>
 						<Text className="text-gray-600 mb-1">Description</Text>
 						<TextInput
-							className="border border-gray-300 rounded-md p-2"
+							className="border border-primary rounded-md p-2"
 							value={formData.description}
 							onChangeText={(text) => handleInputChange("description", text)}
 							placeholder="Enter Description"
@@ -136,12 +137,16 @@ export default function EnquirySettingScreen() {
 					</View>
 				</View>
 
-				<TouchableOpacity className="bg-pink-500 rounded-md py-3 mt-6">
-					<Text className="text-white text-center font-semibold">Connect</Text>
+				<TouchableOpacity className="bg-primary rounded-md py-3 mt-6 flex-row items-center justify-center">
+					<Ionicons name="chatbubble-ellipses" size={24} color="black" />
+					<Text className="text-dark text-center font-semibold ml-2">
+						Connect
+					</Text>
 				</TouchableOpacity>
 
-				<TouchableOpacity className="border border-gray-300 rounded-md py-3 mt-4">
-					<Text className="text-center font-semibold">Delete Enquiry</Text>
+				<TouchableOpacity className="border border-primary rounded-md py-3 mt-4 mb-8 flex-row items-center justify-center">
+					<Ionicons name="trash" size={24} color="black" />
+					<Text className="text-center font-semibold ml-2">Delete Enquiry</Text>
 				</TouchableOpacity>
 			</ScrollView>
 		</SafeAreaView>
