@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { getToken, setToken } from "../api/auth";
 import { useNavigation } from "@react-navigation/native";
-
+import JWT from "expo-jwt";
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
@@ -11,13 +11,26 @@ export const AuthProvider = ({ children }) => {
 
 	useEffect(() => {
 		const loadToken = async () => {
-			const token = await getToken();
-			if (token) {
-				// TODO: Fetch user data using the token
-				setUser({});
+			try {
+				const token = await getToken();
+				if (token) {
+					const decoded = JWT.decode(token, "kvnJHKUhi7y87syhkj");
+					setUser(decoded);
+					navigation.reset({
+						index: 0,
+						routes: [{ name: "Home" }],
+					});
+				} else {
+					setLoading(false);
+					navigation.reset({
+						index: 0,
+						routes: [{ name: "Auth" }],
+					});
+				}
+			} catch (error) {
+				console.error(error);
+				setLoading(false);
 			}
-			setLoading(false);
-			navigation.navigate("Auth");
 		};
 		loadToken();
 	}, []);
