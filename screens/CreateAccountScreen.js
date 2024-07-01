@@ -10,13 +10,48 @@ import { useNavigation } from "@react-navigation/native";
 import InputField from "../components/InputField";
 import Header from "../components/Header";
 import Button from "../components/Button";
+import { API_URL } from "../api/client";
+
+const postFormData = async (formData) => {
+	const response = await axios.post(
+		`${API_URL}/auth/email-verification`,
+		formData
+	);
+	return response.data;
+};
 
 export default function CreateAccount() {
 	const navigation = useNavigation();
 	const [data, setData] = useState({
+		username: "",
 		email: "",
 		password: "",
 	});
+
+	const mutation = useMutation({
+		mutationFn: postFormData,
+		onSuccess: (responseData) => {
+			if (responseData.success) {
+				navigation.navigate("OTPVerification", {
+					email: data.email,
+					username: data.username,
+					password: data.password,
+				});
+			} else {
+				// Handle error (e.g., show an error message)
+				console.error(responseData.message);
+			}
+		},
+		onError: (error) => {
+			console.error("Error submitting form:", error);
+		},
+	});
+
+	const handleSubmit = () => {
+		mutation.mutate({
+			email: data.email,
+		});
+	};
 	return (
 		<SafeAreaView className=" bg-white h-screen ">
 			{/* Back Icon */}
@@ -39,6 +74,17 @@ export default function CreateAccount() {
 				</Text>
 			</View>
 			<View className="mx-4">
+				<InputField
+					placeholder="Enter Username"
+					Icon={require("../assets/user_icon.png")}
+					onChange={(val) =>
+						setData({
+							...data,
+							username: val.nativeEvent.text,
+						})
+					}
+					value={data.username}
+				/>
 				<InputField
 					placeholder="Sign up with E-mail/Mobile"
 					Icon={require("../assets/passkey.png")}
@@ -70,10 +116,7 @@ export default function CreateAccount() {
 					<Text className="font-medium">Number</Text> and a{" "}
 					<Text className="font-medium">Special Character</Text>.
 				</Text>
-				<Button
-					title="Sign Up"
-					onPress={() => navigation.navigate("PersonalDetails")}
-				/>
+				<Button title="Sign Up" onPress={handleSubmit} />
 				<View className=" mt-3 mx-3 flex-row items-center space-x-2 justify-center">
 					<Text className=" text-grayish text-xs">
 						Already have an account?

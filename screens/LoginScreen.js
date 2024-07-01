@@ -9,6 +9,9 @@ import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header";
 import InputField from "../components/InputField";
+import { useMutation } from "@tanstack/react-query";
+import { login } from "../api/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginScreen() {
 	const navigation = useNavigation();
@@ -16,6 +19,30 @@ export default function LoginScreen() {
 		email: "",
 		password: "",
 	});
+
+	const mutation = useMutation({
+		mutationFn: login,
+		onSuccess: async (data) => {
+			if (data.jwtToken === undefined || data.jwtToken === null) {
+				console.error("Login Failed");
+				return;
+			}
+			await AsyncStorage.setItem("auth", data.jwtToken);
+			navigation.replace("Home");
+		},
+		onError: (error) => {
+			console.error("Error submitting form:", error);
+			// Handle login error (e.g., show an error message)
+		},
+	});
+
+	const handleSubmit = () => {
+		mutation.mutate({
+			email: data.email,
+			password: data.password,
+		});
+	};
+
 	return (
 		<SafeAreaView className=" bg-white h-screen ">
 			{/* Back Icon */}
@@ -70,7 +97,8 @@ export default function LoginScreen() {
 				</View>
 				<TouchableOpacity
 					className=" p-3 bg-primary rounded-lg mt-6"
-					onPress={() => navigation.navigate("PersonalDetails")}
+					onPress={handleSubmit}
+					disabled={mutation.isLoading || !data.email || !data.password}
 				>
 					<Text className=" text-dark text-center font-bold text-base">
 						Log in
