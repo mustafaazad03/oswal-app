@@ -14,23 +14,33 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import BottomNavigation from "../components/BottomNavigation";
 import { Entypo } from "@expo/vector-icons";
 import CarouselComponent from "../components/Carousel";
+import HomeProfileFeed from "../components/HomeProfileFeed";
+import { getToken } from "../api/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import ReviewTab from "../components/ReviewTab";
+import BottomPane from "./BottomPane";
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const route = useRoute();
-
+  console.log(getToken());
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="bg-[#FFD1DC] p-4 pt-8 flex flex-row items-center justify-between">
-        <Text className="text-xl font-bold">LoremIpsum</Text>
-        <TouchableOpacity className="">
-          <Image
-            source={require("../assets/menu_icon.png")}
-            className="w-6 h-6"
-          />
-        </TouchableOpacity>
+      <View className="flex-row justify-between items-center p-4 bg-primary pt-8">
+        <Image source={require("../assets/icon.png")} className="w-10 h-10" />
+        <Text className="text-lg font-bold">Freathers</Text>
+        <View className="flex-row items-center">
+          <TouchableOpacity
+            className=""
+            onPress={() => navigation.navigate("Setting")}
+          >
+            <Image
+              source={require("../assets/menu_icon.png")}
+              className="w-6 h-6"
+            />
+          </TouchableOpacity>
+        </View>
       </View>
-
       <ScrollView>
         <CarouselComponent />
         <View className="p-4">
@@ -84,19 +94,19 @@ export default function ProfileScreen() {
             <Text className="font-bold text-base">Contact business at:</Text>
             <View className="text-gray-800 flex flex-row justify-start items-center space-x-2">
               <Ionicons name="person-sharp" size={18} color="black" />
-              <Text>Sr. Manager</Text>
+              <Text className="text-sm">Sr. Manager</Text>
             </View>
             <View className="text-gray-800 flex flex-row justify-start items-center space-x-2">
               <FontAwesome6 name="ranking-star" size={18} color="black" />
-              <Text> Sr. Manager</Text>
+              <Text className="text-sm"> Sr. Manager</Text>
             </View>
             <View className="text-gray-800 flex flex-row justify-start items-center space-x-2">
               <Entypo name="phone" size={18} color="black" />
-              <Text>+325 123 456 78790</Text>
+              <Text className="text-sm">+325 123 456 78790</Text>
             </View>
             <View className="text-gray-800 flex flex-row justify-start items-center space-x-2">
               <Entypo name="mail" size={18} color="black" />
-              <Text> dummyemail@email.com</Text>
+              <Text className="text-sm"> dummyemail@email.com</Text>
             </View>
           </View>
 
@@ -106,9 +116,11 @@ export default function ProfileScreen() {
           />
 
           <View className="mt-4">
-            <Text className="font-bold mb-2">My Album</Text>
+            {/* <HomeProfileFeed /> */}
+            <ReviewTab />
+            {/* <Text className="font-bold mb-2">My Album</Text>
             <View className="flex-row flex-wrap gap-1">
-              {[...Array(15)].map((_, index) => (
+              {[...Array(10)].map((_, index) => (
                 <Image
                   key={index}
                   source={require("../assets/random.png")}
@@ -116,10 +128,11 @@ export default function ProfileScreen() {
                 />
               ))}
             </View>
+             */}
           </View>
         </View>
       </ScrollView>
-
+      <BottomPane />
       {/* Bottom Navigation */}
       <BottomNavigation notify={true} />
     </SafeAreaView>
