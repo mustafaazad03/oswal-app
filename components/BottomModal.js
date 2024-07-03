@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, Animated } from "react-native";
+import { View, Text, TouchableOpacity, Animated, Image } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 
 const BottomModal = ({ isVisible, onClose }) => {
@@ -40,19 +40,35 @@ const BottomModal = ({ isVisible, onClose }) => {
 			></View>
 			<View className="p-4 space-y-4 px-8 text-dark font-medium">
 				<TouchableOpacity className="flex-row items-center space-x-3 w-full">
-					<Entypo name="cog" size={24} color="black" />
+					{/* <Entypo name="cog" size={24} color="black" /> */}
+					<Image
+						source={require("../assets/Profile/settings.png")}
+						className="w-6 h-6"
+					/>
 					<Text className="text-sm font-medium text-dark">Settings</Text>
 				</TouchableOpacity>
 				<TouchableOpacity className="flex-row items-center space-x-3 w-full">
-					<Entypo name="bookmark" size={24} color="black" />
+					{/* <Entypo name="bookmark" size={24} color="black" /> */}
+					<Image
+						source={require("../assets/Profile/bookmark.png")}
+						className="w-6 h-6"
+					/>
 					<Text className="text-sm font-medium text-dark">Saved</Text>
 				</TouchableOpacity>
 				<TouchableOpacity className="flex-row items-center space-x-3 w-full">
-					<Entypo name="moon" size={24} color="black" />
+					{/* <Entypo name="moon" size={24} color="black" /> */}
+					<Image
+						source={require("../assets/Profile/contrast.png")}
+						className="w-6 h-6"
+					/>
 					<Text className="text-sm font-medium text-dark">Dark Mode</Text>
 				</TouchableOpacity>
 				<TouchableOpacity className="flex-row items-center space-x-3 w-full">
-					<Entypo name="warning" size={24} color="black" />
+					{/* <Entypo name="warning" size={24} color="black" /> */}
+					<Image
+						source={require("../assets/Profile/brightness_alert.png")}
+						className="w-6 h-6"
+					/>
 					<Text className="text-sm font-medium text-dark">
 						Report a problem
 					</Text>
@@ -61,7 +77,11 @@ const BottomModal = ({ isVisible, onClose }) => {
 					className="flex-row items-center space-x-3 w-full border-t border-t-white pt-4"
 					onPress={onClose}
 				>
-					<Entypo name="log-out" size={24} color="black" />
+					{/* <Entypo name="log-out" size={24} color="black" /> */}
+					<Image
+						source={require("../assets/Profile/move_item.png")}
+						className="w-6 h-6"
+					/>
 					<Text className="text-sm font-medium text-dark">Log Out</Text>
 				</TouchableOpacity>
 			</View>
