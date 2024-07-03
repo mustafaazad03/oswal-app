@@ -103,7 +103,9 @@ export default function SettingsScreen() {
 				<SettingItem
 					icon={require("../assets/Settings/block.png")}
 					title="Blocked Accounts"
-					onPress={() => {}}
+					onPress={() => {
+						navigation.navigate("BlockedAccounts");
+					}}
 				/>
 				<SettingItem
 					icon={require("../assets/Settings/person_remove.png")}
