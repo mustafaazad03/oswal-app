@@ -2,11 +2,25 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
 import ReviewTab from "./ReviewTab";
 import HomeProfileFeed from "./HomeProfileFeed";
+import { Entypo } from "@expo/vector-icons";
 
 const ProfileTabs = () => {
 	const [activeTab, setActiveTab] = useState("Home");
 
-	const tabs = ["Home", "Feed", "Ratings & Reviews"];
+	const tabs = [
+		{
+			tab: "Home",
+			icon: "home",
+		},
+		{
+			tab: "Feed",
+			icon: "grid",
+		},
+		{
+			tab: "Ratings & Reviews",
+			icon: "star",
+		},
+	];
 
 	const renderTabContent = () => {
 		switch (activeTab) {
@@ -39,18 +53,19 @@ const ProfileTabs = () => {
 			<View className="flex-row justify-around border-b border-gray-200">
 				{tabs.map((tab) => (
 					<TouchableOpacity
-						key={tab}
-						onPress={() => setActiveTab(tab)}
-						className={`py-2 px-4 ${
-							activeTab === tab ? "border-b-2 border-black" : ""
+						key={tab.tab}
+						onPress={() => setActiveTab(tab.tab)}
+						className={`py-2 pr-3 flex-row items-center gap-2 ${
+							activeTab === tab.tab ? "border-b-2 border-black" : ""
 						}`}
 					>
+						<Entypo name={tab.icon} size={16} color="black" />
 						<Text
 							className={`font-semibold ${
-								activeTab === tab ? "text-dark" : "text-gray-600"
+								activeTab === tab.tab ? "text-dark" : "text-gray-600"
 							}`}
 						>
-							{tab}
+							{tab.tab}
 						</Text>
 					</TouchableOpacity>
 				))}
