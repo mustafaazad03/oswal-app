@@ -13,6 +13,7 @@ import BottomNavigation from "../components/BottomNavigation";
 import CarouselComponent from "../components/Carousel";
 import ReviewTab from "../components/ReviewTab";
 import BottomModal from "../components/BottomModal";
+import ProfileTabs from "../components/ProfileTabs";
 
 export default function ProfileScreen() {
 	const navigation = useNavigation();
@@ -111,9 +112,7 @@ export default function ProfileScreen() {
 						className="w-full h-40 mt-4 rounded-lg"
 					/>
 
-					<View className="mt-4">
-						<ReviewTab />
-					</View>
+					<ProfileTabs />
 				</View>
 			</ScrollView>
 			<BottomNavigation notify={true} />
