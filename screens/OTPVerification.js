@@ -7,6 +7,7 @@ import InputField from "../components/InputField";
 import Header from "../components/Header";
 import Button from "../components/Button";
 import { API_URL } from "../api/client";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const verifyOTP = async (formData) => {
 	const response = await axios.post(`${API_URL}/auth/register`, formData);
@@ -16,17 +17,18 @@ const verifyOTP = async (formData) => {
 export default function OTPVerification() {
 	const navigation = useNavigation();
 	const route = useRoute();
-	const { email, username, password } = route.params;
+	const { email, username, password, otpData } = route.params;
 	const [otp, setOtp] = useState("");
 
 	const mutation = useMutation({
 		mutationFn: verifyOTP,
 		onSuccess: (data) => {
-			if (data.success) {
+			if (data.statusCode === 201) {
 				// Handle successful registration (e.g., store token, navigate to home)
 				console.log("Registration successful");
-				navigation.navigate("Login");
-				navigation.replace("Home");
+				// store token
+				AsyncStorage.setItem("auth", data.jwtToken);
+				navigation.navigate("Home");
 			} else {
 				// Handle error (e.g., show an error message)
 				console.error(data.message);
@@ -38,18 +40,20 @@ export default function OTPVerification() {
 	});
 
 	const handleSubmit = () => {
+		if (!otp && otpData !== otp) {
+			return;
+		}
 		mutation.mutate({
 			email,
 			username,
 			password,
-			otp,
 		});
 	};
 
 	return (
 		<SafeAreaView className="bg-white h-screen">
 			<Header />
-			<View className="space-y-2 mb-6 text-dark flex flex-col justify-center text-center">
+			<View className="space-y-2 mb-10 text-dark flex flex-col justify-center text-center">
 				<Text className="font-bold capitalize text-base text-center">
 					Verify OTP
 				</Text>
