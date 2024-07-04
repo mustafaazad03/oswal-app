@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
 	View,
 	Text,
@@ -8,6 +8,9 @@ import {
 	FlatList,
 	ActivityIndicator,
 	RefreshControl,
+	Alert,
+	Linking,
+	Platform,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -15,12 +18,15 @@ import FilterComponent from "../components/FilterComponent";
 import BottomNavigation from "../components/BottomNavigation";
 import { postService } from "../api/feed";
 import { useAuth } from "../context/AuthContext";
+import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
 
 export default function FeedScreen() {
 	const navigation = useNavigation();
 	const queryClient = useQueryClient();
 	// get user from context
 	const { user } = useAuth();
+	const [likedPosts, setLikedPosts] = useState(new Set());
 
 	const {
 		data: posts,
@@ -31,11 +37,22 @@ export default function FeedScreen() {
 	} = useQuery({
 		queryKey: ["posts"],
 		queryFn: postService.getAllFeed,
-		select: (data) => data,
 	});
 
+	useEffect(() => {
+		if (user && posts) {
+			const likedPostIds = posts
+				.filter((post) =>
+					post.likes.some((like) => like.username === user.username)
+				)
+				.map((post) => post._id);
+			setLikedPosts(new Set(likedPostIds));
+		}
+	}, [posts, user]);
+
 	const likeMutation = useMutation({
-		mutationFn: ({ postId, userId }) => postService.likePost(postId, userId),
+		mutationFn: ({ postId, username }) =>
+			postService.likePost(postId, username),
 		onSuccess: () => {
 			queryClient.invalidateQueries("posts");
 		},
@@ -44,14 +61,81 @@ export default function FeedScreen() {
 	const handleLikePost = useCallback(
 		(postId) => {
 			if (user) {
-				likeMutation.mutate({ postId, userId: user._id });
+				likeMutation.mutate(
+					{ postId, username: user.username },
+					{
+						onSuccess: () => {
+							setLikedPosts((prev) => {
+								const newSet = new Set(prev);
+								if (newSet.has(postId)) {
+									newSet.delete(postId);
+								} else {
+									newSet.add(postId);
+								}
+								return newSet;
+							});
+							// Invalidate and refetch to update the likes count
+							queryClient.invalidateQueries(["posts"]);
+						},
+					}
+				);
 			} else {
-				// Handle case when user is not logged in
 				navigation.navigate("Login");
 			}
 		},
-		[user, likeMutation, navigation]
+		[user, likeMutation, navigation, queryClient]
 	);
+
+	const handleDownloadImage = async (imageUrl) => {
+		try {
+			const { status } = await MediaLibrary.requestPermissionsAsync();
+			if (status === "granted") {
+				const fileUri = FileSystem.documentDirectory + "temp_image.jpg";
+				const downloadResumable = FileSystem.createDownloadResumable(
+					imageUrl,
+					fileUri,
+					{}
+				);
+				const { uri } = await downloadResumable.downloadAsync();
+				const asset = await MediaLibrary.createAssetAsync(uri);
+				await MediaLibrary.createAlbumAsync("Freathers", asset, false);
+				Alert.alert("Success", "Image saved to gallery!");
+			}
+		} catch (error) {
+			console.error("Error downloading image:", error);
+			Alert.alert("Error", "Failed to save image");
+		}
+	};
+
+	const handleWhatsAppRedirect = (phoneNumber) => {
+		const url = `whatsapp://send?phone=${phoneNumber}`;
+		Linking.canOpenURL(url)
+			.then((supported) => {
+				if (supported) {
+					return Linking.openURL(url);
+				} else {
+					Alert.alert("Error", "WhatsApp is not installed on this device");
+				}
+			})
+			.catch((err) => console.error("Error opening WhatsApp:", err));
+	};
+
+	const handlePhoneCall = (phoneNumber) => {
+		console.log(phoneNumber);
+		const url =
+			Platform.OS === "android"
+				? `tel:${phoneNumber}`
+				: `telprompt:${phoneNumber}`;
+		Linking.canOpenURL(url)
+			.then((supported) => {
+				if (supported) {
+					return Linking.openURL(url);
+				} else {
+					Alert.alert("Error", "Phone call not supported on this device");
+				}
+			})
+			.catch((err) => console.error("Error making phone call:", err));
+	};
 
 	const renderItem = useCallback(
 		({ item }) => (
@@ -82,7 +166,11 @@ export default function FeedScreen() {
 					<View className="flex-row items-center space-x-4">
 						<TouchableOpacity onPress={() => handleLikePost(item._id)}>
 							<Image
-								source={require("../assets/like_icon.png")}
+								source={
+									likedPosts.has(item._id)
+										? require("../assets/like_colored.png")
+										: require("../assets/like_icon.png")
+								}
 								className="w-6 h-6"
 							/>
 						</TouchableOpacity>
@@ -94,19 +182,31 @@ export default function FeedScreen() {
 						</TouchableOpacity>
 					</View>
 					<View className="flex-row items-center space-x-4">
-						<TouchableOpacity>
+						<TouchableOpacity
+							onPress={() => handleDownloadImage(item.imageUrl)}
+						>
 							<Image
 								source={require("../assets/download_icon.png")}
 								className="w-6 h-6"
 							/>
 						</TouchableOpacity>
-						<TouchableOpacity>
+						<TouchableOpacity
+							onPress={() =>
+								handleWhatsAppRedirect(
+									item.user.contactDetails.contactNumber?.whatsapp
+								)
+							}
+						>
 							<Image
 								source={require("../assets/whatsapp_icon.png")}
 								className="w-6 h-6"
 							/>
 						</TouchableOpacity>
-						<TouchableOpacity>
+						<TouchableOpacity
+							onPress={() =>
+								handlePhoneCall(item.user.contactDetails.contactNumber?.mobile)
+							}
+						>
 							<Image
 								source={require("../assets/call_icon.png")}
 								className="w-6 h-6"
@@ -180,11 +280,6 @@ export default function FeedScreen() {
 					<RefreshControl refreshing={isLoading} onRefresh={refetch} />
 				}
 			/>
-			{isLoading && (
-				<View className="absolute inset-0 justify-center items-center bg-black bg-opacity-50">
-					<ActivityIndicator size="large" color="#0000ff" />
-				</View>
-			)}
 			<FilterComponent />
 			<BottomNavigation notify={true} />
 		</SafeAreaView>

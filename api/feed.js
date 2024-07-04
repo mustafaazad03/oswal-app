@@ -21,10 +21,10 @@ export const postService = {
 		}
 	},
 
-	likePost: async (postId, userId) => {
+	likePost: async (postId, username) => {
 		try {
-			const response = await apiClient.post(`${API_URL}/post/${postId}/like`, {
-				userId,
+			const response = await apiClient.put(`${API_URL}/user/like/${username}`, {
+				postId,
 			});
 			return response.data;
 		} catch (error) {
