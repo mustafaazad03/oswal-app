@@ -34,6 +34,7 @@ import { AuthProvider } from "./context/AuthContext";
 import OTPVerification from "./screens/OTPVerification";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BlockedAccountsScreen from "./screens/BlockedAccountsScreen";
+import CreateFeedScreen from "./screens/CreateFeedScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -301,6 +302,15 @@ function App() {
 							<Stack.Screen
 								name="BlockedAccounts"
 								component={BlockedAccountsScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Create feed screen */}
+							<Stack.Screen
+								name="CreateFeed"
+								component={CreateFeedScreen}
 								options={{
 									headerShown: false,
 									presentation: "fullScreenModal",
