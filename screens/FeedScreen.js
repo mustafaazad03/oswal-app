@@ -54,7 +54,15 @@ export default function FeedScreen() {
 		mutationFn: ({ postId, username }) =>
 			postService.likePost(postId, username),
 		onSuccess: () => {
-			queryClient.invalidateQueries("posts");
+			queryClient.invalidateQueries(["posts"]);
+		},
+	});
+
+	const dislikeMutation = useMutation({
+		mutationFn: ({ postId, username }) =>
+			postService.unlikePost(postId, username),
+		onSuccess: () => {
+			queryClient.invalidateQueries(["posts"]);
 		},
 	});
 
@@ -84,6 +92,34 @@ export default function FeedScreen() {
 			}
 		},
 		[user, likeMutation, navigation, queryClient]
+	);
+
+	const handleDislikePost = useCallback(
+		(postId) => {
+			if (user) {
+				dislikeMutation.mutate(
+					{ postId, username: user.username },
+					{
+						onSuccess: () => {
+							setLikedPosts((prev) => {
+								const newSet = new Set(prev);
+								if (newSet.has(postId)) {
+									newSet.delete(postId);
+								} else {
+									newSet.add(postId);
+								}
+								return newSet;
+							});
+							// Invalidate and refetch to update the likes count
+							queryClient.invalidateQueries(["posts"]);
+						},
+					}
+				);
+			} else {
+				navigation.navigate("Login");
+			}
+		},
+		[user, dislikeMutation, navigation, queryClient]
 	);
 
 	const handleDownloadImage = async (imageUrl) => {
@@ -164,7 +200,13 @@ export default function FeedScreen() {
 				/>
 				<View className="flex-row justify-between p-2 pt-4">
 					<View className="flex-row items-center space-x-4">
-						<TouchableOpacity onPress={() => handleLikePost(item._id)}>
+						<TouchableOpacity
+							onPress={
+								likedPosts.has(item._id)
+									? () => handleLikePost(item._id)
+									: () => handleDislikePost(item._id)
+							}
+						>
 							<Image
 								source={
 									likedPosts.has(item._id)

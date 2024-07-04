@@ -33,11 +33,13 @@ export const postService = {
 		}
 	},
 
-	unlikePost: async (postId, userId) => {
+	unlikePost: async (postId, username) => {
 		try {
-			const response = await apiClient.delete(
-				`${API_URL}/post/${postId}/like`,
-				{ data: { userId } }
+			const response = await apiClient.put(
+				`${API_URL}/user/unlike/${username}`,
+				{
+					postId,
+				}
 			);
 			return response.data;
 		} catch (error) {
