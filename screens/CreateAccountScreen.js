@@ -18,7 +18,6 @@ const postFormData = async (formData) => {
 	const response = await axios.get(
 		`${API_URL}/auth/email-verification?email=${formData.email}`
 	);
-	console.log(response.data);
 	return response.data;
 };
 
