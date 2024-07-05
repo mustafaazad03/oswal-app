@@ -37,7 +37,7 @@ export default function BottomNavigation({ notify }) {
 				}}
 				onUploadMedia={() => {
 					// Handle Upload Media
-					navigation.navigate("UploadMedia");
+					navigation.navigate("CreateFeed");
 				}}
 				onUploadPDF={() => {
 					// Handle Upload PDF

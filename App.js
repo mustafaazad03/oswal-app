@@ -33,275 +33,295 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthContext";
 import OTPVerification from "./screens/OTPVerification";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import BlockedAccountsScreen from "./screens/BlockedAccountsScreen";
+import CreateFeedScreen from "./screens/CreateFeedScreen";
 
 const Stack = createNativeStackNavigator();
 
 function App() {
-  const queryClient = new QueryClient();
-  return (
-    <QueryClientProvider client={queryClient}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <NavigationContainer>
-          <AuthProvider>
-            <Stack.Navigator initialRouteName="Auth">
-              <Stack.Screen
-                name="Auth"
-                component={AuthScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              <Stack.Screen
-                name="Register"
-                component={CreateAccount}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              <Stack.Screen
-                name="Login"
-                component={LoginScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              <Stack.Screen
-                name="OTPVerification"
-                component={OTPVerification}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              <Stack.Screen
-                name="PersonalDetails"
-                component={ProfileDetailsScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Buisness Details */}
-              <Stack.Screen
-                name="BusinessDetails"
-                component={BusinessDetailsScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Buisness Contact Details */}
-              <Stack.Screen
-                name="BusinessContact"
-                component={BusinessContactScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Create Album */}
-              <Stack.Screen
-                name="CreateAlbum"
-                component={CreateAlbumScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Explore Screen */}
-              <Stack.Screen
-                name="Explore"
-                component={ExploreScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              <Stack.Screen
-                name="Home"
-                component={FeedScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Search Screen */}
-              <Stack.Screen
-                name="Search"
-                component={SearchScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Profile Screen */}
-              <Stack.Screen
-                name="Info"
-                component={ProfileScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Setting  screen*/}
-              <Stack.Screen
-                name="Setting"
-                component={SettingsScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Edit Profile Screen */}
-              <Stack.Screen
-                name="EditProfile"
-                component={EditProfileScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Personal Detail Setting */}
-              <Stack.Screen
-                name="PersonalDetailSetting"
-                component={ProfileDetailsSettingScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Buisness Detail Setting Screen */}
-              <Stack.Screen
-                name="BusinessDetailSetting"
-                component={BusinessDetailsSettingScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Contact Detail Setting */}
-              <Stack.Screen
-                name="ContactDetailSetting"
-                component={ContactDetailSettingScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* My Album */}
-              <Stack.Screen
-                name="MyAlbum"
-                component={MyAlbumScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Notification Settings Screen */}
-              <Stack.Screen
-                name="NotificationSetting"
-                component={NotificationsSettingScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Explore Setting Screen */}
-              <Stack.Screen
-                name="ExploreSetting"
-                component={ExploreSettingScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Enquiries Screen */}
-              <Stack.Screen
-                name="EnquiriesSetting"
-                component={EnquiriesScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Password Security Screen */}
-              <Stack.Screen
-                name="PasswordSecurity"
-                component={PasswordSecurityScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Account Privacy Screen */}
-              <Stack.Screen
-                name="AccountPrivacy"
-                component={AccountPrivacyScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Deleted Feed Screen */}
-              <Stack.Screen
-                name="DeletedFeed"
-                component={DeletedFeedsScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Deactivation and Deletion Screen */}
-              <Stack.Screen
-                name="DeactivationDeletion"
-                component={DeactivationDeletionScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Enquiry Setting Screen */}
-              <Stack.Screen
-                name="EnquirySetting"
-                component={EnquirySettingScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* Change Password Modal */}
-              <Stack.Screen
-                name="ChangePassword"
-                component={ChangePasswordModal}
-                options={{ headerShown: false, presentation: "modal" }}
-              />
-              {/* Raise Enquiry */}
-              <Stack.Screen
-                name="RaiseEnquiry"
-                component={RaiseEnquiryScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-              {/* UploadPdf screen */}
-              <Stack.Screen
-                name="UploadPDF"
-                component={RaiseEnquiryScreen}
-                options={{
-                  headerShown: false,
-                  presentation: "fullScreenModal",
-                }}
-              />
-            </Stack.Navigator>
-          </AuthProvider>
-        </NavigationContainer>
-      </GestureHandlerRootView>
-    </QueryClientProvider>
-  );
+	const queryClient = new QueryClient();
+	return (
+		<QueryClientProvider client={queryClient}>
+			<GestureHandlerRootView style={{ flex: 1 }}>
+				<NavigationContainer>
+					<AuthProvider>
+						<Stack.Navigator initialRouteName="Auth">
+							<Stack.Screen
+								name="Auth"
+								component={AuthScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							<Stack.Screen
+								name="Register"
+								component={CreateAccount}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							<Stack.Screen
+								name="Login"
+								component={LoginScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							<Stack.Screen
+								name="OTPVerification"
+								component={OTPVerification}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							<Stack.Screen
+								name="PersonalDetails"
+								component={ProfileDetailsScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Buisness Details */}
+							<Stack.Screen
+								name="BusinessDetails"
+								component={BusinessDetailsScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Buisness Contact Details */}
+							<Stack.Screen
+								name="BusinessContact"
+								component={BusinessContactScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Create Album */}
+							<Stack.Screen
+								name="CreateAlbum"
+								component={CreateAlbumScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Explore Screen */}
+							<Stack.Screen
+								name="Explore"
+								component={ExploreScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							<Stack.Screen
+								name="Home"
+								component={FeedScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Search Screen */}
+							<Stack.Screen
+								name="Search"
+								component={SearchScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Profile Screen */}
+							<Stack.Screen
+								name="Info"
+								component={ProfileScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Setting  screen*/}
+							<Stack.Screen
+								name="Setting"
+								component={SettingsScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Edit Profile Screen */}
+							<Stack.Screen
+								name="EditProfile"
+								component={EditProfileScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Personal Detail Setting */}
+							<Stack.Screen
+								name="PersonalDetailSetting"
+								component={ProfileDetailsSettingScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Buisness Detail Setting Screen */}
+							<Stack.Screen
+								name="BusinessDetailSetting"
+								component={BusinessDetailsSettingScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Contact Detail Setting */}
+							<Stack.Screen
+								name="ContactDetailSetting"
+								component={ContactDetailSettingScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* My Album */}
+							<Stack.Screen
+								name="MyAlbum"
+								component={MyAlbumScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Notification Settings Screen */}
+							<Stack.Screen
+								name="NotificationSetting"
+								component={NotificationsSettingScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Explore Setting Screen */}
+							<Stack.Screen
+								name="ExploreSetting"
+								component={ExploreSettingScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Enquiries Screen */}
+							<Stack.Screen
+								name="EnquiriesSetting"
+								component={EnquiriesScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Password Security Screen */}
+							<Stack.Screen
+								name="PasswordSecurity"
+								component={PasswordSecurityScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Account Privacy Screen */}
+							<Stack.Screen
+								name="AccountPrivacy"
+								component={AccountPrivacyScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Deleted Feed Screen */}
+							<Stack.Screen
+								name="DeletedFeed"
+								component={DeletedFeedsScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Deactivation and Deletion Screen */}
+							<Stack.Screen
+								name="DeactivationDeletion"
+								component={DeactivationDeletionScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Enquiry Setting Screen */}
+							<Stack.Screen
+								name="EnquirySetting"
+								component={EnquirySettingScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Change Password Modal */}
+							<Stack.Screen
+								name="ChangePassword"
+								component={ChangePasswordModal}
+								options={{ headerShown: false, presentation: "modal" }}
+							/>
+							{/* Raise Enquiry */}
+							<Stack.Screen
+								name="RaiseEnquiry"
+								component={RaiseEnquiryScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* UploadPdf screen */}
+							<Stack.Screen
+								name="UploadPDF"
+								component={RaiseEnquiryScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* BlockedAccountsScreen */}
+							<Stack.Screen
+								name="BlockedAccounts"
+								component={BlockedAccountsScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							{/* Create feed screen */}
+							<Stack.Screen
+								name="CreateFeed"
+								component={CreateFeedScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+						</Stack.Navigator>
+					</AuthProvider>
+				</NavigationContainer>
+			</GestureHandlerRootView>
+		</QueryClientProvider>
+	);
 }
 
 export default App;
