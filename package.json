@@ -21,6 +21,7 @@
     "axios": "^1.7.2",
     "crypto": "^1.0.1",
     "expo": "~51.0.14",
+    "expo-clipboard": "~6.0.3",
     "expo-file-system": "^17.0.1",
     "expo-image-picker": "~15.0.5",
     "expo-jwt": "^1.7.1",

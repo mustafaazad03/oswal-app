@@ -11,6 +11,7 @@ import {
 	Alert,
 	Linking,
 	Platform,
+	Share,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -20,6 +21,7 @@ import { postService } from "../api/feed";
 import { useAuth } from "../context/AuthContext";
 import * as FileSystem from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
+import * as Clipboard from "expo-clipboard";
 
 export default function FeedScreen() {
 	const navigation = useNavigation();
@@ -166,6 +168,39 @@ export default function FeedScreen() {
 			.catch((err) => console.error("Error making phone call:", err));
 	}, []);
 
+	const handleShare = async (postId) => {
+		try {
+			const url = `https://www.freathers.com/post/${postId}`;
+
+			try {
+				const result = await Share.share({
+					message: `Check out this post: ${url}`,
+					url: url, // iOS only
+				});
+				if (result.action === Share.sharedAction) {
+					if (result.activityType) {
+					} else {
+					}
+				} else if (result.action === Share.dismissedAction) {
+					// dismissed by user
+					return;
+				}
+			} catch (error) {
+				console.log("Error with native share:", error.message);
+
+				// If native share fails, fall back to copying to clipboard
+				await Clipboard.setStringAsync(url);
+				Alert.alert(
+					"Link Copied",
+					"The post link has been copied to your clipboard."
+				);
+			}
+		} catch (error) {
+			console.error("Error sharing:", error);
+			Alert.alert("Error", "Failed to share the post");
+		}
+	};
+
 	const renderItem = useCallback(
 		({ item }) => (
 			<View className="mb-4 mx-3">
@@ -203,7 +238,7 @@ export default function FeedScreen() {
 								className="w-6 h-6"
 							/>
 						</TouchableOpacity>
-						<TouchableOpacity>
+						<TouchableOpacity onPress={() => handleShare(item._id)}>
 							<Image
 								source={require("../assets/share_icon.png")}
 								className="w-6 h-6"
