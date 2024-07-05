@@ -41,92 +41,86 @@ export default function FeedScreen() {
 
 	useEffect(() => {
 		if (user && posts) {
-			const likedPostIds = posts
-				.filter((post) =>
-					post.likes.some((like) => like.username === user.username)
-				)
-				.map((post) => post._id);
-			setLikedPosts(new Set(likedPostIds));
+			const likedPostIds = new Set(
+				posts
+					.filter((post) =>
+						post.likes.some((like) => like.username === user.username)
+					)
+					.map((post) => post._id)
+			);
+			setLikedPosts(likedPostIds);
 		}
 	}, [posts, user]);
 
-	const likeMutation = useMutation({
-		mutationFn: ({ postId, username }) =>
-			postService.likePost(postId, username),
-		onSuccess: () => {
+	const toggleLikeMutation = useMutation({
+		mutationFn: ({ postId, username, isLiked }) =>
+			isLiked
+				? postService.unlikePost(postId, username)
+				: postService.likePost(postId, username),
+		onMutate: ({ postId, isLiked }) => {
+			const previousPosts = queryClient.getQueryData(["posts"]);
+			queryClient.setQueryData(["posts"], (old) =>
+				old.map((post) =>
+					post._id === postId
+						? {
+								...post,
+								likes: isLiked
+									? post.likes.filter((like) => like.username !== user.username)
+									: [...post.likes, { username: user.username }],
+						  }
+						: post
+				)
+			);
+			setLikedPosts((prev) => {
+				const newSet = new Set(prev);
+				if (isLiked) {
+					newSet.delete(postId);
+				} else {
+					newSet.add(postId);
+				}
+				return newSet;
+			});
+			return { previousPosts };
+		},
+		onError: (err, { postId }, context) => {
+			queryClient.setQueryData(["posts"], context.previousPosts);
+			setLikedPosts((prev) => {
+				const newSet = new Set(prev);
+				if (newSet.has(postId)) {
+					newSet.delete(postId);
+				} else {
+					newSet.add(postId);
+				}
+				return newSet;
+			});
+		},
+		onSettled: () => {
 			queryClient.invalidateQueries(["posts"]);
 		},
 	});
 
-	const dislikeMutation = useMutation({
-		mutationFn: ({ postId, username }) =>
-			postService.unlikePost(postId, username),
-		onSuccess: () => {
-			queryClient.invalidateQueries(["posts"]);
-		},
-	});
-
-	const handleLikePost = useCallback(
+	const handleToggleLike = useCallback(
 		(postId) => {
 			if (user) {
-				likeMutation.mutate(
-					{ postId, username: user.username },
-					{
-						onSuccess: () => {
-							setLikedPosts((prev) => {
-								const newSet = new Set(prev);
-								if (newSet.has(postId)) {
-									newSet.delete(postId);
-								} else {
-									newSet.add(postId);
-								}
-								return newSet;
-							});
-							// Invalidate and refetch to update the likes count
-							queryClient.invalidateQueries(["posts"]);
-						},
-					}
-				);
+				const isLiked = likedPosts.has(postId);
+				toggleLikeMutation.mutate({
+					postId,
+					username: user.username,
+					isLiked,
+				});
 			} else {
-				navigation.navigate("Login");
+				// Handle the case when the user is not logged in
+				Alert.alert("Error", "Please log in to like posts");
 			}
 		},
-		[user, likeMutation, navigation, queryClient]
+		[user, likedPosts, toggleLikeMutation]
 	);
 
-	const handleDislikePost = useCallback(
-		(postId) => {
-			if (user) {
-				dislikeMutation.mutate(
-					{ postId, username: user.username },
-					{
-						onSuccess: () => {
-							setLikedPosts((prev) => {
-								const newSet = new Set(prev);
-								if (newSet.has(postId)) {
-									newSet.delete(postId);
-								} else {
-									newSet.add(postId);
-								}
-								return newSet;
-							});
-							// Invalidate and refetch to update the likes count
-							queryClient.invalidateQueries(["posts"]);
-						},
-					}
-				);
-			} else {
-				navigation.navigate("Login");
-			}
-		},
-		[user, dislikeMutation, navigation, queryClient]
-	);
-
-	const handleDownloadImage = async (imageUrl) => {
+	const handleDownloadImage = useCallback(async (imageUrl) => {
 		try {
 			const { status } = await MediaLibrary.requestPermissionsAsync();
 			if (status === "granted") {
-				const fileUri = FileSystem.documentDirectory + "temp_image.jpg";
+				const fileUri = `${FileSystem.cacheDirectory}temp_image.jpg`;
 				const downloadResumable = FileSystem.createDownloadResumable(
 					imageUrl,
 					fileUri,
@@ -141,9 +135,9 @@ export default function FeedScreen() {
 			console.error("Error downloading image:", error);
 			Alert.alert("Error", "Failed to save image");
 		}
-	};
+	}, []);
 
-	const handleWhatsAppRedirect = (phoneNumber) => {
+	const handleWhatsAppRedirect = useCallback((phoneNumber) => {
 		const url = `whatsapp://send?phone=${phoneNumber}`;
 		Linking.canOpenURL(url)
 			.then((supported) => {
@@ -154,10 +148,9 @@ export default function FeedScreen() {
 				}
 			})
 			.catch((err) => console.error("Error opening WhatsApp:", err));
-	};
+	}, []);
 
-	const handlePhoneCall = (phoneNumber) => {
-		console.log(phoneNumber);
+	const handlePhoneCall = useCallback((phoneNumber) => {
 		const url =
 			Platform.OS === "android"
 				? `tel:${phoneNumber}`
@@ -171,7 +164,7 @@ export default function FeedScreen() {
 				}
 			})
 			.catch((err) => console.error("Error making phone call:", err));
-	};
+	}, []);
 
 	const renderItem = useCallback(
 		({ item }) => (
@@ -200,13 +193,7 @@ export default function FeedScreen() {
 				/>
 				<View className="flex-row justify-between p-2 pt-4">
 					<View className="flex-row items-center space-x-4">
-						<TouchableOpacity
-							onPress={
-								likedPosts.has(item._id)
-									? () => handleLikePost(item._id)
-									: () => handleDislikePost(item._id)
-							}
-						>
+						<TouchableOpacity onPress={() => handleToggleLike(item._id)}>
 							<Image
 								source={
 									likedPosts.has(item._id)
@@ -267,7 +254,13 @@ export default function FeedScreen() {
 				</View>
 			</View>
 		),
-		[handleLikePost]
+		[
+			handleToggleLike,
+			likedPosts,
+			handleDownloadImage,
+			handleWhatsAppRedirect,
+			handlePhoneCall,
+		]
 	);
 
 	const ListEmptyComponent = useCallback(
