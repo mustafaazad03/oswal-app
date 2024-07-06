@@ -17,8 +17,9 @@ import Animated, {
 
 const { height } = Dimensions.get("window");
 
-const FilterComponent = () => {
+const FilterComponent = ({ onFilterChange }) => {
 	const [isOpen, setIsOpen] = useState(false);
+	const [selectedFilter, setSelectedFilter] = useState(null);
 	const animation = useSharedValue(0);
 
 	const toggleFilter = useCallback(() => {
@@ -48,13 +49,43 @@ const FilterComponent = () => {
 	}));
 
 	const filterOptions = [
-		{ icon: require("../assets/city_icon.png"), text: "My City" },
-		{ icon: require("../assets/nearby_icon.png"), text: "Nearby" },
-		{ icon: require("../assets/liked_icon.png"), text: "Most Liked" },
-		{ icon: require("../assets/today_icon.png"), text: "Today" },
-		{ icon: require("../assets/week_icon.png"), text: "Last 7 days" },
-		{ icon: require("../assets/month_icon.png"), text: "Last 1 month" },
+		{
+			icon: require("../assets/city_icon.png"),
+			text: "My City",
+			value: "myCity",
+		},
+		{
+			icon: require("../assets/nearby_icon.png"),
+			text: "Nearby",
+			value: "nearby",
+		},
+		{
+			icon: require("../assets/liked_icon.png"),
+			text: "Most Liked",
+			value: "mostLiked",
+		},
+		{
+			icon: require("../assets/today_icon.png"),
+			text: "Today",
+			value: "today",
+		},
+		{
+			icon: require("../assets/week_icon.png"),
+			text: "Last 7 days",
+			value: "lastWeek",
+		},
+		{
+			icon: require("../assets/month_icon.png"),
+			text: "Last 1 month",
+			value: "lastMonth",
+		},
 	];
+
+	const handleFilterSelect = (filterValue) => {
+		setSelectedFilter(filterValue);
+		onFilterChange(filterValue);
+		toggleFilter();
+	};
 
 	return (
 		<SafeAreaView className="flex-1">
@@ -88,7 +119,10 @@ const FilterComponent = () => {
 					{filterOptions.map((option, index) => (
 						<TouchableOpacity
 							key={index}
-							className="flex-row items-center space-x-4"
+							className={`flex-row items-center space-x-4 ${
+								selectedFilter === option.value ? "bg-secondary" : ""
+							}`}
+							onPress={() => handleFilterSelect(option.value)}
 						>
 							<Image source={option.icon} className="w-6 h-6" />
 							<Text className="text-base text-gray-800">{option.text}</Text>

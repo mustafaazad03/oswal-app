@@ -6,7 +6,6 @@ import {
 	TouchableOpacity,
 	Image,
 	FlatList,
-	ActivityIndicator,
 	RefreshControl,
 	Alert,
 	Linking,
@@ -26,9 +25,10 @@ import * as Clipboard from "expo-clipboard";
 export default function FeedScreen() {
 	const navigation = useNavigation();
 	const queryClient = useQueryClient();
-	// get user from context
 	const { user } = useAuth();
 	const [likedPosts, setLikedPosts] = useState(new Set());
+	const [filteredPosts, setFilteredPosts] = useState([]);
+	const [activeFilter, setActiveFilter] = useState(null);
 
 	const {
 		data: posts,
@@ -53,6 +53,84 @@ export default function FeedScreen() {
 			setLikedPosts(likedPostIds);
 		}
 	}, [posts, user]);
+
+	useEffect(() => {
+		if (posts) {
+			let sorted = [...posts].sort(
+				(a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+			);
+			setFilteredPosts(sorted);
+		}
+	}, [posts]);
+
+	const applyFilter = useCallback(
+		(filter) => {
+			setActiveFilter(filter);
+			if (!posts) return;
+
+			let filtered = [...posts].sort(
+				(a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+			);
+
+			const userState = "new_york";
+			const userCity = "Near IGI, New Delhi"
+				?.split(",")
+				.pop()
+				.trim()
+				.toLowerCase();
+
+			switch (filter) {
+				case "myCity":
+					// Implement city filter logic here
+					filtered = filtered.filter((post) => {
+						const postCity = post.user.businessDetails?.address?.landmark
+							?.split(",")
+							.pop()
+							.trim()
+							.toLowerCase();
+						return postCity === userCity;
+					});
+					break;
+				case "nearby":
+					// Implement nearby filter logic here
+					filtered = filtered.filter((post) => {
+						const postState =
+							post.user.businessDetails?.address?.state?.toLowerCase();
+						return postState === userState;
+					});
+					break;
+				case "mostLiked":
+					filtered.sort((a, b) => b.likes.length - a.likes.length);
+					break;
+				case "today":
+					filtered = filtered.filter(
+						(post) =>
+							new Date(post.createdAt).toDateString() ===
+							new Date().toDateString()
+					);
+					break;
+				case "lastWeek":
+					const oneWeekAgo = new Date();
+					oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+					filtered = filtered.filter(
+						(post) => new Date(post.createdAt) >= oneWeekAgo
+					);
+					break;
+				case "lastMonth":
+					const oneMonthAgo = new Date();
+					oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+					filtered = filtered.filter(
+						(post) => new Date(post.createdAt) >= oneMonthAgo
+					);
+					break;
+				default:
+					break;
+			}
+
+			setFilteredPosts(filtered);
+		},
+		[posts]
+	);
 
 	const toggleLikeMutation = useMutation({
 		mutationFn: ({ postId, username, isLiked }) =>
@@ -340,7 +418,7 @@ export default function FeedScreen() {
 	return (
 		<SafeAreaView className="flex-1 bg-white">
 			<FlatList
-				data={posts}
+				data={filteredPosts}
 				renderItem={renderItem}
 				keyExtractor={(item) => item._id}
 				contentContainerStyle={{ flexGrow: 1 }}
@@ -350,7 +428,7 @@ export default function FeedScreen() {
 					<RefreshControl refreshing={isLoading} onRefresh={refetch} />
 				}
 			/>
-			<FilterComponent />
+			<FilterComponent onFilterChange={applyFilter} />
 			<BottomNavigation notify={true} />
 		</SafeAreaView>
 	);
