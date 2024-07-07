@@ -4,7 +4,7 @@ import ReviewTab from "./ReviewTab";
 import HomeProfileFeed from "./HomeProfileFeed";
 import { Entypo } from "@expo/vector-icons";
 
-const ProfileTabs = () => {
+const ProfileTabs = ({ user }) => {
 	const [activeTab, setActiveTab] = useState("Home");
 
 	const tabs = [
@@ -25,24 +25,34 @@ const ProfileTabs = () => {
 	const renderTabContent = () => {
 		switch (activeTab) {
 			case "Home":
-				return <HomeProfileFeed />;
+				return (
+					<HomeProfileFeed
+						businessDetails={user?.businessDetails}
+						contactDetails={user?.contactDetails}
+						socials={user?.socials}
+					/>
+				);
 			case "Feed":
 				return (
 					<View className="mt-4">
-						<Text className="font-bold mb-2">My Album</Text>
-						<View className="flex-row flex-wrap gap-1">
-							{[...Array(15)].map((_, index) => (
-								<Image
-									key={index}
-									source={require("../assets/random.png")}
-									className="w-[32%] h-32 p-1"
-								/>
-							))}
-						</View>
+						{user.album && user.album.length === 0 && (
+							<>
+								<Text className="font-bold mb-2">My Album</Text>
+								<View className="flex-row flex-wrap gap-1">
+									{user.album?.map((item, index) => (
+										<Image
+											key={index}
+											source={{ uri: item.url }}
+											className="w-[32%] h-32 p-1"
+										/>
+									))}
+								</View>
+							</>
+						)}
 					</View>
 				);
 			case "Ratings & Reviews":
-				return <ReviewTab />;
+				return <ReviewTab review={user?.ratings} />;
 			default:
 				return null;
 		}

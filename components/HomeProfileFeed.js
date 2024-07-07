@@ -3,16 +3,16 @@ import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
-const HomeProfileFeed = () => {
+const HomeProfileFeed = ({businessDetails, contactDetails, socials}) => {
   return (
     <View className="flex flex-col space-y-2 justify-center items-center">
       <View className="flex flex-row space-x-2 flex-1">
         <View className="flex flex-col bg-primary/40 p-5 rounded-xl space-y-2 justify-evenly items-center flex-1 h-40">
-          <Text className="text-3xl font-bold">Category</Text>
+          <Text className="text-3xl font-bold">{businessDetails?.productCategory?.category || "Category"}</Text>
           <Text className="text-lg font-bold">Business Category</Text>
         </View>
         <View className="flex flex-col space-y-2 bg-primary/40 p-5 rounded-xl justify-evenly items-center flex-1 h-40">
-          <Text className="text-3xl font-bold">2013</Text>
+          <Text className="text-3xl font-bold">{contactDetails?.workingSince || "N/A"}</Text>
           <Text className="text-lg font-bold">Working Since</Text>
         </View>
       </View>
@@ -25,10 +25,10 @@ const HomeProfileFeed = () => {
         <View className="flex flex-col space-y-2">
           <Text className="text-xl font-bold">Business Address</Text>
           <View className="">
-            <Text className="text-sm">123 - A Block, Building,</Text>
-            <Text className="text-sm">Lorem Epsum area, </Text>
-            <Text className="text-sm">Indore, Madhya Pradesh</Text>
-            <Text className="text-sm">452001</Text>
+            <Text className="text-sm">{businessDetails?.address?.officeNumber || "N/A"} - {businessDetails?.address?.block || "N/A"}</Text>
+            <Text className="text-sm">{businessDetails?.address?.landmark || "N/A"}</Text>
+            <Text className="text-sm">{businessDetails?.address?.city || "N/A"}, {businessDetails?.address?.state || "N/A"}</Text>
+            <Text className="text-sm">{businessDetails?.address?.pincode || "N/A"}</Text>
           </View>
         </View>
       </View>
@@ -40,8 +40,8 @@ const HomeProfileFeed = () => {
         <View className="flex flex-col space-y-2">
           <Text className="text-xl font-bold">Business Contact</Text>
           <View className="">
-            <Text className="text-sm">8845489181</Text>
-            <Text className="text-sm">8815169096</Text>
+            <Text className="text-sm">{contactDetails?.contactNumber?.mobile}</Text>
+            <Text className="text-sm">{contactDetails?.contactNumber?.whatsapp}</Text>
           </View>
         </View>
       </View>
@@ -53,11 +53,11 @@ const HomeProfileFeed = () => {
         <View className="flex flex-col space-y-2">
           <Text className="text-xl font-bold">Business Working Hours</Text>
           <View className="">
-            <Text className="text-sm">Monday - 10:00am to 7:00pm</Text>
-            <Text className="text-sm">Tuesday - 10:00am to 7:00pm</Text>
-            <Text className="text-sm">Wednesday - 10:00am to 7:00pm</Text>
-            <Text className="text-sm">Thursday - 10:00am to 7:00pm</Text>
-            <Text className="text-sm">Friday - 10:00am to 7:00pm</Text>
+            <Text className="text-sm">Monday - {contactDetails?.workingHours}</Text>
+            <Text className="text-sm">Tuesday - {contactDetails?.workingHours}</Text>
+            <Text className="text-sm">Wednesday - {contactDetails?.workingHours}</Text>
+            <Text className="text-sm">Thursday - {contactDetails?.workingHours}</Text>
+            <Text className="text-sm">Friday - {contactDetails?.workingHours}</Text>
           </View>
         </View>
       </View>
@@ -71,23 +71,23 @@ const HomeProfileFeed = () => {
           <View className="flex flex-col space-y-1">
             <View className="text-sm flex flex-row space-x-2 justify-start items-center">
               <Ionicons name="globe-outline" size={24} color="black" />
-              <Text>8845489181</Text>
+              <Text>{socials?.website || "N/A"}</Text>
             </View>
             <View className="text-sm flex flex-row space-x-2 justify-start items-center">
               <AntDesign name="instagram" size={24} color="black" />
-              <Text>8815169096</Text>
+              <Text>{socials?.instagram || "N/A"}</Text>
             </View>
             <View className="text-sm flex flex-row space-x-2 justify-start items-center">
               <AntDesign name="twitter" size={24} color="black" />
-              <Text>8815169096</Text>
+              <Text>{socials?.twitter || "N/A"}</Text>
             </View>
             <View className="text-sm flex flex-row space-x-2 justify-start items-center">
               <AntDesign name="facebook-square" size={24} color="black" />
-              <Text>8815169096</Text>
+              <Text>{socials?.facebook || "N/A"}</Text>
             </View>
             <View className="text-sm flex flex-row space-x-2 justify-start items-center">
               <Entypo name="pinterest" size={24} color="black" />
-              <Text>8815169096</Text>
+              <Text>{socials?.pinterest || "N/A"}</Text>
             </View>
           </View>
         </View>
@@ -101,16 +101,7 @@ const HomeProfileFeed = () => {
           <Text className="text-xl font-bold">About Business</Text>
           <View className="">
             <Text className="text-sm flex-wrap w-48">
-              Jorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu
-              turpis molestie, dictum est a, mattis tellus. Sed dignissim, metus
-              nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum
-              tellus elit sed risus. Maecenas eget condimentum velit, sit amet
-              feugiat lectus. Class aptent taciti sociosqu ad litora torquent
-              per conubia nostra, per inceptos himenaeos. Praesent auctor purus
-              luctus enim egestas, ac scelerisque ante pulvinar. Donec ut
-              rhoncus ex. Suspendisse ac rhoncus nisl, eu tempor urna. Curabitur
-              vel bibendum lorem. Morbi convallis convallis diam sit amet
-              lacinia. Aliquam in elementum tellus.
+              {businessDetails?.about || "N/A"}
             </Text>
           </View>
         </View>

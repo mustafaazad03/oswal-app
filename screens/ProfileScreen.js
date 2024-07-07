@@ -6,20 +6,115 @@ import {
 	Image,
 	TouchableOpacity,
 	ScrollView,
+	ActivityIndicator,
+	Alert,
+	Share,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons, FontAwesome6, Entypo } from "@expo/vector-icons";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import BottomNavigation from "../components/BottomNavigation";
 import CarouselComponent from "../components/Carousel";
-import ReviewTab from "../components/ReviewTab";
+import * as Clipboard from "expo-clipboard";
 import BottomModal from "../components/BottomModal";
 import ProfileTabs from "../components/ProfileTabs";
+import { userService } from "../api/user";
+import { useAuth } from "../context/AuthContext";
 
 export default function ProfileScreen() {
 	const navigation = useNavigation();
+	const queryClient = useQueryClient();
+	const { user: authUser } = useAuth();
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
 	const toggleModal = () => setIsModalVisible(!isModalVisible);
+
+	const {
+		data: user,
+		isLoading,
+		isError,
+		error,
+		refetch,
+	} = useQuery({
+		queryKey: ["user", authUser?.username],
+		queryFn: () => userService.getSingleUser(authUser?.userId),
+		enabled: !!authUser,
+	});
+
+	const updateUserMutation = useMutation({
+		mutationFn: (updateData) =>
+			userService.updateUser(authUser?.userId, updateData),
+		onSuccess: () => {
+			queryClient.invalidateQueries(["user", authUser?.username]);
+			Alert.alert("Success", "Profile updated successfully");
+		},
+		onError: (error) => {
+			console.error("Error updating user:", error);
+			Alert.alert("Error", "Failed to update profile");
+		},
+	});
+
+	const handleEditProfile = () => {
+		// Navigate to edit profile screen or open edit modal
+		// For this example, we'll just update the bio
+		const newBio = "Updated bio"; // In a real app, this would come from user input
+		updateUserMutation.mutate({ bio: newBio });
+	};
+
+	const handleShare = async (userId) => {
+		try {
+			const url = `https://www.freathers.com/user/${userId}`;
+
+			try {
+				const result = await Share.share({
+					message: `Check out this profile on freathers: ${url}`,
+					url: url, // iOS only
+				});
+				if (result.action === Share.sharedAction) {
+					if (result.activityType) {
+					} else {
+					}
+				} else if (result.action === Share.dismissedAction) {
+					// dismissed by user
+					return;
+				}
+			} catch (error) {
+				console.log("Error with native share:", error.message);
+
+				// If native share fails, fall back to copying to clipboard
+				await Clipboard.setStringAsync(url);
+				Alert.alert(
+					"Link Copied",
+					"The post link has been copied to your clipboard."
+				);
+			}
+		} catch (error) {
+			console.error("Error sharing:", error);
+			Alert.alert("Error", "Failed to share the post");
+		}
+	};
+
+	if (isLoading) {
+		return (
+			<SafeAreaView className="flex-1 justify-center items-center bg-white">
+				<ActivityIndicator size="large" color="#FFD1DC" />
+			</SafeAreaView>
+		);
+	}
+
+	if (isError) {
+		return (
+			<SafeAreaView className="flex-1 justify-center items-center bg-white">
+				<Text>Error: {error.message}</Text>
+				<TouchableOpacity
+					onPress={refetch}
+					className="mt-4 bg-primary p-2 rounded"
+				>
+					<Text className="text-white">Try Again</Text>
+				</TouchableOpacity>
+			</SafeAreaView>
+		);
+	}
 
 	return (
 		<SafeAreaView className="flex-1 bg-white">
@@ -34,46 +129,64 @@ export default function ProfileScreen() {
 				</TouchableOpacity>
 			</View>
 			<ScrollView>
-				<CarouselComponent />
+				<CarouselComponent images={user?.album.map((item) => item.url)} />
 				<View className="p-4">
 					{/* Profile information */}
 					<View className="flex-row items-center space-x-4">
 						<Image
-							source={require("../assets/random2.png")}
+							source={{ uri: user.profilePic }}
 							className="w-20 h-20 rounded-full"
 						/>
 						<View className="flex flex-row justify-evenly items-center space-x-5 flex-1">
 							<View className="items-center">
-								<Text className="font-bold text-2xl">123</Text>
+								<Text className="font-bold text-2xl">
+									{user.followers.length}
+								</Text>
 								<Text className="text-gray-600">followers</Text>
 							</View>
 							<View className="items-center">
-								<Text className="font-bold text-2xl">123</Text>
+								<Text className="font-bold text-2xl">
+									{user.followings.length}
+								</Text>
 								<Text className="text-gray-600">following</Text>
 							</View>
 							<View className="items-center">
-								<Text className="font-bold text-2xl">5★</Text>
+								<Text className="font-bold text-2xl">
+									{user.ratings.length > 0
+										? (
+												user.ratings.reduce(
+													(acc, curr) => acc + curr.rating,
+													0
+												) / user.ratings.length
+										  ).toFixed(1)
+										: "0.0"}
+									★
+								</Text>
 								<Text className="text-gray-600">rating</Text>
 							</View>
 						</View>
 					</View>
 
 					<View className="flex-col justify-between mt-2">
-						<Text className="text-lg font-bold">Viraj Shah</Text>
-						<Text className="text-gray-600">@imvirajshah</Text>
+						<Text className="text-lg font-bold">{user.name}</Text>
+						<Text className="text-gray-600">@{user.username}</Text>
 					</View>
 
-					<Text className="mt-4 text-gray-600">
-						Lorem ipsum dolor sit. Repellat enim adipisci. Aliquam.
-					</Text>
+					<Text className="mt-4 text-gray-600">{user.bio}</Text>
 
 					<View className="mt-4 flex-1 flex flex-row justify-center items-center space-x-2">
-						<TouchableOpacity className="bg-[#FFD1DC] px-4 py-2 rounded-xl flex-1">
+						<TouchableOpacity
+							className="bg-[#FFD1DC] px-4 py-2 rounded-xl flex-1"
+							onPress={handleEditProfile}
+						>
 							<Text className="font-semibold text-base text-center">
 								Edit Profile
 							</Text>
 						</TouchableOpacity>
-						<TouchableOpacity className="border border-black px-4 py-2 rounded-xl flex-1">
+						<TouchableOpacity
+							className="border border-black px-4 py-2 rounded-xl flex-1"
+							onPress={() => handleShare(user?._id)}
+						>
 							<Text className="font-semibold text-base text-center">Share</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
@@ -91,19 +204,25 @@ export default function ProfileScreen() {
 						<Text className="font-bold text-base">Contact business at:</Text>
 						<View className="text-gray-800 flex flex-row justify-start items-center space-x-2">
 							<Ionicons name="person-sharp" size={18} color="black" />
-							<Text className="text-sm">Sr. Manager</Text>
+							<Text className="text-sm">
+								{user.contactDetails?.designation || "N/A"}
+							</Text>
 						</View>
 						<View className="text-gray-800 flex flex-row justify-start items-center space-x-2">
 							<FontAwesome6 name="ranking-star" size={18} color="black" />
-							<Text className="text-sm"> Sr. Manager</Text>
+							<Text className="text-sm">
+								{user.contactDetails?.workingSince || "N/A"}
+							</Text>
 						</View>
 						<View className="text-gray-800 flex flex-row justify-start items-center space-x-2">
 							<Entypo name="phone" size={18} color="black" />
-							<Text className="text-sm">+325 123 456 78790</Text>
+							<Text className="text-sm">
+								{user.contactDetails?.contactNumber?.mobile || "N/A"}
+							</Text>
 						</View>
 						<View className="text-gray-800 flex flex-row justify-start items-center space-x-2">
 							<Entypo name="mail" size={18} color="black" />
-							<Text className="text-sm"> dummyemail@email.com</Text>
+							<Text className="text-sm">{user.email}</Text>
 						</View>
 					</View>
 
@@ -112,7 +231,7 @@ export default function ProfileScreen() {
 						className="w-full h-40 mt-4 rounded-lg"
 					/>
 
-					<ProfileTabs />
+					<ProfileTabs user={user} />
 				</View>
 			</ScrollView>
 			<BottomNavigation notify={true} />
