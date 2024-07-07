@@ -8,10 +8,18 @@ import {
 	Image,
 	PanResponder,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const BottomModal = ({ isVisible, onClose }) => {
+	const navigation = useNavigation();
 	const slideAnim = useRef(new Animated.Value(0)).current;
 	const [modalHeight, setModalHeight] = useState(0);
+
+	const onLogout = () => {
+		onClose();
+		logout();
+		navigation.navigate("Login");
+	};
 
 	const panResponder = useRef(
 		PanResponder.create({
@@ -113,7 +121,7 @@ const BottomModal = ({ isVisible, onClose }) => {
 				</TouchableOpacity>
 				<TouchableOpacity
 					className="flex-row items-center space-x-3 w-full border-t border-t-white pt-4"
-					onPress={onClose}
+					onPress={onLogout}
 				>
 					<Image
 						source={require("../assets/Profile/move_item.png")}

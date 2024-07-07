@@ -42,7 +42,7 @@ const ProfileTabs = ({ user }) => {
 									{user.album?.map((item, index) => (
 										<Image
 											key={index}
-											source={{ uri: item.url }}
+											source={{ uri: item?.url }}
 											className="w-[32%] h-32 p-1"
 										/>
 									))}
@@ -52,7 +52,7 @@ const ProfileTabs = ({ user }) => {
 					</View>
 				);
 			case "Ratings & Reviews":
-				return <ReviewTab review={user?.ratings} />;
+				return <ReviewTab reviews={user?.ratings} user={user} />;
 			default:
 				return null;
 		}

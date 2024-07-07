@@ -54,6 +54,16 @@ export const userService = {
 		}
 	},
 
+	getAllRating: async (userId) => {
+		try {
+			const response = await apiClient.get(`${API_URL}/user/${userId}/ratings`);
+			return response.data;
+		} catch (error) {
+			console.error("Error fetching ratings:", error);
+			throw error;
+		}
+	},
+
 	createRating: async (userId, ratingData) => {
 		try {
 			const response = await apiClient.post(

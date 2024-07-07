@@ -14,10 +14,15 @@ import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import Button from "../components/Button";
 import { Picker } from "@react-native-picker/picker";
+import { useAuth } from "../context/AuthContext";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { userService } from "../api/user";
 
 export default function ProfileDetailsScreen() {
 	const navigation = useNavigation();
+	const { user } = useAuth();
 	const [formData, setFormData] = useState({
+		profilePic: "",
 		name: "",
 		mobile: "",
 		email: "",
@@ -27,7 +32,47 @@ export default function ProfileDetailsScreen() {
 	});
 	const [showDatePicker, setShowDatePicker] = useState(false);
 	const [showGenderPicker, setShowGenderPicker] = useState(false);
-	const [profileImage, setProfileImage] = useState(null);
+
+	const queryClient = useQueryClient();
+
+	const {
+		data: userData,
+		isLoading,
+		isError,
+	} = useQuery({
+		queryKey: ["userData", user?.userId],
+		queryFn: () => userService.getSingleUser(user?.userId),
+		enabled: !!user?.userId,
+		onError: (error) => {
+			console.error("Error fetching user data:", error);
+		},
+	});
+
+	const mutation = useMutation({
+		mutationFn: (data) => userService.updateUser(user?.userId, data),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["userData", user?.userId] });
+			navigation.navigate("BusinessDetails");
+		},
+		onError: (error) => {
+			console.error("Mutation error:", error);
+		},
+	});
+
+	useEffect(() => {
+		if (userData) {
+			const { profilePic, name, phone, email, gender, dob, bio } = userData;
+			setFormData({
+				profilePic,
+				name,
+				phone,
+				email,
+				gender,
+				dob: new Date(dob),
+				bio,
+			});
+		}
+	}, [userData]);
 
 	const handleImagePicker = async () => {
 		const permissionResult =
@@ -47,8 +92,26 @@ export default function ProfileDetailsScreen() {
 
 		if (!result.cancelled) {
 			const selectedImageUri = result.assets[0].uri;
-			setProfileImage(selectedImageUri);
+			setFormData({ ...formData, profilePic: selectedImageUri });
 		}
+	};
+
+	const handleSubmit = () => {
+		// Check if all required fields are filled
+		if (
+			!formData.name ||
+			!formData.mobile ||
+			!formData.dob ||
+			!formData.email ||
+			!formData.gender ||
+			!formData.bio ||
+			!formData.profilePic ||
+			!formData.profilePic.length
+		) {
+			return;
+		}
+		mutation.mutate(formData);
+		navigation.navigate("BusinessDetails");
 	};
 
 	return (
@@ -76,10 +139,10 @@ export default function ProfileDetailsScreen() {
 					className="items-center mb-4"
 					onPress={handleImagePicker}
 				>
-					{profileImage ? (
+					{formData?.profilePic ? (
 						<Image
 							source={{
-								uri: profileImage,
+								uri: formData?.profilePic,
 							}}
 							className="w-24 h-24 rounded-full"
 						/>
@@ -90,7 +153,9 @@ export default function ProfileDetailsScreen() {
 						/>
 					)}
 					<Text className="text-dark bg-primary p-3 py-2 rounded-lg mt-3 font-semibold">
-						{profileImage ? "Re-upload Profile Photo" : "Upload Profile Photo"}
+						{formData?.profilePic
+							? "Re-upload Profile Photo"
+							: "Upload Profile Photo"}
 					</Text>
 				</TouchableOpacity>
 
@@ -152,10 +217,7 @@ export default function ProfileDetailsScreen() {
 					onChangeText={(text) => setFormData({ ...formData, bio: text })}
 					multiline
 				/>
-				<Button
-					title="Next"
-					onPress={() => navigation.navigate("BusinessDetails")}
-				/>
+				<Button title="Next" onPress={handleSubmit} />
 			</ScrollView>
 
 			<Modal

@@ -28,7 +28,7 @@ export default function OTPVerification() {
 				console.log("Registration successful");
 				// store token
 				AsyncStorage.setItem("auth", data.jwtToken);
-				navigation.navigate("Home");
+				navigation.navigate("PersonalDetails");
 			} else {
 				// Handle error (e.g., show an error message)
 				console.error(data.message);
