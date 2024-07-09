@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	View,
 	Text,
@@ -14,9 +14,13 @@ import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import Button from "../components/Button";
 import { Picker } from "@react-native-picker/picker";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { userService } from "../api/user";
+import { useAuth } from "../context/AuthContext";
 
 export default function ProfileDetailsScreen() {
 	const navigation = useNavigation();
+	const { user } = useAuth();
 	const [formData, setFormData] = useState({
 		name: "",
 		mobile: "",
@@ -49,6 +53,62 @@ export default function ProfileDetailsScreen() {
 			const selectedImageUri = result.assets[0].uri;
 			setProfileImage(selectedImageUri);
 		}
+	};
+
+	const {
+		data: userData,
+		isLoading,
+		isError,
+	} = useQuery({
+		queryKey: ["userData", user?.userId],
+		queryFn: () => userService.getSingleUser(user?.userId),
+		enabled: !!user?.userId,
+		onError: (error) => {
+			console.error("Error fetching user data:", error);
+		},
+	});
+
+	const queryClient = useQueryClient();
+
+	const mutation = useMutation({
+		mutationFn: (data) => userService.updateUser(user?.userId, data),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["userData", user?.userId] });
+			navigation.navigate("BusinessDetails");
+		},
+		onError: (error) => {
+			console.error("Mutation error:", error);
+		},
+	});
+
+	useEffect(() => {
+		if (userData) {
+			const { name, phone, email, gender, dob, bio } = userData;
+			setFormData({
+				profileImage,
+				name,
+				phone,
+				email,
+				gender,
+				dob: new Date(dob),
+				bio,
+			});
+		}
+	}, [userData]);
+
+	const handleSubmit = () => {
+		// Check if all required fields are filled
+		if (
+			!formData.name ||
+			!formData.mobile ||
+			!formData.dob ||
+			!formData.email ||
+			!formData.gender ||
+			!formData.bio
+		) {
+			return;
+		}
+		mutation.mutate(formData);
 	};
 
 	return (
@@ -111,6 +171,7 @@ export default function ProfileDetailsScreen() {
 					placeholder="E-mail"
 					className="border border-primary p-3 rounded-lg mb-4"
 					value={formData.email}
+					editable={!userData?.email}
 					onChangeText={(text) => setFormData({ ...formData, email: text })}
 					keyboardType="email-address"
 				/>
@@ -152,10 +213,7 @@ export default function ProfileDetailsScreen() {
 					onChangeText={(text) => setFormData({ ...formData, bio: text })}
 					multiline
 				/>
-				<Button
-					title="Next"
-					onPress={() => navigation.navigate("BusinessDetails")}
-				/>
+				<Button title="Next" onPress={() => handleSubmit} />
 			</ScrollView>
 
 			<Modal

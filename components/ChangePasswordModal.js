@@ -9,10 +9,15 @@ import {
 	Easing,
 	Keyboard,
 	TouchableWithoutFeedback,
+	Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "@react-navigation/native";
+import { useMutation } from "@tanstack/react-query";
+import { authService } from "../api/settings";
+import { logout } from "../api/auth";
+import { useAuth } from "../context/AuthContext";
 
 const ChangePasswordModal = () => {
 	const navigation = useNavigation();
@@ -21,6 +26,7 @@ const ChangePasswordModal = () => {
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [logOutAll, setLogOutAll] = useState(false);
 	const slideAnim = useRef(new Animated.Value(0)).current;
+	const { user } = useAuth();
 
 	useEffect(() => {
 		Animated.timing(slideAnim, {
@@ -40,9 +46,40 @@ const ChangePasswordModal = () => {
 		}).start(() => navigation.goBack());
 	};
 
+	const mutation = useMutation({
+		mutationFn: (changePasswordData) =>
+			authService.changePassword(
+				changePasswordData.email,
+				changePasswordData.password
+			),
+		onSuccess: () => {
+			Alert.alert(
+				"Success",
+				"Your Password Update Successfully. Please login again."
+			);
+			logout();
+			navigation.navigate("Login");
+		},
+		onError: (error) => {
+			Alert.alert("Error", error.message);
+		},
+	});
+
 	const handleChangePassword = () => {
-		// Implement password change logic here
-		console.log("Password changed");
+		if (
+			newPassword !== confirmPassword ||
+			newPassword === "" ||
+			confirmPassword === ""
+		) {
+			Alert.alert("Error", "Passwords do not match");
+			return;
+		}
+
+		mutation.mutate({
+			email: user.email,
+			password: newPassword,
+		});
+
 		closeModal();
 	};
 

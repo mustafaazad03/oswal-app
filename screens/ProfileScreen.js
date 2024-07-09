@@ -27,7 +27,9 @@ export default function ProfileScreen() {
 	const { user: authUser } = useAuth();
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
-	const toggleModal = () => setIsModalVisible(!isModalVisible);
+	const toggleModal = () => {
+		setIsModalVisible(!isModalVisible);
+	};
 
 	const {
 		data: user,
@@ -55,9 +57,7 @@ export default function ProfileScreen() {
 	});
 
 	const handleEditProfile = () => {
-		// Navigate to edit profile screen or open edit modal
-		// For this example, we'll just update the bio
-		const newBio = "Updated bio"; // In a real app, this would come from user input
+		const newBio = "Updated bio";
 		updateUserMutation.mutate({ bio: newBio });
 	};
 

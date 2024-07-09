@@ -6,15 +6,15 @@ const SingleReview = ({ review }) => {
 		<View className="flex flex-col space-y-3 py-2">
 			<View className="flex flex-row justify-between items-center">
 				<View className="flex flex-row space-x-4 justify-center items-center">
-					<Image
-						source={{
-							uri:
-								review.reviewerProfilePic ||
-								require("../assets/Logo/google-9646e5e7.png"),
-						}}
-						className="w-6 h-6 rounded-full bg-white"
-					/>
-					<Text className="font-bold text-lg">{review.reviewerName}</Text>
+					{review?.profilePic && (
+						<Image
+							source={{
+								uri: review.profilePic,
+							}}
+							className="w-6 h-6 rounded-full bg-white"
+						/>
+					)}
+					<Text className="font-bold text-lg">{review?.user?.name}</Text>
 				</View>
 				<TouchableOpacity>
 					<Image
@@ -23,8 +23,8 @@ const SingleReview = ({ review }) => {
 					/>
 				</TouchableOpacity>
 			</View>
-			<Text>{review.review}</Text>
-			<Text>{new Date(review.createdAt).toLocaleDateString()}</Text>
+			<Text>{review?.review}</Text>
+			<Text>{new Date(review?.timestamp).toLocaleDateString()}</Text>
 		</View>
 	);
 };
