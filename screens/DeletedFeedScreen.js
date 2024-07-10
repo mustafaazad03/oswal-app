@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
 	View,
 	Text,
@@ -6,37 +6,87 @@ import {
 	TouchableOpacity,
 	Image,
 	ScrollView,
+	Alert,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import DeleteFeedModal from "../components/DeletedFeedModal";
+import { useAuth } from "../context/AuthContext";
+import { useMutation } from "@tanstack/react-query";
+import { postService } from "../api/feed";
 
 const DeletedFeedItem = ({ item, onPress }) => (
 	<TouchableOpacity
 		className="w-[48%] aspect-square rounded-lg mb-4 overflow-hidden"
 		onPress={() => onPress(item)}
 	>
-		<Image source={item.image} className="w-full h-full" resizeMode="cover" />
+		<Image
+			source={{ uri: item?.imageUrl }}
+			className="w-full h-full"
+			resizeMode="cover"
+		/>
 	</TouchableOpacity>
 );
 
 export default function DeletedFeedsScreen() {
 	const navigation = useNavigation();
 	const route = useRoute();
+	const { user } = useAuth();
+	const [deletedFeedsData, setDeletedFeedsData] = useState([]);
+	const [item, setItem] = useState(null);
 
-	// Sample data array
-	const deletedFeedsData = [
-		{ id: 1, image: require("../assets/random.png"), daysLeft: 30 },
-		{ id: 2, image: require("../assets/random.png"), daysLeft: 45 },
-		{ id: 3, image: require("../assets/random.png"), daysLeft: 20 },
-		{ id: 4, image: require("../assets/random.png"), daysLeft: 55 },
-		{ id: 5, image: require("../assets/random.png"), daysLeft: 15 },
-		{ id: 6, image: require("../assets/random.png"), daysLeft: 40 },
-	];
+	const mutation = useMutation({
+		mutationFn: () => postService.getDeletedPosts(user?.userId),
+		onSuccess: (data) => {
+			setDeletedFeedsData(data);
+		},
+		onError: (error) => {
+			console.error(error);
+		},
+	});
 
-	const [isModalVisible, setModalVisible] = React.useState(false);
+	const postDeletedMutation = useMutation({
+		mutationFn: (mutationData) =>
+			postService.updatePost(mutationData.postId, {
+				isPermanentlyDeleted: true,
+			}),
+		onSuccess: () => {
+			Alert.alert("Success", "Post Deleted successfully");
+		},
+		onError: (error) => {
+			Alert.alert("Error", error.message);
+		},
+	});
+
+	const postRestoreMutation = useMutation({
+		mutationFn: (mutationData) =>
+			postService.updatePost(mutationData.postId, { isDeleted: false }),
+		onSuccess: () => {
+			Alert.alert("Success", "Post Restored successfully");
+		},
+		onError: (error) => {
+			Alert.alert("Error", error.message);
+		},
+	});
+
+	useEffect(() => {
+		mutation.mutate();
+	}, []);
+
+	const [isModalVisible, setModalVisible] = useState(false);
 
 	const openDeletedScreenModal = (item) => {
+		setItem(item);
 		setModalVisible(true);
+	};
+
+	const handleOnDelete = () => {
+		postDeletedMutation.mutate({ postId: item?._id });
+		setModalVisible(false);
+	};
+
+	const handleOnRestore = () => {
+		postRestoreMutation.mutate({ postId: item?._id });
+		setModalVisible(false);
 	};
 
 	return (
@@ -131,14 +181,8 @@ export default function DeletedFeedsScreen() {
 			<DeleteFeedModal
 				isVisible={isModalVisible}
 				onClose={() => setModalVisible(false)}
-				onDelete={() => {
-					// Handle delete logic
-					setModalVisible(false);
-				}}
-				onRestore={() => {
-					// Handle restore logic
-					setModalVisible(false);
-				}}
+				onDelete={handleOnDelete}
+				onRestore={handleOnRestore}
 			/>
 		</>
 	);

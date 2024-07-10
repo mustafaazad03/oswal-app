@@ -7,9 +7,12 @@ import {
 	Image,
 	ScrollView,
 	TextInput,
+	Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
+import { useMutation } from "@tanstack/react-query";
+import { enquiryService } from "../api/enquiry";
 
 export default function RaiseEnquiryScreen() {
 	const navigation = useNavigation();
@@ -25,8 +28,25 @@ export default function RaiseEnquiryScreen() {
 		description: "",
 	});
 
+	const mutation = useMutation({
+		mutationFn: (enquiryData) => enquiryService.createEnquiry(enquiryData),
+		onSuccess: () => {
+			// Show success message
+			Alert.alert("Success", "Enquiry raised successfully.");
+			navigation.goBack();
+		},
+		onError: (error) => {
+			// Show error message
+			Alert.alert("Error", error.message);
+		},
+	});
+
 	const handleChange = (name, value) => {
 		setFormData((prevState) => ({ ...prevState, [name]: value }));
+	};
+
+	const handleSubmit = () => {
+		mutation.mutate(formData);
 	};
 
 	return (
@@ -93,7 +113,7 @@ export default function RaiseEnquiryScreen() {
 
 				<TouchableOpacity
 					className="bg-primary p-3 rounded-lg items-center mb-6"
-					onPress={() => navigation.goBack()}
+					onPress={handleSubmit}
 				>
 					<Text className="font-semibold">Submit Enquiry</Text>
 				</TouchableOpacity>

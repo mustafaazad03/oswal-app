@@ -1,12 +1,20 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, {
+	createContext,
+	useState,
+	useEffect,
+	useContext,
+	useCallback,
+} from "react";
 import { getToken, setToken } from "../api/auth";
 import { useNavigation } from "@react-navigation/native";
 import JWT from "expo-jwt";
+import { userService } from "../api/user";
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
 	const [user, setUser] = useState(null);
 	const [loading, setLoading] = useState(true);
+	const [fullUser, setFullUser] = useState(null);
 	const navigation = useNavigation();
 
 	useEffect(() => {
@@ -35,6 +43,25 @@ export const AuthProvider = ({ children }) => {
 		loadToken();
 	}, []);
 
+	const {
+		data: userData,
+		isLoading,
+		isError,
+		error,
+		refetch,
+	} = useQuery({
+		queryKey: ["user", user?.username],
+		queryFn: () => userService.getSingleUser(user?.userId),
+		enabled: !!user,
+		retry: 1,
+	});
+
+	useEffect(() => {
+		if (userData) {
+			setFullUser(userData);
+		}
+	}, [refetch, userData]);
+
 	const login = async (userData, token) => {
 		await setToken(token);
 		setUser(userData);
@@ -48,7 +75,7 @@ export const AuthProvider = ({ children }) => {
 	};
 
 	return (
-		<AuthContext.Provider value={{ user, login, logout, loading }}>
+		<AuthContext.Provider value={{ user, login, logout, loading, fullUser }}>
 			{children}
 		</AuthContext.Provider>
 	);

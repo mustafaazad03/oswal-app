@@ -80,4 +80,14 @@ export const postService = {
 			throw error;
 		}
 	},
+
+	getDeletedPosts: async (userId) => {
+		try {
+			const response = await apiClient.get(`${API_URL}/post/deleted/${userId}`);
+			return response.data;
+		} catch (error) {
+			console.error("Error fetching deleted posts:", error);
+			throw error;
+		}
+	},
 };

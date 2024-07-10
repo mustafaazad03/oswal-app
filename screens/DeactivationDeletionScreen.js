@@ -6,12 +6,11 @@ import {
 	TouchableOpacity,
 	Image,
 } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import BottomNavigation from "../components/BottomNavigation";
 
 export default function DeactivationDeletionScreen() {
 	const navigation = useNavigation();
-	const route = useRoute();
 
 	return (
 		<SafeAreaView className="flex-1 bg-white">
