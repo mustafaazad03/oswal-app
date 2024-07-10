@@ -6,14 +6,33 @@ import {
 	TouchableOpacity,
 	Image,
 	ScrollView,
+	Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import Button from "../components/Button";
+import { useAuth } from "../context/AuthContext";
+import { useMutation } from "@tanstack/react-query";
+import { userService } from "../api/user";
 
 export default function CreateAlbumScreen() {
 	const navigation = useNavigation();
 	const [selectedImages, setSelectedImages] = useState([]);
+
+	const { user: authUser } = useAuth();
+
+	const updateUserMutation = useMutation({
+		mutationFn: (updateData) =>
+			userService.updateUser(authUser?.userId, updateData),
+		onSuccess: () => {
+			Alert.alert("Success", "Album updated successfully");
+			navigation.navigate("Home");
+		},
+		onError: (error) => {
+			console.error("Error updating user:", error);
+			Alert.alert("Error", "Failed to update album");
+		},
+	});
 
 	const handleImagePicker = async () => {
 		const permissionResult =
@@ -36,6 +55,23 @@ export default function CreateAlbumScreen() {
 			const newImages = result.assets.map((asset) => asset.uri);
 			setSelectedImages([...selectedImages, ...newImages].slice(0, 10));
 		}
+	};
+
+	const handleSubmit = async () => {
+		if (selectedImages.length === 0) {
+			Alert.alert("Error", "Please select at least one image");
+			return;
+		}
+		const albumData = selectedImages.map((imageUrl, index) => ({
+			url: imageUrl,
+			title: `Image ${index + 1}`,
+		}));
+
+		const updateData = {
+			album: albumData,
+		};
+
+		updateUserMutation.mutate(updateData);
 	};
 
 	return (
@@ -77,7 +113,11 @@ export default function CreateAlbumScreen() {
 						</TouchableOpacity>
 					))}
 				</View>
-				<Button title="Next" onPress={() => navigation.navigate("Home")} />
+				<Button
+					title={updateUserMutation.isLoading ? "Updating..." : "Next"}
+					onPress={handleSubmit}
+					disabled={updateUserMutation.isLoading || selectedImages.length === 0}
+				/>
 			</ScrollView>
 		</SafeAreaView>
 	);

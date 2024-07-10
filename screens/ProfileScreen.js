@@ -24,30 +24,17 @@ import { useAuth } from "../context/AuthContext";
 export default function ProfileScreen() {
 	const navigation = useNavigation();
 	const queryClient = useQueryClient();
-	const { user: authUser } = useAuth();
+	const { fullUser: user } = useAuth();
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
 	const toggleModal = () => {
 		setIsModalVisible(!isModalVisible);
 	};
 
-	const {
-		data: user,
-		isLoading,
-		isError,
-		error,
-		refetch,
-	} = useQuery({
-		queryKey: ["user", authUser?.username],
-		queryFn: () => userService.getSingleUser(authUser?.userId),
-		enabled: !!authUser,
-	});
-
 	const updateUserMutation = useMutation({
-		mutationFn: (updateData) =>
-			userService.updateUser(authUser?.userId, updateData),
+		mutationFn: (updateData) => userService.updateUser(user?._id, updateData),
 		onSuccess: () => {
-			queryClient.invalidateQueries(["user", authUser?.username]);
+			queryClient.invalidateQueries(["user", user?.username]);
 			Alert.alert("Success", "Profile updated successfully");
 		},
 		onError: (error) => {
@@ -93,28 +80,6 @@ export default function ProfileScreen() {
 			Alert.alert("Error", "Failed to share the post");
 		}
 	};
-
-	if (isLoading) {
-		return (
-			<SafeAreaView className="flex-1 justify-center items-center bg-white">
-				<ActivityIndicator size="large" color="#FFD1DC" />
-			</SafeAreaView>
-		);
-	}
-
-	if (isError) {
-		return (
-			<SafeAreaView className="flex-1 justify-center items-center bg-white">
-				<Text>Error: {error.message}</Text>
-				<TouchableOpacity
-					onPress={refetch}
-					className="mt-4 bg-primary p-2 rounded"
-				>
-					<Text className="text-white">Try Again</Text>
-				</TouchableOpacity>
-			</SafeAreaView>
-		);
-	}
 
 	return (
 		<SafeAreaView className="flex-1 bg-white">

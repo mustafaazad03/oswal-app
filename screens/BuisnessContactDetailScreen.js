@@ -7,10 +7,14 @@ import {
 	Image,
 	TextInput,
 	ScrollView,
+	Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
 import Button from "../components/Button";
+import { useAuth } from "../context/AuthContext";
+import { useMutation } from "@tanstack/react-query";
+import { userService } from "../api/user";
 
 export default function BusinessContactScreen() {
 	const navigation = useNavigation();
@@ -21,16 +25,62 @@ export default function BusinessContactScreen() {
 		designation: "",
 		mobileNumber: "",
 		whatsappNumber: "",
-		email: "",
 		website: "",
 		instagram: "",
 		twitter: "",
 		facebook: "",
 		pinterest: "",
 	});
+	const { user: authUser } = useAuth();
+
+	const updateUserMutation = useMutation({
+		mutationFn: (updateData) =>
+			userService.updateUser(authUser?.userId, updateData),
+		onSuccess: () => {
+			Alert.alert("Success", "Business contact details updated successfully");
+			navigation.navigate("CreateAlbum");
+		},
+		onError: (error) => {
+			console.error("Error updating user:", error);
+			Alert.alert("Error", "Failed to update business contact details");
+		},
+	});
 
 	const handleInputChange = (field, value) => {
 		setFormData({ ...formData, [field]: value });
+	};
+
+	const handleSubmit = () => {
+		if (
+			!formData.contactPersonName ||
+			!formData.designation ||
+			!formData.mobileNumber ||
+			!formData.whatsappNumber
+		) {
+			Alert.alert("Error", "Please enter contact person name and designation");
+			return;
+		}
+		const updateData = {
+			contactDetails: {
+				workingSince: formData.workingSince,
+				workingHours: formData.workingHours,
+				contactName: formData.contactPersonName,
+				designation: formData.designation,
+				contactNumber: {
+					mobile: formData.mobileNumber,
+					whatsapp: formData.whatsappNumber,
+				},
+				socials: {
+					website: formData.website,
+					instagram: formData.instagram,
+					twitter: formData.twitter,
+					facebook: formData.facebook,
+					pinterest: formData.pinterest,
+				},
+			},
+		};
+
+		updateUserMutation.mutate(updateData);
 	};
 
 	return (
@@ -126,8 +176,8 @@ export default function BusinessContactScreen() {
 				<TextInput
 					placeholder="Business E-mail"
 					className="border border-primary p-3 rounded-lg mb-4"
-					value={formData.email}
-					onChangeText={(text) => handleInputChange("email", text)}
+					value={authUser?.email}
+					editable={false}
 					keyboardType="email-address"
 				/>
 
@@ -146,7 +196,11 @@ export default function BusinessContactScreen() {
 					value={formData.instagram}
 					onChangeText={(text) => handleInputChange("instagram", text)}
 				/>
-
+				<Button
+					title={updateUserMutation.isLoading ? "Updating..." : "Next"}
+					onPress={handleSubmit}
+					disabled={updateUserMutation.isLoading}
+				/>
 				<TextInput
 					placeholder="Twitter"
 					className="border border-primary p-3 rounded-lg mb-4"
@@ -169,8 +223,9 @@ export default function BusinessContactScreen() {
 				/>
 
 				<Button
-					title="Next"
-					onPress={() => navigation.navigate("CreateAlbum")}
+					title={updateUserMutation.isLoading ? "Updating..." : "Next"}
+					onPress={handleSubmit}
+					disabled={updateUserMutation.isLoading}
 				/>
 			</ScrollView>
 		</SafeAreaView>
