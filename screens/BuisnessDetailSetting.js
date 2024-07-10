@@ -7,10 +7,15 @@ import {
 	Image,
 	TextInput,
 	ScrollView,
+	Alert,
+	ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
 import Button from "../components/Button";
+import { useAuth } from "../context/AuthContext";
+import { useMutation } from "@tanstack/react-query";
+import { userService } from "../api/user";
 
 export default function BusinessDetailsSettingScreen() {
 	const navigation = useNavigation();
@@ -27,9 +32,47 @@ export default function BusinessDetailsSettingScreen() {
 		state: "",
 		country: "",
 	});
+	const { user: authUser } = useAuth();
+
+	const updateUserMutation = useMutation({
+		mutationFn: (updateData) =>
+			userService.updateUser(authUser?.userId, updateData),
+		onSuccess: () => {
+			// Handle successful update
+			Alert.alert("Success", "Business details updated successfully");
+			navigation.goBack();
+		},
+		onError: (error) => {
+			console.error("Error updating user:", error);
+			Alert.alert("Error", "Failed to update business details");
+		},
+	});
 
 	const handleInputChange = (field, value) => {
 		setFormData({ ...formData, [field]: value });
+	};
+
+	const handleSubmit = () => {
+		const updateData = {
+			businessDetails: {
+				productCategory: {
+					category: formData.category,
+					subCategory: formData.subCategory,
+				},
+				about: formData.aboutUs,
+				address: {
+					officeNumber: formData.officeNumber,
+					block: formData.tower,
+					landmark: formData.landmark,
+					pincode: formData.pincode,
+					city: formData.city,
+					state: formData.state,
+					country: formData.country,
+				},
+			},
+		};
+
+		updateUserMutation.mutate(updateData);
 	};
 
 	return (
@@ -42,13 +85,19 @@ export default function BusinessDetailsSettingScreen() {
 					/>
 				</TouchableOpacity>
 				<Text className="text-xl font-bold">Buisness Details</Text>
-				<TouchableOpacity
-					className="ml-auto"
-					onPress={() => {
-						navigation.goBack();
-					}}
-				>
-					<Image source={require("../assets/check.png")} className="w-6 h-6" />
+				<TouchableOpacity className="ml-auto" onPress={handleSubmit}>
+					{updateUserMutation.isLoading ? (
+						<ActivityIndicator
+							size="large"
+							color="#FFD1DC"
+							style={{ marginTop: 20 }}
+						/>
+					) : (
+						<Image
+							source={require("../assets/check.png")}
+							className="w-6 h-6"
+						/>
+					)}
 				</TouchableOpacity>
 			</View>
 

@@ -75,11 +75,13 @@ export const AuthProvider = ({ children }) => {
     navigation.navigate("Auth");
   };
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout, loading, fullUser }}>
-      {children}
-    </AuthContext.Provider>
-  );
+	return (
+		<AuthContext.Provider
+			value={{ user, login, logout, loading, fullUser, setFullUser, setUser }}
+		>
+			{children}
+		</AuthContext.Provider>
+	);
 };
 
 export const useAuth = () => useContext(AuthContext);

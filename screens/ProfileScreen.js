@@ -22,15 +22,23 @@ import { userService } from "../api/user";
 import { useAuth } from "../context/AuthContext";
 
 export default function ProfileScreen() {
+<<<<<<< HEAD
   const navigation = useNavigation();
   const queryClient = useQueryClient();
   const { user: authUser } = useAuth();
   const [isModalVisible, setIsModalVisible] = useState(false);
+=======
+	const navigation = useNavigation();
+	const queryClient = useQueryClient();
+	const { fullUser: user } = useAuth();
+	const [isModalVisible, setIsModalVisible] = useState(false);
+>>>>>>> 6f8498b4adf8bb79679d5fd600501f54b1783d27
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
 
+<<<<<<< HEAD
   const {
     data: user,
     isLoading,
@@ -70,6 +78,19 @@ export default function ProfileScreen() {
     const newBio = "Updated bio";
     updateUserMutation.mutate({ bio: newBio });
   };
+=======
+	const updateUserMutation = useMutation({
+		mutationFn: (updateData) => userService.updateUser(user?._id, updateData),
+		onSuccess: () => {
+			queryClient.invalidateQueries(["user", user?.username]);
+			Alert.alert("Success", "Profile updated successfully");
+		},
+		onError: (error) => {
+			console.error("Error updating user:", error);
+			Alert.alert("Error", "Failed to update profile");
+		},
+	});
+>>>>>>> 6f8498b4adf8bb79679d5fd600501f54b1783d27
 
   const handleShare = async (userId) => {
     try {

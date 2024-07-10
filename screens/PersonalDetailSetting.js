@@ -8,26 +8,46 @@ import {
 	TextInput,
 	ScrollView,
 	Modal,
+	Alert,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import Button from "../components/Button";
 import { Picker } from "@react-native-picker/picker";
+import { useAuth } from "../context/AuthContext";
+import { useMutation } from "@tanstack/react-query";
+import { userService } from "../api/user";
 
 export default function ProfileDetailsSettingScreen() {
 	const navigation = useNavigation();
+	const { fullUser: authUser } = useAuth();
 	const [formData, setFormData] = useState({
-		name: "",
-		mobile: "",
-		email: "",
-		gender: "",
-		dob: new Date(),
-		bio: "",
+		name: authUser?.name || "",
+		mobile: authUser?.phone || "",
+		email: authUser?.email || "",
+		gender: authUser?.gender || "",
+		dob: authUser?.dob ? new Date(authUser.dob) : new Date(),
+		bio: authUser?.bio || "",
 	});
 	const [showDatePicker, setShowDatePicker] = useState(false);
 	const [showGenderPicker, setShowGenderPicker] = useState(false);
-	const [profileImage, setProfileImage] = useState(null);
+	const [profileImage, setProfileImage] = useState(
+		authUser?.profilePic || null
+	);
+
+	const updateUserMutation = useMutation({
+		mutationFn: (updateData) =>
+			userService.updateUser(authUser?.userId, updateData),
+		onSuccess: () => {
+			Alert.alert("Success", "Profile details updated successfully");
+			navigation.goBack();
+		},
+		onError: (error) => {
+			console.error("Error updating user:", error);
+			Alert.alert("Error", "Failed to update profile details");
+		},
+	});
 
 	const handleImagePicker = async () => {
 		const permissionResult =
@@ -51,6 +71,20 @@ export default function ProfileDetailsSettingScreen() {
 		}
 	};
 
+	const handleSubmit = async () => {
+		const updateData = {
+			name: formData.name,
+			phone: formData.mobile,
+			email: formData.email,
+			gender: formData.gender,
+			dob: formData.dob.toISOString(),
+			bio: formData.bio,
+			profilePic: profileImage,
+		};
+
+		updateUserMutation.mutate(updateData);
+	};
+
 	return (
 		<SafeAreaView className="flex-1 bg-white">
 			{/* Back Icon */}
@@ -63,12 +97,18 @@ export default function ProfileDetailsSettingScreen() {
 				</TouchableOpacity>
 				<Text className="text-xl font-bold">Personal Details</Text>
 				<TouchableOpacity
-					className="ml-auto"
-					onPress={() => {
-						navigation.goBack();
-					}}
+					className="ml-auto flex items-center flex-row gap-2"
+					onPress={handleSubmit}
+					disabled={updateUserMutation.isLoading}
 				>
-					<Image source={require("../assets/check.png")} className="w-6 h-6" />
+					<Image source={require("../assets/check.png")} className="w-6 h-6" />{" "}
+					{updateUserMutation.isLoading && (
+						<ActivityIndicator
+							size="large"
+							color="#FFD1DC"
+							style={{ marginTop: 20 }}
+						/>
+					)}
 				</TouchableOpacity>
 			</View>
 
