@@ -119,7 +119,9 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
       <ScrollView>
-        <CarouselComponent images={user?.album.map((item) => item.url)} />
+        {user.album && (
+          <CarouselComponent images={user?.album.map((item) => item.url)} />
+        )}
         <View className="p-4">
           {/* Profile information */}
           <View className="flex-row items-center space-x-4">

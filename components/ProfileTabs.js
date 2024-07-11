@@ -1,94 +1,89 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
+import React, { useState, useCallback } from "react";
+import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
 import ReviewTab from "./ReviewTab";
 import HomeProfileFeed from "./HomeProfileFeed";
 import { Entypo } from "@expo/vector-icons";
 import PostModal from "./PostModal";
 
 const ProfileTabs = ({ user, post }) => {
-  // console.log(post.map((item) => item.imageUrl));
   const [activeTab, setActiveTab] = useState("Home");
-  const [isVisible, setIsVisible] = useState(false);
-  const [postData, setPostData] = useState();
-  const onPostPress = async (data) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [postData, setPostData] = useState(null);
+
+  const onPostPress = useCallback((data) => {
     setPostData(data);
-    setIsVisible(true);
-  };
-  const onClose = () => {
-    setIsVisible(false);
-  };
+    setIsModalVisible(true);
+  }, []);
+
+  const onClose = useCallback(() => {
+    setIsModalVisible(false);
+    setPostData(null);
+  }, []);
+
   const tabs = [
-    {
-      tab: "Home",
-      icon: "home",
-    },
-    {
-      tab: "Feed",
-      icon: "grid",
-    },
-    {
-      tab: "Ratings & Reviews",
-      icon: "star",
-    },
+    { tab: "Home", icon: "home" },
+    { tab: "Feed", icon: "grid" },
+    { tab: "Ratings & Reviews", icon: "star" },
   ];
 
-  const renderTabContent = () => {
+  const renderTabContent = useCallback(() => {
     switch (activeTab) {
       case "Home":
         return (
           <HomeProfileFeed
             businessDetails={user?.businessDetails}
             contactDetails={user?.contactDetails}
-            socials={user?.socials}
+            socials={user?.contactDetails?.socials}
           />
         );
       case "Feed":
+        const sortedPosts = [...post].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
         return (
-          <View className="">
-            {post && post.length > 0 && (
-              <>
-                {/* <Text className="font-bold mb-2">My Album</Text> */}
-                <View className="flex-row flex-wrap gap-1">
-                  {post.map((item, index) => {
-                    // console.log(item.imageUrl);
-                    return (
-                      <TouchableOpacity
-                        className="w-[32%] h-32 p-1 rounded-md"
-                        key={index}
-                        onPress={onPostPress}
-                      >
-                        <Image
-                          key={index}
-                          source={{ uri: item?.imageUrl }}
-                          className="w-full h-full rounded-md"
-                        />
-                        {isVisible && (
-                          <View className="relative ">
-                            <PostModal
-                              isVisible={isVisible}
-                              onClose={onClose}
-                              data={postData}
-                            />
-                          </View>
-                        )}
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-              </>
+          <FlatList
+            data={sortedPosts}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                className="w-[33.33%] aspect-square p-1"
+                onPress={() => onPostPress(item)}
+              >
+                <Image
+                  source={{ uri: item?.imageUrl }}
+                  className="w-full h-full rounded-md"
+                  resizeMode="cover"
+                />
+              </TouchableOpacity>
             )}
-          </View>
+            keyExtractor={(item, index) => index.toString()}
+            numColumns={3}
+            ListEmptyComponent={<Text>No posts available</Text>}
+          />
         );
       case "Ratings & Reviews":
         return <ReviewTab reviews={user?.ratings} user={user} />;
       default:
         return null;
     }
-  };
+  }, [activeTab, user, post, onPostPress]);
 
-  return (
-    <View className="mt-4">
-      <View className="flex-row justify-around border-b border-gray-200">
+  const renderItem = useCallback(() => {
+    return (
+      <View style={{ flex: 1 }}>
+        {renderTabContent()}
+        <PostModal
+          onClose={onClose}
+          isVisible={isModalVisible}
+          data={postData}
+          user={user}
+        />
+      </View>
+    );
+  }, [activeTab, isModalVisible, postData, onClose]);
+
+  const renderHeader = useCallback(
+    () => (
+      <View className="flex-row justify-around border-b border-gray-200 mb-4 px-4 pt-4">
         {tabs.map((tab) => (
           <TouchableOpacity
             key={tab.tab}
@@ -108,8 +103,17 @@ const ProfileTabs = ({ user, post }) => {
           </TouchableOpacity>
         ))}
       </View>
-      <ScrollView className="mt-4">{renderTabContent()}</ScrollView>
-    </View>
+    ),
+    [activeTab]
+  );
+
+  return (
+    <FlatList
+      data={[{ key: "content" }]}
+      renderItem={renderItem}
+      ListHeaderComponent={renderHeader}
+      stickyHeaderIndices={[0]}
+    />
   );
 };
 

@@ -1,18 +1,28 @@
-import { View, Text, Image } from "react-native";
 import React from "react";
-import { Ionicons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
-import { Entypo } from "@expo/vector-icons";
-const HomeProfileFeed = ({businessDetails, contactDetails, socials}) => {
+import { View, Text, TouchableOpacity, Image } from "react-native";
+import { Ionicons, AntDesign, Entypo } from "@expo/vector-icons";
+import * as Linking from "expo-linking";
+
+const HomeProfileFeed = ({ businessDetails, contactDetails, socials }) => {
+  console.log(socials);
+  const openLink = (url) => {
+    if (url) {
+      Linking.openURL(url);
+    }
+  };
   return (
     <View className="flex flex-col space-y-2 justify-center items-center">
       <View className="flex flex-row space-x-2 flex-1">
         <View className="flex flex-col bg-primary/40 p-5 rounded-xl space-y-2 justify-evenly items-center flex-1 h-40">
-          <Text className="text-3xl font-bold">{businessDetails?.productCategory?.category || "Category"}</Text>
+          <Text className="text-3xl font-bold">
+            {businessDetails?.productCategory?.category || "Category"}
+          </Text>
           <Text className="text-lg font-bold">Business Category</Text>
         </View>
         <View className="flex flex-col space-y-2 bg-primary/40 p-5 rounded-xl justify-evenly items-center flex-1 h-40">
-          <Text className="text-3xl font-bold">{contactDetails?.workingSince || "N/A"}</Text>
+          <Text className="text-3xl font-bold">
+            {contactDetails?.workingSince || "N/A"}
+          </Text>
           <Text className="text-lg font-bold">Working Since</Text>
         </View>
       </View>
@@ -25,10 +35,20 @@ const HomeProfileFeed = ({businessDetails, contactDetails, socials}) => {
         <View className="flex flex-col space-y-2">
           <Text className="text-xl font-bold">Business Address</Text>
           <View className="">
-            <Text className="text-sm">{businessDetails?.address?.officeNumber || "N/A"} - {businessDetails?.address?.block || "N/A"}</Text>
-            <Text className="text-sm">{businessDetails?.address?.landmark || "N/A"}</Text>
-            <Text className="text-sm">{businessDetails?.address?.city || "N/A"}, {businessDetails?.address?.state || "N/A"}</Text>
-            <Text className="text-sm">{businessDetails?.address?.pincode || "N/A"}</Text>
+            <Text className="text-sm">
+              {businessDetails?.address?.officeNumber || "N/A"} -{" "}
+              {businessDetails?.address?.block || "N/A"}
+            </Text>
+            <Text className="text-sm">
+              {businessDetails?.address?.landmark || "N/A"}
+            </Text>
+            <Text className="text-sm">
+              {businessDetails?.address?.city || "N/A"},{" "}
+              {businessDetails?.address?.state || "N/A"}
+            </Text>
+            <Text className="text-sm">
+              {businessDetails?.address?.pincode || "N/A"}
+            </Text>
           </View>
         </View>
       </View>
@@ -40,8 +60,12 @@ const HomeProfileFeed = ({businessDetails, contactDetails, socials}) => {
         <View className="flex flex-col space-y-2">
           <Text className="text-xl font-bold">Business Contact</Text>
           <View className="">
-            <Text className="text-sm">{contactDetails?.contactNumber?.mobile}</Text>
-            <Text className="text-sm">{contactDetails?.contactNumber?.whatsapp}</Text>
+            <Text className="text-sm">
+              {contactDetails?.contactNumber?.mobile}
+            </Text>
+            <Text className="text-sm">
+              {contactDetails?.contactNumber?.whatsapp}
+            </Text>
           </View>
         </View>
       </View>
@@ -53,11 +77,21 @@ const HomeProfileFeed = ({businessDetails, contactDetails, socials}) => {
         <View className="flex flex-col space-y-2">
           <Text className="text-xl font-bold">Business Working Hours</Text>
           <View className="">
-            <Text className="text-sm">Monday - {contactDetails?.workingHours}</Text>
-            <Text className="text-sm">Tuesday - {contactDetails?.workingHours}</Text>
-            <Text className="text-sm">Wednesday - {contactDetails?.workingHours}</Text>
-            <Text className="text-sm">Thursday - {contactDetails?.workingHours}</Text>
-            <Text className="text-sm">Friday - {contactDetails?.workingHours}</Text>
+            <Text className="text-sm">
+              Monday - {contactDetails?.workingHours}
+            </Text>
+            <Text className="text-sm">
+              Tuesday - {contactDetails?.workingHours}
+            </Text>
+            <Text className="text-sm">
+              Wednesday - {contactDetails?.workingHours}
+            </Text>
+            <Text className="text-sm">
+              Thursday - {contactDetails?.workingHours}
+            </Text>
+            <Text className="text-sm">
+              Friday - {contactDetails?.workingHours}
+            </Text>
           </View>
         </View>
       </View>
@@ -69,26 +103,47 @@ const HomeProfileFeed = ({businessDetails, contactDetails, socials}) => {
         <View className="flex flex-col space-y-2">
           <Text className="text-xl font-bold">Business Social Presence</Text>
           <View className="flex flex-col space-y-1">
-            <View className="text-sm flex flex-row space-x-2 justify-start items-center">
+            <TouchableOpacity
+              className="text-sm flex flex-row space-x-2 justify-start items-center"
+              onPress={() => openLink(`https://` + socials?.website)}
+            >
               <Ionicons name="globe-outline" size={24} color="black" />
               <Text>{socials?.website || "N/A"}</Text>
-            </View>
-            <View className="text-sm flex flex-row space-x-2 justify-start items-center">
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="text-sm flex flex-row space-x-2 justify-start items-center"
+              onPress={() =>
+                openLink(`https://instagram.com/` + socials?.instagram)
+              }
+            >
               <AntDesign name="instagram" size={24} color="black" />
               <Text>{socials?.instagram || "N/A"}</Text>
-            </View>
-            <View className="text-sm flex flex-row space-x-2 justify-start items-center">
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="text-sm flex flex-row space-x-2 justify-start items-center"
+              onPress={() => openLink(`https://x.com/` + socials?.twitter)}
+            >
               <AntDesign name="twitter" size={24} color="black" />
               <Text>{socials?.twitter || "N/A"}</Text>
-            </View>
-            <View className="text-sm flex flex-row space-x-2 justify-start items-center">
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="text-sm flex flex-row space-x-2 justify-start items-center"
+              onPress={() =>
+                openLink(`https://facebook.com/` + socials?.facebook)
+              }
+            >
               <AntDesign name="facebook-square" size={24} color="black" />
               <Text>{socials?.facebook || "N/A"}</Text>
-            </View>
-            <View className="text-sm flex flex-row space-x-2 justify-start items-center">
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="text-sm flex flex-row space-x-2 justify-start items-center"
+              onPress={() =>
+                openLink(`https://pinterest.com/` + socials?.pinterest)
+              }
+            >
               <Entypo name="pinterest" size={24} color="black" />
               <Text>{socials?.pinterest || "N/A"}</Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
