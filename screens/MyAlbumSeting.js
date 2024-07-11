@@ -89,7 +89,7 @@ export default function MyAlbumScreen() {
 					onPress={handleSubmit}
 					disabled={updateUserMutation.isLoading}
 				>
-					<Image source={require("../assets/check.png")} className="w-6 h-6" />{" "}
+					<Image source={require("../assets/check.png")} className="w-6 h-6" />
 					{updateUserMutation.isLoading && (
 						<ActivityIndicator
 							size="large"

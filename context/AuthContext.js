@@ -9,6 +9,7 @@ import { getToken, setToken } from "../api/auth";
 import { useNavigation } from "@react-navigation/native";
 import JWT from "expo-jwt";
 import { userService } from "../api/user";
+import { useQuery } from "@tanstack/react-query";
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
