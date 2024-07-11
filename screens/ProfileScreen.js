@@ -22,26 +22,34 @@ import { userService } from "../api/user";
 import { useAuth } from "../context/AuthContext";
 
 export default function ProfileScreen() {
-	const navigation = useNavigation();
-	const queryClient = useQueryClient();
-	const { fullUser: user } = useAuth();
-	const [isModalVisible, setIsModalVisible] = useState(false);
+  const navigation = useNavigation();
+  const queryClient = useQueryClient();
+  const { user: authUser } = useAuth();
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
 
-	const updateUserMutation = useMutation({
-		mutationFn: (updateData) => userService.updateUser(user?._id, updateData),
-		onSuccess: () => {
-			queryClient.invalidateQueries(["user", user?.username]);
-			Alert.alert("Success", "Profile updated successfully");
-		},
-		onError: (error) => {
-			console.error("Error updating user:", error);
-			Alert.alert("Error", "Failed to update profile");
-		},
-	});
+  const {
+    data: user,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["user", authUser?.username],
+    queryFn: () => userService.getSingleUser(authUser?.userId),
+    enabled: !!authUser,
+  });
+  const { data: post, isPostLoading } = useQuery({
+    queryKey: ["post", authUser?.username],
+    queryFn: () => userService.getAllPostsFromUser(authUser?.userId),
+    enabled: !!authUser,
+  });
+  const handleEditProfile = () => {
+    navigation.navigate("EditProfile");
+  };
 
   const handleShare = async (userId) => {
     try {
@@ -116,25 +124,25 @@ export default function ProfileScreen() {
           {/* Profile information */}
           <View className="flex-row items-center space-x-4">
             <Image
-              source={{ uri: user.profilePic }}
+              source={{ uri: user?.profilePic }}
               className="w-20 h-20 rounded-full"
             />
             <View className="flex flex-row justify-evenly items-center space-x-5 flex-1">
               <View className="items-center">
                 <Text className="font-bold text-2xl">
-                  {user.followers.length}
+                  {user?.followers?.length}
                 </Text>
                 <Text className="text-gray-600">followers</Text>
               </View>
               <View className="items-center">
                 <Text className="font-bold text-2xl">
-                  {user.followings.length}
+                  {user?.followings?.length}
                 </Text>
                 <Text className="text-gray-600">following</Text>
               </View>
               <View className="items-center">
                 <Text className="font-bold text-2xl">
-                  {user.ratings.length > 0
+                  {user?.ratings.length > 0
                     ? (
                         user.ratings.reduce(
                           (acc, curr) => acc + curr.rating,
@@ -150,11 +158,11 @@ export default function ProfileScreen() {
           </View>
 
           <View className="flex-col justify-between mt-2">
-            <Text className="text-lg font-bold">{user.name}</Text>
-            <Text className="text-gray-600">@{user.username}</Text>
+            <Text className="text-lg font-bold">{user?.name}</Text>
+            <Text className="text-gray-600">@{user?.username}</Text>
           </View>
 
-          <Text className="mt-4 text-gray-600">{user.bio}</Text>
+          <Text className="mt-4 text-gray-600">{user?.bio}</Text>
 
           <View className="mt-4 flex-1 flex flex-row justify-center items-center space-x-2">
             <TouchableOpacity
@@ -187,19 +195,19 @@ export default function ProfileScreen() {
             <View className="text-gray-800 flex flex-row justify-start items-center space-x-2">
               <Ionicons name="person-sharp" size={18} color="black" />
               <Text className="text-sm">
-                {user.contactDetails?.designation || "N/A"}
+                {user?.contactDetails?.designation || "N/A"}
               </Text>
             </View>
             <View className="text-gray-800 flex flex-row justify-start items-center space-x-2">
               <FontAwesome6 name="ranking-star" size={18} color="black" />
               <Text className="text-sm">
-                {user.contactDetails?.workingSince || "N/A"}
+                {user?.contactDetails?.workingSince || "N/A"}
               </Text>
             </View>
             <View className="text-gray-800 flex flex-row justify-start items-center space-x-2">
               <Entypo name="phone" size={18} color="black" />
               <Text className="text-sm">
-                {user.contactDetails?.contactNumber?.mobile || "N/A"}
+                {user?.contactDetails?.contactNumber?.mobile || "N/A"}
               </Text>
             </View>
             <View className="text-gray-800 flex flex-row justify-start items-center space-x-2">
@@ -213,7 +221,7 @@ export default function ProfileScreen() {
             className="w-full h-40 mt-4 rounded-lg"
           />
 
-          <ProfileTabs user={user} post={posts} />
+          <ProfileTabs user={user} post={post} />
         </View>
       </ScrollView>
       <BottomNavigation notify={true} />

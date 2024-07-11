@@ -8,7 +8,8 @@ const album = [
   "https://res.cloudinary.com/ddsp8i11t/image/upload/v1718902303/hqg2j36iu1546lg8fx2v.webp",
   "https://res.cloudinary.com/ddsp8i11t/image/upload/v1719031498/kjjcid5fnfbnjvrmkvly.jpg",
 ];
-function CarouselComponent() {
+function CarouselComponent(images) {
+  console.log(images);
   const width = Dimensions.get("window").width;
   return (
     <View style={{ flex: 1 }}>
