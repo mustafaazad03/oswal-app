@@ -18,22 +18,20 @@ import { userService } from "../api/user";
 
 export default function ContactDetailSettingScreen() {
 	const navigation = useNavigation();
+	const { user: authUser, fullUser } = useAuth();
 	const [formData, setFormData] = useState({
-		workingSince: "",
-		workingHours: "",
-		contactPersonName: "",
-		designation: "",
-		mobileNumber: "",
-		whatsappNumber: "",
-		website: "",
-		instagram: "",
-		twitter: "",
-		facebook: "",
-		pinterest: "",
+		workingSince: fullUser.contactDetails?.workingSince || "",
+		workingHours: fullUser.contactDetails?.workingHours || "",
+		contactPersonName: fullUser.contactDetails?.contactName || "",
+		designation: fullUser.contactDetails?.designation || "",
+		mobileNumber: fullUser.contactDetails?.contactNumber?.mobile || "",
+		whatsappNumber: fullUser.contactDetails?.contactNumber?.whatsapp || "",
+		website: fullUser.contactDetails?.socials?.website || "",
+		instagram: fullUser.contactDetails?.socials?.instagram || "",
+		twitter: fullUser.contactDetails?.socials?.twitter || "",
+		facebook: fullUser.contactDetails?.socials?.facebook || "",
+		pinterest: fullUser.contactDetails?.socials?.pinterest || "",
 	});
-
-	const { user: authUser } = useAuth();
-
 	const updateUserMutation = useMutation({
 		mutationFn: (updateData) =>
 			userService.updateUser(authUser?.userId, updateData),
