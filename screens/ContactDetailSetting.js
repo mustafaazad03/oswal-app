@@ -7,29 +7,79 @@ import {
 	Image,
 	TextInput,
 	ScrollView,
+	Alert,
+	ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
+import { useAuth } from "../context/AuthContext";
+import { useMutation } from "@tanstack/react-query";
+import { userService } from "../api/user";
 
 export default function ContactDetailSettingScreen() {
 	const navigation = useNavigation();
+	const { user: authUser, fullUser } = useAuth();
 	const [formData, setFormData] = useState({
-		workingSince: "",
-		workingHours: "",
-		contactPersonName: "",
-		designation: "",
-		mobileNumber: "",
-		whatsappNumber: "",
-		email: "",
-		website: "",
-		instagram: "",
-		twitter: "",
-		facebook: "",
-		pinterest: "",
+		workingSince: fullUser.contactDetails?.workingSince || "",
+		workingHours: fullUser.contactDetails?.workingHours || "",
+		contactPersonName: fullUser.contactDetails?.contactName || "",
+		designation: fullUser.contactDetails?.designation || "",
+		mobileNumber: fullUser.contactDetails?.contactNumber?.mobile || "",
+		whatsappNumber: fullUser.contactDetails?.contactNumber?.whatsapp || "",
+		website: fullUser.contactDetails?.socials?.website || "",
+		instagram: fullUser.contactDetails?.socials?.instagram || "",
+		twitter: fullUser.contactDetails?.socials?.twitter || "",
+		facebook: fullUser.contactDetails?.socials?.facebook || "",
+		pinterest: fullUser.contactDetails?.socials?.pinterest || "",
+	});
+	const updateUserMutation = useMutation({
+		mutationFn: (updateData) =>
+			userService.updateUser(authUser?.userId, updateData),
+		onSuccess: () => {
+			Alert.alert("Success", "Business contact details updated successfully");
+			navigation.goBack();
+		},
+		onError: (error) => {
+			console.error("Error updating user:", error);
+			Alert.alert("Error", "Failed to update business contact details");
+		},
 	});
 
 	const handleInputChange = (field, value) => {
 		setFormData({ ...formData, [field]: value });
+	};
+
+	const handleSubmit = () => {
+		if (
+			!formData.contactPersonName ||
+			!formData.designation ||
+			!formData.mobileNumber ||
+			!formData.whatsappNumber
+		) {
+			Alert.alert("Error", "Please enter contact person name and designation");
+			return;
+		}
+		const updateData = {
+			contactDetails: {
+				workingSince: formData.workingSince,
+				workingHours: formData.workingHours,
+				contactName: formData.contactPersonName,
+				designation: formData.designation,
+				contactNumber: {
+					mobile: formData.mobileNumber,
+					whatsapp: formData.whatsappNumber,
+				},
+				socials: {
+					website: formData.website,
+					instagram: formData.instagram,
+					twitter: formData.twitter,
+					facebook: formData.facebook,
+					pinterest: formData.pinterest,
+				},
+			},
+		};
+
+		updateUserMutation.mutate(updateData);
 	};
 
 	return (
@@ -42,13 +92,19 @@ export default function ContactDetailSettingScreen() {
 					/>
 				</TouchableOpacity>
 				<Text className="text-xl font-bold">Contact Details</Text>
-				<TouchableOpacity
-					className="ml-auto"
-					onPress={() => {
-						navigation.goBack();
-					}}
-				>
-					<Image source={require("../assets/check.png")} className="w-6 h-6" />
+				<TouchableOpacity className="ml-auto" onPress={handleSubmit}>
+					{updateUserMutation.isLoading ? (
+						<ActivityIndicator
+							size="large"
+							color="#FFD1DC"
+							style={{ marginTop: 20 }}
+						/>
+					) : (
+						<Image
+							source={require("../assets/check.png")}
+							className="w-6 h-6"
+						/>
+					)}
 				</TouchableOpacity>
 			</View>
 
@@ -133,8 +189,8 @@ export default function ContactDetailSettingScreen() {
 				<TextInput
 					placeholder="Business E-mail"
 					className="border border-primary p-3 rounded-lg mb-4"
-					value={formData.email}
-					onChangeText={(text) => handleInputChange("email", text)}
+					value={authUser?.email}
+					editable={false}
 					keyboardType="email-address"
 				/>
 

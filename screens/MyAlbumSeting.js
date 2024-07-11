@@ -6,14 +6,35 @@ import {
 	TouchableOpacity,
 	Image,
 	ScrollView,
+	Alert,
+	ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import Button from "../components/Button";
+import { useAuth } from "../context/AuthContext";
+import { useMutation } from "@tanstack/react-query";
+import { userService } from "../api/user";
 
 export default function MyAlbumScreen() {
 	const navigation = useNavigation();
-	const [selectedImages, setSelectedImages] = useState([]);
+	const { user: authUser } = useAuth();
+	const [selectedImages, setSelectedImages] = useState(
+		authUser?.album?.map((item) => item.url) || []
+	);
+
+	const updateUserMutation = useMutation({
+		mutationFn: (updateData) =>
+			userService.updateUser(authUser?.userId, updateData),
+		onSuccess: () => {
+			Alert.alert("Success", "Album updated successfully");
+			navigation.goBack();
+		},
+		onError: (error) => {
+			console.error("Error updating user:", error);
+			Alert.alert("Error", "Failed to update album");
+		},
+	});
 
 	const handleImagePicker = async () => {
 		const permissionResult =
@@ -34,8 +55,23 @@ export default function MyAlbumScreen() {
 
 		if (!result.canceled) {
 			const newImages = result.assets.map((asset) => asset.uri);
-			setSelectedImages([...selectedImages, ...newImages].slice(0, 10));
+			setSelectedImages((prevImages) =>
+				[...prevImages, ...newImages].slice(0, 10)
+			);
 		}
+	};
+
+	const handleSubmit = async () => {
+		const albumData = selectedImages.map((imageUrl, index) => ({
+			url: imageUrl,
+			title: `Image ${index + 1}`,
+		}));
+
+		const updateData = {
+			album: albumData,
+		};
+
+		updateUserMutation.mutate(updateData);
 	};
 
 	return (
@@ -50,11 +86,17 @@ export default function MyAlbumScreen() {
 				<Text className="text-xl font-bold">My Album</Text>
 				<TouchableOpacity
 					className="ml-auto"
-					onPress={() => {
-						navigation.goBack();
-					}}
+					onPress={handleSubmit}
+					disabled={updateUserMutation.isLoading}
 				>
 					<Image source={require("../assets/check.png")} className="w-6 h-6" />
+					{updateUserMutation.isLoading && (
+						<ActivityIndicator
+							size="large"
+							color="#FFD1DC"
+							style={{ marginTop: 20 }}
+						/>
+					)}
 				</TouchableOpacity>
 			</View>
 
@@ -68,14 +110,26 @@ export default function MyAlbumScreen() {
 					{[...Array(10)].map((_, index) => (
 						<TouchableOpacity
 							key={index}
-							className="w-[45%] h-fit aspect-square mb-4 border-2 border-primary rounded-lg flex items-center justify-center"
-							onPress={handleImagePicker}
+							className="w-[45%] h-fit aspect-square mb-4 border-2 border-primary rounded-lg flex items-center justify-center relative"
+							onPress={selectedImages[index] ? null : handleImagePicker}
 						>
 							{selectedImages[index] ? (
-								<Image
-									source={{ uri: selectedImages[index] }}
-									className="w-full h-full rounded-lg"
-								/>
+								<>
+									<Image
+										source={{ uri: selectedImages[index] }}
+										className="w-full h-full rounded-lg"
+									/>
+									<TouchableOpacity
+										className="absolute top-1 right-1 bg-red-500 rounded-full p-1"
+										onPress={() => {
+											setSelectedImages((prevImages) =>
+												prevImages.filter((_, i) => i !== index)
+											);
+										}}
+									>
+										<Text className="text-white">X</Text>
+									</TouchableOpacity>
+								</>
 							) : (
 								<Image
 									source={require("../assets/upload.png")}

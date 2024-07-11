@@ -63,6 +63,14 @@ export default function EnquirySettingScreen() {
 								onValueChange={(value) => handleInputChange("category", value)}
 							>
 								<Picker.Item label="Select Category" value="" />
+								<Picker.Item label="Fashion" value="fashion" />
+								<Picker.Item label="Food" value="food" />
+								<Picker.Item label="Travel" value="travel" />
+								<Picker.Item label="Health" value="health" />
+								<Picker.Item label="Technology" value="technology" />
+								<Picker.Item label="Education" value="education" />
+								<Picker.Item label="Sports" value="sports" />
+								<Picker.Item label="Music" value="music" />
 								{/* Add more category options here */}
 							</Picker>
 						</View>
@@ -78,6 +86,16 @@ export default function EnquirySettingScreen() {
 								}
 							>
 								<Picker.Item label="Select Sub-Category" value="" />
+								<Picker.Item label="Product Review" value="product_review" />
+								<Picker.Item label="Travel Guide" value="travel_guide" />
+								<Picker.Item label="Health Tips" value="health_tips" />
+								<Picker.Item label="Technology News" value="technology_news" />
+								<Picker.Item
+									label="Educational Content"
+									value="educational_content"
+								/>
+								<Picker.Item label="Sports News" value="sports_news" />
+								<Picker.Item label="Music Review" value="music_review" />
 								{/* Add more sub-category options here */}
 							</Picker>
 						</View>

@@ -9,15 +9,19 @@ import {
 	PanResponder,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "../context/AuthContext";
 
 const BottomModal = ({ isVisible, onClose }) => {
 	const navigation = useNavigation();
 	const slideAnim = useRef(new Animated.Value(0)).current;
 	const [modalHeight, setModalHeight] = useState(0);
+	const { setFullUser, setUser } = useAuth();
 
 	const onLogout = () => {
 		onClose();
 		logout();
+		setFullUser(null);
+		setUser(null);
 		navigation.navigate("Login");
 	};
 

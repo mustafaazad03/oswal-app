@@ -6,17 +6,39 @@ import {
 	TouchableOpacity,
 	Image,
 	Switch,
+	Alert,
 } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import ExpandableButton from "../components/ExtendeblePlusButton";
+import { useNavigation } from "@react-navigation/native";
 import BottomNavigation from "../components/BottomNavigation";
+import { useMutation } from "@tanstack/react-query";
+import { userService } from "../api/user";
+import { useAuth } from "../context/AuthContext";
 
 export default function AccountPrivacyScreen() {
 	const navigation = useNavigation();
-	const route = useRoute();
 	const [isLocked, setIsLocked] = useState(false);
+	const { user, fullUser } = useAuth();
 
 	const toggleLock = () => setIsLocked((previousState) => !previousState);
+
+	const mutation = useMutation({
+		mutationFn: () => userService.updatePrivacy(user.userId, { isLocked }),
+		onSuccess: () => {
+			Alert.alert("Success", "Account privacy updated successfully.");
+			navigation.goBack();
+		},
+		onError: (error) => {
+			Alert.alert("Error", error.message);
+		},
+	});
+
+	const updatePrivacy = () => {
+		toggleLock();
+		if (isLocked === fullUser.isLocked) {
+			return;
+		}
+		mutation.mutate();
+	};
 
 	return (
 		<SafeAreaView className="flex-1 bg-white">
@@ -37,7 +59,7 @@ export default function AccountPrivacyScreen() {
 						trackColor={{ false: "#767577", true: "#EEC0C8" }}
 						thumbColor={isLocked ? "#EEB0C0" : "#f4f3f4"}
 						ios_backgroundColor="#3e3e3e"
-						onValueChange={toggleLock}
+						onValueChange={updatePrivacy}
 						value={isLocked}
 					/>
 				</View>

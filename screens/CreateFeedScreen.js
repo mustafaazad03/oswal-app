@@ -8,11 +8,16 @@ import {
 	ScrollView,
 	Modal,
 	FlatList,
+	Alert,
+	ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { useMutation } from "@tanstack/react-query";
+import { postService } from "../api/feed";
+import { useAuth } from "../context/AuthContext";
 
 const CreateFeedScreen = () => {
 	const navigation = useNavigation();
@@ -20,6 +25,7 @@ const CreateFeedScreen = () => {
 	const [feedText, setFeedText] = useState("");
 	const [isRefineModalVisible, setIsRefineModalVisible] = useState(false);
 	const [selectedTags, setSelectedTags] = useState([]);
+	const { user } = useAuth();
 
 	const tags = [
 		"Nature",
@@ -75,6 +81,35 @@ const CreateFeedScreen = () => {
 		</TouchableOpacity>
 	);
 
+	const createPostMutation = useMutation({
+		mutationFn: (postData) => postService.createPost(postData),
+		onSuccess: () => {
+			// Handle successful post creation
+			Alert.alert("Success", "Post created successfully");
+			navigation.navigate("Home");
+		},
+		onError: (error) => {
+			console.error("Error creating post:", error);
+			Alert.alert("Error", "Failed to create post");
+		},
+	});
+
+	const handleSubmitPost = () => {
+		if (!image) {
+			Alert.alert("Error", "Please select an image");
+			return;
+		}
+
+		const postData = {
+			user: user?.userId,
+			imageUrl: image,
+			caption: feedText,
+			tags: selectedTags,
+		};
+
+		createPostMutation.mutate(postData);
+	};
+
 	return (
 		<SafeAreaView className="flex-1 bg-white">
 			<View className="flex-row items-center  bg-primary p-4 border-b border-gray-200">
@@ -115,6 +150,23 @@ const CreateFeedScreen = () => {
 
 				<TouchableOpacity className="bg-primary p-4 rounded-md items-center">
 					<Text className="text-dark font-semibold">Buy Premium</Text>
+				</TouchableOpacity>
+
+				<TouchableOpacity
+					className="bg-primary p-4 rounded-md items-center"
+					onPress={handleSubmitPost}
+					disabled={createPostMutation.isLoading}
+				>
+					<Text className="text-dark font-semibold bg-[#FFD1DC]">
+						{createPostMutation.isLoading ? "Creating Post..." : "Create Post"}{" "}
+						{createPostMutation.isLoading && (
+							<ActivityIndicator
+								size="large"
+								color="#FFD1DC"
+								style={{ marginTop: 20 }}
+							/>
+						)}
+					</Text>
 				</TouchableOpacity>
 			</ScrollView>
 

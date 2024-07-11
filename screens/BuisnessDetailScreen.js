@@ -7,10 +7,14 @@ import {
 	Image,
 	TextInput,
 	ScrollView,
+	Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
 import Button from "../components/Button";
+import { useMutation } from "@tanstack/react-query";
+import { useAuth } from "../context/AuthContext";
+import { userService } from "../api/user";
 
 export default function BusinessDetailsScreen() {
 	const navigation = useNavigation();
@@ -27,9 +31,47 @@ export default function BusinessDetailsScreen() {
 		state: "",
 		country: "",
 	});
+	const { user: authUser } = useAuth();
+
+	const updateUserMutation = useMutation({
+		mutationFn: (updateData) =>
+			userService.updateUser(authUser?.userId, updateData),
+		onSuccess: () => {
+			// Handle successful update
+			Alert.alert("Success", "Business details updated successfully");
+			navigation.navigate("BusinessContact");
+		},
+		onError: (error) => {
+			console.error("Error updating user:", error);
+			Alert.alert("Error", "Failed to update business details");
+		},
+	});
 
 	const handleInputChange = (field, value) => {
 		setFormData({ ...formData, [field]: value });
+	};
+
+	const handleSubmit = () => {
+		const updateData = {
+			businessDetails: {
+				productCategory: {
+					category: formData.category,
+					subCategory: formData.subCategory,
+				},
+				about: formData.aboutUs,
+				address: {
+					officeNumber: formData.officeNumber,
+					block: formData.tower,
+					landmark: formData.landmark,
+					pincode: formData.pincode,
+					city: formData.city,
+					state: formData.state,
+					country: formData.country,
+				},
+			},
+		};
+
+		updateUserMutation.mutate(updateData);
 	};
 
 	return (
@@ -258,8 +300,9 @@ export default function BusinessDetailsScreen() {
 				</View>
 
 				<Button
-					title="Next"
-					onPress={() => navigation.navigate("BusinessContact")}
+					title={updateUserMutation.isLoading ? "Updating..." : "Next"}
+					onPress={handleSubmit}
+					disabled={updateUserMutation.isLoading}
 				/>
 			</ScrollView>
 		</SafeAreaView>

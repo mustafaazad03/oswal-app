@@ -1,18 +1,68 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+	View,
+	Text,
+	TouchableOpacity,
+	Image,
+	ActivityIndicator,
+	Alert,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BlockedAccountsList from "../components/BlockedAccountsList";
-import { blockedAccounts } from "../data/mockedData";
 import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "../context/AuthContext";
+import { useMutation } from "@tanstack/react-query";
+import useBlockedUserData from "../hooks/useBlockUserData";
+import { userService } from "../api/user";
 
 const BlockedAccountsScreen = () => {
-	const [accounts, setAccounts] = useState(blockedAccounts);
+	const navigation = useNavigation();
+	const { fullUser } = useAuth();
+
+	const {
+		data: accounts,
+		isLoading,
+		isError,
+		error,
+		refetch,
+	} = useBlockedUserData(fullUser?.blockList || []);
+
+	const mutation = useMutation({
+		mutationFn: (blockedAccountList) =>
+			userService.updateUser(fullUser.userId, {
+				blockList: blockedAccountList,
+			}),
+		onSuccess: () => {
+			Alert.alert("Success", "User unblocked successfully");
+			refetch();
+		},
+		onError: (error) => {
+			Alert.alert("Error", error.message);
+		},
+	});
 
 	const handleUnblock = (id) => {
-		setAccounts(accounts.filter((account) => account.id !== id));
+		const updatedAccountIds = accounts
+			.filter((account) => account.id !== id)
+			.map((account) => account.id);
+		mutation.mutate(updatedAccountIds);
 	};
 
-	const navigation = useNavigation();
+	if (isLoading) {
+		return (
+			<SafeAreaView className="flex-1 justify-center items-center bg-white">
+				<ActivityIndicator size="large" color="#FFD1DC" />
+			</SafeAreaView>
+		);
+	}
+
+	if (isError) {
+		return (
+			<SafeAreaView className="flex-1 justify-center items-center bg-white">
+				<Text>Error: {error.message}</Text>
+			</SafeAreaView>
+		);
+	}
 
 	return (
 		<SafeAreaView className="flex-1 bg-white">
@@ -25,7 +75,16 @@ const BlockedAccountsScreen = () => {
 				</TouchableOpacity>
 				<Text className="text-xl font-bold ml-4">Blocked Accounts</Text>
 			</View>
-			<BlockedAccountsList accounts={accounts} onUnblock={handleUnblock} />
+			{accounts && accounts.length === 0 ? (
+				<View className="flex-1 justify-center items-center bg-white">
+					<Text>No blocked accounts</Text>
+				</View>
+			) : (
+				<BlockedAccountsList
+					accounts={accounts || []}
+					onUnblock={handleUnblock}
+				/>
+			)}
 		</SafeAreaView>
 	);
 };

@@ -6,13 +6,13 @@ const BlockedAccountsList = ({ accounts, onUnblock }) => {
 	return (
 		<FlatList
 			data={accounts}
-			keyExtractor={(item) => item.id}
+			keyExtractor={(item) => item?._id}
 			renderItem={({ item }) => (
 				<BlockedAccount
 					name={item.name}
 					username={item.username}
-					avatarUrl={item.avatarUrl}
-					onUnblock={() => onUnblock(item.id)}
+					avatarUrl={item?.profilePic}
+					onUnblock={() => onUnblock(item?._id)}
 				/>
 			)}
 		/>
