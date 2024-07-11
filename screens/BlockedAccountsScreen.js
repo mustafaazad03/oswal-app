@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	View,
 	Text,
@@ -19,17 +19,13 @@ const BlockedAccountsScreen = () => {
 	const navigation = useNavigation();
 	const { fullUser } = useAuth();
 
-	const { data, isLoading, isError, error } = useBlockedUserData(
-		fullUser.blockList
-	);
-
-	const [accounts, setAccounts] = useState([]);
-
-	useEffect(() => {
-		if (data) {
-			setAccounts(data);
-		}
-	}, [data]);
+	const {
+		data: accounts,
+		isLoading,
+		isError,
+		error,
+		refetch,
+	} = useBlockedUserData(fullUser?.blockList || []);
 
 	const mutation = useMutation({
 		mutationFn: (blockedAccountList) =>
@@ -38,6 +34,7 @@ const BlockedAccountsScreen = () => {
 			}),
 		onSuccess: () => {
 			Alert.alert("Success", "User unblocked successfully");
+			refetch();
 		},
 		onError: (error) => {
 			Alert.alert("Error", error.message);
@@ -45,11 +42,10 @@ const BlockedAccountsScreen = () => {
 	});
 
 	const handleUnblock = (id) => {
-		const updatedAccounts = accounts.filter((account) => account.id !== id);
-		setAccounts(updatedAccounts);
-
-		const blockedAccountIds = updatedAccounts.map((account) => account.id);
-		mutation.mutate(blockedAccountIds);
+		const updatedAccountIds = accounts
+			.filter((account) => account.id !== id)
+			.map((account) => account.id);
+		mutation.mutate(updatedAccountIds);
 	};
 
 	if (isLoading) {
@@ -79,7 +75,16 @@ const BlockedAccountsScreen = () => {
 				</TouchableOpacity>
 				<Text className="text-xl font-bold ml-4">Blocked Accounts</Text>
 			</View>
-			<BlockedAccountsList accounts={accounts} onUnblock={handleUnblock} />
+			{accounts && accounts.length === 0 ? (
+				<View className="flex-1 justify-center items-center bg-white">
+					<Text>No blocked accounts</Text>
+				</View>
+			) : (
+				<BlockedAccountsList
+					accounts={accounts || []}
+					onUnblock={handleUnblock}
+				/>
+			)}
 		</SafeAreaView>
 	);
 };

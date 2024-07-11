@@ -34,7 +34,7 @@ export default function AccountPrivacyScreen() {
 
 	const updatePrivacy = () => {
 		toggleLock();
-		if (isLocked === fullUser.isLocked && isLoading) {
+		if (isLocked === fullUser.isLocked) {
 			return;
 		}
 		mutation.mutate();

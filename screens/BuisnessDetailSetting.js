@@ -12,27 +12,25 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
-import Button from "../components/Button";
 import { useAuth } from "../context/AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import { userService } from "../api/user";
 
 export default function BusinessDetailsSettingScreen() {
 	const navigation = useNavigation();
+	const { user: authUser, fullUser } = useAuth();
 	const [formData, setFormData] = useState({
-		category: "",
-		subCategory: "",
-		aboutUs: "",
-		businessAddress: "",
-		officeNumber: "",
-		tower: "",
-		landmark: "",
-		pincode: "",
-		city: "",
-		state: "",
-		country: "",
+		category: fullUser.businessDetails?.productCategory?.category || "",
+		subCategory: fullUser.businessDetails?.productCategory?.subCategory || "",
+		aboutUs: fullUser.businessDetails?.about || "",
+		officeNumber: fullUser.businessDetails?.address?.officeNumber || "",
+		tower: fullUser.businessDetails?.address?.block || "",
+		landmark: fullUser.businessDetails?.address?.landmark || "",
+		pincode: fullUser.businessDetails?.address?.pincode || "",
+		city: fullUser.businessDetails?.address?.city || "",
+		state: fullUser.businessDetails?.address?.state || "",
+		country: fullUser.businessDetails?.address?.country || "",
 	});
-	const { user: authUser } = useAuth();
 
 	const updateUserMutation = useMutation({
 		mutationFn: (updateData) =>
@@ -186,13 +184,6 @@ export default function BusinessDetailsSettingScreen() {
 				>
 					<Text className="text-center">Add Google Location</Text>
 				</TouchableOpacity>
-
-				<TextInput
-					placeholder="Business Address*"
-					className="border border-primary p-3 rounded-lg mb-4"
-					value={formData.businessAddress}
-					onChangeText={(text) => handleInputChange("businessAddress", text)}
-				/>
 
 				<TextInput
 					placeholder="Office number/Floor*"

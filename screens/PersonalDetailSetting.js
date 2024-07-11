@@ -88,7 +88,7 @@ export default function ProfileDetailsSettingScreen() {
 	return (
 		<SafeAreaView className="flex-1 bg-white">
 			{/* Back Icon */}
-			<View className="bg-[#FFD1DC] p-4 flex-row items-center pt-8">
+			<View className="bg-[#FFD1DC] p-4 flex-row items-center pt-8 w-full">
 				<TouchableOpacity onPress={() => navigation.goBack()}>
 					<Image
 						source={require("../assets/arrow_back.png")}
@@ -97,11 +97,11 @@ export default function ProfileDetailsSettingScreen() {
 				</TouchableOpacity>
 				<Text className="text-xl font-bold">Personal Details</Text>
 				<TouchableOpacity
-					className="ml-auto flex items-center flex-row gap-2"
+					className="ml-auto flex items-center flex-row gap-2 w-[40%] justify-end"
 					onPress={handleSubmit}
 					disabled={updateUserMutation.isLoading}
 				>
-					<Image source={require("../assets/check.png")} className="w-6 h-6" />{" "}
+					<Image source={require("../assets/check.png")} className="w-6 h-6" />
 					{updateUserMutation.isLoading && (
 						<ActivityIndicator
 							size="large"
