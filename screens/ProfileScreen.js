@@ -31,21 +31,8 @@ export default function ProfileScreen() {
 		setIsModalVisible(!isModalVisible);
 	};
 
-	const updateUserMutation = useMutation({
-		mutationFn: (updateData) => userService.updateUser(user?._id, updateData),
-		onSuccess: () => {
-			queryClient.invalidateQueries(["user", user?.username]);
-			Alert.alert("Success", "Profile updated successfully");
-		},
-		onError: (error) => {
-			console.error("Error updating user:", error);
-			Alert.alert("Error", "Failed to update profile");
-		},
-	});
-
 	const handleEditProfile = () => {
-		const newBio = "Updated bio";
-		updateUserMutation.mutate({ bio: newBio });
+		navigation.navigate("EditProfile");
 	};
 
 	const handleShare = async (userId) => {
