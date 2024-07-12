@@ -148,16 +148,12 @@ const CreateFeedScreen = () => {
 					<Ionicons name="chevron-forward" size={20} color="black" />
 				</TouchableOpacity>
 
-				<TouchableOpacity className="bg-primary p-4 rounded-md items-center">
-					<Text className="text-dark font-semibold">Buy Premium</Text>
-				</TouchableOpacity>
-
 				<TouchableOpacity
 					className="bg-primary p-4 rounded-md items-center"
 					onPress={handleSubmitPost}
 					disabled={createPostMutation.isLoading}
 				>
-					<Text className="text-dark font-semibold bg-[#FFD1DC]">
+					<Text className="text-dark font-semibold">
 						{createPostMutation.isLoading ? "Creating Post..." : "Create Post"}{" "}
 						{createPostMutation.isLoading && (
 							<ActivityIndicator
@@ -167,6 +163,9 @@ const CreateFeedScreen = () => {
 							/>
 						)}
 					</Text>
+				</TouchableOpacity>
+				<TouchableOpacity className="border border-primary p-4 rounded-md items-center mt-4">
+					<Text className="text-dark font-semibold">Buy Premium</Text>
 				</TouchableOpacity>
 			</ScrollView>
 
