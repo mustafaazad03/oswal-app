@@ -27,7 +27,6 @@ import DeletedFeedsScreen from "./screens/DeletedFeedScreen";
 import DeactivationDeletionScreen from "./screens/DeactivationDeletionScreen";
 import ChangePasswordModal from "./components/ChangePasswordModal";
 import EnquirySettingScreen from "./screens/EnquirySettingScreen";
-import DeletedFeedsSettingModal from "./components/DeletedFeedModal";
 import RaiseEnquiryScreen from "./screens/RaiseEnquiry";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthContext";
@@ -36,6 +35,9 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BlockedAccountsScreen from "./screens/BlockedAccountsScreen";
 import CreateFeedScreen from "./screens/CreateFeedScreen";
 import CommonProfileScreen from "./screens/CommonProfileScreen";
+import ParticularPostScreen from "./screens/PerticularPostScreen";
+import NotificationScreen from "./screens/NotificationScreen";
+import ForgetPasswordScreen from "./screens/ForgetPasswordScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -320,6 +322,30 @@ function App() {
 							<Stack.Screen
 								name="CommonProfile"
 								component={CommonProfileScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							<Stack.Screen
+								name="ParticularPost"
+								component={ParticularPostScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							<Stack.Screen
+								name="NotificationUser"
+								component={NotificationScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							<Stack.Screen
+								name="ForgotPassword"
+								component={ForgetPasswordScreen}
 								options={{
 									headerShown: false,
 									presentation: "fullScreenModal",
