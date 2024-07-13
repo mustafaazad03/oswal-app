@@ -21,6 +21,7 @@ import { useAuth } from "../context/AuthContext";
 import * as FileSystem from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
 import * as Clipboard from "expo-clipboard";
+import SkeletonLoading from "../components/SkeletonLoading";
 
 export default function FeedScreen() {
 	const navigation = useNavigation();
@@ -283,16 +284,6 @@ export default function FeedScreen() {
 		({ item }) => (
 			<View className="mb-4 mx-3">
 				<View className="flex-row items-center p-4 px-0 justify-between">
-					{/* <View className="flex-row items-center">
-            <Image
-              source={{ uri: item.user.profilePic }}
-              className="w-10 h-10 rounded-full mr-2 border border-primary"
-            />
-            <View>
-              <Text className="font-bold">{item.user.name}</Text>
-              <Text className="text-gray-500">@{item.user.username}</Text>
-            </View>
-          </View> */}
 					<TouchableOpacity
 						onPress={() =>
 							navigation.navigate("CommonProfile", { userId: item.user._id })
@@ -309,7 +300,13 @@ export default function FeedScreen() {
 							</View>
 						</View>
 					</TouchableOpacity>
-					<TouchableOpacity>
+					<TouchableOpacity
+						onPress={() =>
+							navigation.navigate("ParticularPost", {
+								postId: item?._id,
+							})
+						}
+					>
 						<Image
 							source={require("../assets/menu_icon.png")}
 							className="w-6 h-6"
@@ -439,10 +436,15 @@ export default function FeedScreen() {
 				keyExtractor={(item) => item._id}
 				contentContainerStyle={{ flexGrow: 1 }}
 				ListHeaderComponent={ListHeaderComponent}
-				ListEmptyComponent={isLoading ? null : ListEmptyComponent}
+				ListEmptyComponent={
+					isLoading ? <SkeletonLoading /> : ListEmptyComponent
+				}
 				refreshControl={
 					<RefreshControl refreshing={isLoading} onRefresh={refetch} />
 				}
+				windowSize={5}
+				maxToRenderPerBatch={10}
+				removeClippedSubviews={true}
 			/>
 			<FilterComponent onFilterChange={applyFilter} />
 			<BottomNavigation notify={true} />
