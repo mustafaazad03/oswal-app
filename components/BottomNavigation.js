@@ -59,8 +59,9 @@ export default function BottomNavigation({ notify }) {
 			{notify ? (
 				<TouchableOpacity
 					className={`rounded-full p-3 ${
-						route.name == "Notify" ? "bg-primary " : ""
+						route.name == "NotificationUser" ? "bg-primary " : ""
 					}`}
+					onPress={() => navigation.navigate("NotificationUser")}
 				>
 					<Image
 						source={require("../assets/notify_icon.png")}
