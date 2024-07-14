@@ -39,7 +39,7 @@ export default function ForgetPasswordScreen() {
 	};
 
 	return (
-		<SafeAreaView className="flex-1 bg-white p-4">
+		<SafeAreaView className="flex-1 bg-white p-4 pt-20">
 			<Text className="text-2xl font-bold mb-4">Forget Password</Text>
 			<Text className="text-sm text-gray-500 mb-4">
 				Enter your {useEmail ? "email" : "phone number"} to receive an OTP

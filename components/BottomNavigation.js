@@ -41,7 +41,7 @@ export default function BottomNavigation({ notify }) {
 				}}
 				onUploadPDF={() => {
 					// Handle Upload PDF
-					navigation.navigate("EnquirySetting");
+					navigation.navigate("EnquiriesSetting");
 				}}
 			/>
 			{/* Info  */}
