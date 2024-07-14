@@ -91,7 +91,9 @@ export default function LoginScreen() {
 				/>
 				{/* Forget Password */}
 				<View className="flex items-start justify-end mt-2">
-					<TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => navigation.navigate("ForgotPassword")}
+					>
 						<Text className="text-xs text-gray-500">Forget Password?</Text>
 					</TouchableOpacity>
 				</View>

@@ -184,10 +184,10 @@ export default function ParticularPostScreen() {
 	}
 
 	return (
-		<SafeAreaView className="flex-1 bg-white">
+		<SafeAreaView className="flex-1 bg-white pt-12">
 			<ScrollView>
 				<TouchableOpacity
-					className="absolute top-10 left-4 z-50"
+					className="absolute top-0 left-4 z-50"
 					onPress={() => navigation.goBack()}
 				>
 					<Image
@@ -196,7 +196,7 @@ export default function ParticularPostScreen() {
 					/>
 				</TouchableOpacity>
 
-				<View className="mb-4 mx-3">
+				<View className="mb-4 mt-8 mx-3">
 					<View className="flex-row items-center p-4 px-0 justify-between">
 						<TouchableOpacity
 							onPress={() =>
