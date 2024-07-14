@@ -300,23 +300,25 @@ export default function FeedScreen() {
 							</View>
 						</View>
 					</TouchableOpacity>
-					<TouchableOpacity
-						onPress={() =>
-							navigation.navigate("ParticularPost", {
-								postId: item?._id,
-							})
-						}
-					>
+					<TouchableOpacity>
 						<Image
 							source={require("../assets/menu_icon.png")}
 							className="w-6 h-6"
 						/>
 					</TouchableOpacity>
 				</View>
-				<Image
-					source={{ uri: item.imageUrl }}
-					className="w-full h-80 object-cover"
-				/>
+				<TouchableOpacity
+					onPress={() =>
+						navigation.navigate("ParticularPost", {
+							postId: item?._id,
+						})
+					}
+				>
+					<Image
+						source={{ uri: item.imageUrl }}
+						className="w-full h-80 object-cover"
+					/>
+				</TouchableOpacity>
 				<View className="flex-row justify-between p-2 pt-4">
 					<View className="flex-row items-center space-x-4">
 						<TouchableOpacity onPress={() => handleToggleLike(item._id)}>
