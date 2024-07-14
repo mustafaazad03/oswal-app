@@ -74,7 +74,7 @@ const HomeProfileFeed = ({ businessDetails, contactDetails, socials }) => {
 					className="w-20 h-20 rounded-lg"
 				/>
 				<View className="flex flex-col space-y-2">
-					<Text className="text-xl font-bold">Business Working Hours</Text>
+					<Text className="text-xl w-52 font-bold">Business Working Hours</Text>
 					<View className="">
 						<Text className="text-sm">
 							Monday - {contactDetails?.workingHours}
@@ -100,7 +100,7 @@ const HomeProfileFeed = ({ businessDetails, contactDetails, socials }) => {
 					className="w-20 h-20 rounded-lg"
 				/>
 				<View className="flex flex-col space-y-2">
-					<Text className="text-xl font-bold">Business Social Presence</Text>
+					<Text className="text-xl font-bold w-52">Business Social Presence</Text>
 					<View className="flex flex-col space-y-1">
 						<TouchableOpacity
 							className="text-sm flex flex-row space-x-2 justify-start items-center"

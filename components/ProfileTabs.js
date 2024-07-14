@@ -1,9 +1,15 @@
-import React, { useState, useCallback } from "react";
-import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
+import React, { useState, useCallback, useMemo } from "react";
+import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import ReviewTab from "./ReviewTab";
 import HomeProfileFeed from "./HomeProfileFeed";
 import { Entypo } from "@expo/vector-icons";
 import PostModal from "./PostModal";
+
+const TABS = [
+  { tab: "Home", icon: "home" },
+  { tab: "Feed", icon: "grid" },
+  { tab: "Reviews", icon: "star" },
+];
 
 const ProfileTabs = ({ user, post }) => {
   const [activeTab, setActiveTab] = useState("Home");
@@ -20,83 +26,90 @@ const ProfileTabs = ({ user, post }) => {
     setPostData(null);
   }, []);
 
-  const tabs = [
-    { tab: "Home", icon: "home" },
-    { tab: "Feed", icon: "grid" },
-    { tab: "Ratings & Reviews", icon: "star" },
-  ];
+  const sortedPosts = useMemo(
+    () =>
+      post
+        ? [...post].sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          )
+        : [],
+    [post]
+  );
+
+  const renderFeed = useCallback(
+    () => (
+      <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+        {sortedPosts.map((item, index) => (
+          <TouchableOpacity
+            key={item.id || index}
+            style={{ width: "33.33%", aspectRatio: 1, padding: 1 }}
+            onPress={() => onPostPress(item)}
+          >
+            <Image
+              source={{ uri: item?.imageUrl }}
+              style={{ width: "100%", height: "100%", borderRadius: 4 }}
+              resizeMode="cover"
+            />
+          </TouchableOpacity>
+        ))}
+        {sortedPosts.length === 0 && <Text>No posts available</Text>}
+      </View>
+    ),
+    [sortedPosts, onPostPress]
+  );
 
   const renderTabContent = useCallback(() => {
+    if (!user) return null;
     switch (activeTab) {
       case "Home":
         return (
           <HomeProfileFeed
-            businessDetails={user?.businessDetails}
-            contactDetails={user?.contactDetails}
-            socials={user?.contactDetails?.socials}
+            businessDetails={user.businessDetails || {}}
+            contactDetails={user.contactDetails || {}}
+            socials={user.contactDetails?.socials || {}}
           />
         );
       case "Feed":
-        const sortedPosts = [...post].sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        );
-        return (
-          <FlatList
-            data={sortedPosts}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                className="w-[33.33%] aspect-square p-1"
-                onPress={() => onPostPress(item)}
-              >
-                <Image
-                  source={{ uri: item?.imageUrl }}
-                  className="w-full h-full rounded-md"
-                  resizeMode="cover"
-                />
-              </TouchableOpacity>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-            numColumns={3}
-            ListEmptyComponent={<Text>No posts available</Text>}
-          />
-        );
-      case "Ratings & Reviews":
-        return <ReviewTab reviews={user?.ratings} user={user} />;
+        return renderFeed();
+      case "Reviews": // Adjusted to match TABS array
+        return <ReviewTab reviews={user.ratings || []} user={user} />;
       default:
         return null;
     }
-  }, [activeTab, user, post, onPostPress]);
-
-  const renderItem = useCallback(() => {
-    return (
-      <View style={{ flex: 1 }}>
-        {renderTabContent()}
-        <PostModal
-          onClose={onClose}
-          isVisible={isModalVisible}
-          data={postData}
-          user={user}
-        />
-      </View>
-    );
-  }, [activeTab, isModalVisible, postData, onClose]);
+  }, [activeTab, user, renderFeed]);
 
   const renderHeader = useCallback(
     () => (
-      <View className="flex-row justify-around border-b border-gray-200 mb-4 px-4 pt-4">
-        {tabs.map((tab) => (
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-around",
+          borderBottomWidth: 1,
+          borderBottomColor: "#ccc",
+          marginBottom: 16,
+          paddingHorizontal: 16,
+          paddingTop: 16,
+        }}
+      >
+        {TABS.map((tab) => (
           <TouchableOpacity
             key={tab.tab}
             onPress={() => setActiveTab(tab.tab)}
-            className={`py-2 pr-3 flex-row items-center gap-2 ${
-              activeTab === tab.tab ? "border-b-2 border-black" : ""
-            }`}
+            style={{
+              paddingVertical: 8,
+              paddingRight: 12,
+              flexDirection: "row",
+              alignItems: "center",
+              borderBottomWidth: activeTab === tab.tab ? 2 : 0,
+              borderBottomColor: activeTab === tab.tab ? "#000" : "transparent",
+            }}
           >
             <Entypo name={tab.icon} size={16} color="black" />
             <Text
-              className={`font-semibold ${
-                activeTab === tab.tab ? "text-dark" : "text-gray-600"
-              }`}
+              style={{
+                fontWeight: "600",
+                color: activeTab === tab.tab ? "#000" : "#999",
+              }}
             >
               {tab.tab}
             </Text>
@@ -107,14 +120,23 @@ const ProfileTabs = ({ user, post }) => {
     [activeTab]
   );
 
+  // Move the loading check after all hooks
+  // if (!user || !post) {
+  //   return <Text>Loading...</Text>;
+  // }
+
   return (
-    <FlatList
-      data={[{ key: "content" }]}
-      renderItem={renderItem}
-      ListHeaderComponent={renderHeader}
-      stickyHeaderIndices={[0]}
-    />
+    <View style={{ flex: 1 }}>
+      {renderHeader()}
+      <ScrollView>{renderTabContent()}</ScrollView>
+      <PostModal
+        onClose={onClose}
+        isVisible={isModalVisible}
+        data={postData}
+        user={user}
+      />
+    </View>
   );
 };
 
-export default ProfileTabs;
+export default React.memo(ProfileTabs);
