@@ -110,7 +110,7 @@ export default function DeletedFeedsScreen() {
 					<View className="flex-row flex-wrap justify-between">
 						{deletedFeedsData.map((item) => (
 							<DeletedFeedItem
-								key={item.id}
+								key={item?.imageUrl}
 								item={item}
 								onPress={openDeletedScreenModal}
 							/>
@@ -183,6 +183,7 @@ export default function DeletedFeedsScreen() {
 				onClose={() => setModalVisible(false)}
 				onDelete={handleOnDelete}
 				onRestore={handleOnRestore}
+				item={item}
 			/>
 		</>
 	);

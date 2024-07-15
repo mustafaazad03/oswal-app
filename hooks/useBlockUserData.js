@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import { userService } from "../api/user";
+
 const useBlockedUserData = (blockedAccounts) => {
 	if (
 		!blockedAccounts ||
@@ -10,25 +11,20 @@ const useBlockedUserData = (blockedAccounts) => {
 	}
 
 	const queries = blockedAccounts.map((account) => ({
-		queryKey: ["user", account.id],
-		queryFn: () => userService.getSingleUser(account.id),
+		queryKey: ["user", account],
+		queryFn: () => userService.getSingleUser(account),
 		enabled: !!account,
 		retry: 1,
 	}));
 
-	const {
-		data: results,
-		isLoading,
-		isError,
-		refetch,
-		error,
-	} = useQuery({ queries });
+	const results = useQueries({ queries });
 
-	if (!Array.isArray(results)) {
-		console.error("useQueries did not return an array", results);
-		return { data: [], isLoading: false, isError: false, error: null };
-	}
+	const isLoading = results.some((result) => result.isLoading);
+	const isError = results.some((result) => result.isError);
+	const error = results.find((result) => result.error)?.error || null;
 	const data = results.map((result) => result.data).filter(Boolean);
+
+	const refetch = () => results.forEach((result) => result.refetch());
 
 	return { data, isLoading, isError, error, refetch };
 };
