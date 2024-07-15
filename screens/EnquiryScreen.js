@@ -1,12 +1,12 @@
 import React from "react";
 import {
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  Image,
-  FlatList,
-  ActivityIndicator,
+	View,
+	Text,
+	SafeAreaView,
+	TouchableOpacity,
+	Image,
+	FlatList,
+	ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { styled } from "nativewind";
@@ -19,88 +19,88 @@ const StyledView = styled(View);
 const StyledText = styled(Text);
 
 const TableHeader = () => (
-  <StyledView className="flex-row bg-primary/80 p-3 gap-8 text-left">
-    <StyledText className=" font-bold text-dark">Sr. No.</StyledText>
-    <StyledText className=" font-bold text-dark">Username</StyledText>
-    <StyledText className="font-bold text-dark">Enquiry</StyledText>
-    <StyledText className="font-bold text-dark">Category</StyledText>
-    <StyledText className="font-bold text-dark"></StyledText>
-  </StyledView>
+	<StyledView className="flex-row bg-primary/80 p-3 gap-8 text-left">
+		<StyledText className=" font-bold text-dark">Sr. No.</StyledText>
+		<StyledText className=" font-bold text-dark">Username</StyledText>
+		<StyledText className="font-bold text-dark">Enquiry</StyledText>
+		<StyledText className="font-bold text-dark">Category</StyledText>
+		<StyledText className="font-bold text-dark"></StyledText>
+	</StyledView>
 );
 
 const TableRow = ({ item, index }) => {
-  const navigation = useNavigation();
-  return (
-    <StyledView
-      className={`flex-row p-3 space-x-7 ${
-        index % 2 === 0 ? "bg-primary/50" : "bg-white"
-      }`}
-    >
-      <StyledText className=" text-dark truncate">
-        {item?._id.substring(0, 4)}
-      </StyledText>
-      <StyledText className=" text-dark truncate">
-        {item?.fromUser.name}
-      </StyledText>
-      <StyledText className=" text-dark truncate">
-        {item?.description.substring(0, 10)}...{" "}
-      </StyledText>
-      <StyledText className=" text-dark truncate">{item?.category}</StyledText>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("EnquirySetting", { enquiry: item })}
-      >
-        <Image
-          source={require("../assets/arrow_back.png")}
-          className="w-6 h-6 mr-3"
-        />
-      </TouchableOpacity>
-    </StyledView>
-  );
+	const navigation = useNavigation();
+	return (
+		<StyledView
+			className={`flex-row p-3 space-x-7 ${
+				index % 2 === 0 ? "bg-primary/50" : "bg-white"
+			}`}
+		>
+			<StyledText className=" text-dark truncate">
+				{item?._id.substring(0, 4)}
+			</StyledText>
+			<StyledText className=" text-dark truncate">
+				{item?.fromUser.name}
+			</StyledText>
+			<StyledText className=" text-dark truncate">
+				{item?.description.substring(0, 10)}...{" "}
+			</StyledText>
+			<StyledText className=" text-dark truncate">{item?.category}</StyledText>
+			<TouchableOpacity
+				onPress={() => navigation.navigate("EnquirySetting", { enquiry: item })}
+			>
+				<Image
+					source={require("../assets/arrow_back.png")}
+					className="w-6 h-6 mr-3"
+				/>
+			</TouchableOpacity>
+		</StyledView>
+	);
 };
 export default function EnquiriesScreen() {
-  const navigation = useNavigation();
-  const { user } = useAuth();
+	const navigation = useNavigation();
+	const { user } = useAuth();
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["enquiries", user?.userId],
-    queryFn: () => enquiryService.getEnquiryForUser(user?.userId),
-    enabled: true,
-    retry: 1,
-  });
+	const { data, isLoading } = useQuery({
+		queryKey: ["enquiries", user?.userId],
+		queryFn: () => enquiryService.getEnquiryForUser(user?.userId),
+		enabled: !!user?.userId,
+		retry: 1,
+	});
 
-  if (isLoading) {
-    return (
-      <SafeAreaView className="flex-1 justify-center items-center bg-white">
-        <ActivityIndicator size="large" color="#FFD1DC" />
-      </SafeAreaView>
-    );
-  }
+	if (isLoading) {
+		return (
+			<SafeAreaView className="flex-1 justify-center items-center bg-white">
+				<ActivityIndicator size="large" color="#FFD1DC" />
+			</SafeAreaView>
+		);
+	}
 
-  return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="bg-pink-200 p-4 flex-row items-center pt-8">
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image
-            source={require("../assets/arrow_back.png")}
-            className="w-6 h-6 mr-3"
-          />
-        </TouchableOpacity>
-        <Text className="text-xl font-bold">Enquiries</Text>
-      </View>
+	return (
+		<SafeAreaView className="flex-1 bg-white">
+			<View className="bg-pink-200 p-4 flex-row items-center pt-8">
+				<TouchableOpacity onPress={() => navigation.goBack()}>
+					<Image
+						source={require("../assets/arrow_back.png")}
+						className="w-6 h-6 mr-3"
+					/>
+				</TouchableOpacity>
+				<Text className="text-xl font-bold">Enquiries</Text>
+			</View>
 
-      <StyledView className="overflow-hidden flex-1">
-        <FlatList
-          data={data}
-          renderItem={({ item, index }) => (
-            <TableRow item={item} index={index} />
-          )}
-          keyExtractor={(item) => item?._id}
-          ListHeaderComponent={TableHeader}
-          stickyHeaderIndices={[0]}
-        />
-      </StyledView>
+			<StyledView className="overflow-hidden flex-1">
+				<FlatList
+					data={data}
+					renderItem={({ item, index }) => (
+						<TableRow item={item} index={index} />
+					)}
+					keyExtractor={(item) => item?._id}
+					ListHeaderComponent={TableHeader}
+					stickyHeaderIndices={[0]}
+				/>
+			</StyledView>
 
-      <BottomNavigation notify={false} />
-    </SafeAreaView>
-  );
+			<BottomNavigation notify={false} />
+		</SafeAreaView>
+	);
 }

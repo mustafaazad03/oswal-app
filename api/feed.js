@@ -90,4 +90,13 @@ export const postService = {
 			throw error;
 		}
 	},
+	createReport: async (reportData) => {
+		try {
+			const response = await apiClient.post(`${API_URL}/reports`, reportData);
+			return response.data;
+		} catch (error) {
+			console.error("Error creating report:", error);
+			throw error;
+		}
+	},
 };
