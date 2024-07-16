@@ -67,6 +67,7 @@ export default function BottomNavigation({ notify }) {
             route.name == "AccountPrivacy" ||
             route.name === "DeactivationDeletion" ||
             route.name == "EnquiriesSetting" ||
+            route.name == "ExploreSetting" ||
             route.name == "NotificationSetting" ||
             route.name == "PasswordSecurity"
               ? "bg-primary "

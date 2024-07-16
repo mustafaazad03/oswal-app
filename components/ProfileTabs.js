@@ -103,8 +103,14 @@ const ProfileTabs = ({ user, post }) => {
               borderBottomWidth: activeTab === tab.tab ? 2 : 0,
               borderBottomColor: activeTab === tab.tab ? "#000" : "transparent",
             }}
+            className="space-x-1"
           >
-            <Entypo name={tab.icon} size={16} color="black" />
+            <Entypo
+              name={tab.icon}
+              size={16}
+              color={activeTab === tab.tab ? "#000" : "#ccc"}
+            />
+
             <Text
               style={{
                 fontWeight: "600",
