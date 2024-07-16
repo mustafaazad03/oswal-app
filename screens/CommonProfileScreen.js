@@ -108,7 +108,7 @@ export default function CommonProfileScreen() {
 	return (
 		<SafeAreaView className="flex-1 bg-white">
 			<View className="flex-row justify-between items-center p-4 bg-primary pt-8">
-				<Image source={require("../assets/icon.png")} className="w-10 h-10" />
+				<Image source={require("../assets/icon.png")} className="w-10 h-10 bg-white rounded-full" />
 				<Text className="text-lg font-bold">Freathers</Text>
 				<TouchableOpacity onPress={() => navigation.navigate("Setting")}>
 					<Image

@@ -190,7 +190,7 @@ export default function ContactDetailSettingScreen() {
           placeholder="Business E-mail"
           className="border border-primary p-3 rounded-lg mb-4"
           value={authUser?.email}
-          editable={false}
+          
           keyboardType="email-address"
         />
 

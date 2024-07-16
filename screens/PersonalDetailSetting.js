@@ -35,10 +35,9 @@ export default function ProfileDetailsSettingScreen() {
   const [profileImage, setProfileImage] = useState(
     authUser?.profilePic || null
   );
-
   const updateUserMutation = useMutation({
     mutationFn: (updateData) =>
-      userService.updateUser(authUser?.userId, updateData),
+      userService.updateUser(authUser?._id, updateData),
     onSuccess: () => {
       Alert.alert("Success", "Profile details updated successfully");
       navigation.goBack();
@@ -73,15 +72,14 @@ export default function ProfileDetailsSettingScreen() {
 
   const handleSubmit = async () => {
     const updateData = {
+      profilePic: profileImage,
       name: formData.name,
-      phone: formData.mobile,
+      phone: Number(formData.mobile),
       email: formData.email,
       gender: formData.gender,
       dob: formData.dob.toISOString(),
       bio: formData.bio,
-      profilePic: profileImage,
     };
-
     updateUserMutation.mutate(updateData);
   };
 
@@ -153,14 +151,20 @@ export default function ProfileDetailsSettingScreen() {
           onChangeText={(text) => setFormData({ ...formData, mobile: text })}
           keyboardType="phone-pad"
         />
-        <TextInput
-          placeholder="E-mail"
-          className="border border-primary p-3 rounded-lg mb-4"
-          value={formData.email}
-          onChangeText={(text) => setFormData({ ...formData, email: text })}
-          keyboardType="email-address"
-        />
-
+        <View className="flex flex-col space-y-1">
+          <Text className="text-gray-300 my-2">
+            Email cannot be changed because it is your unique identifier on
+            platform
+          </Text>
+          <TextInput
+            placeholder="E-mail"
+            className="border border-primary p-3 rounded-lg mb-4"
+            value={formData.email}
+            onChangeText={(text) => setFormData({ ...formData, email: text })}
+            keyboardType="email-address"
+            editable={false}
+          />
+        </View>
         <TouchableOpacity
           className="border border-primary p-3 rounded-lg mb-4"
           onPress={() => setShowGenderPicker(true)}
@@ -193,7 +197,8 @@ export default function ProfileDetailsSettingScreen() {
         )}
         <TextInput
           placeholder="Bio"
-          className="border border-primary px-3 py-1 rounded-lg mb-8 h-32 text-s flex flex-row justify-start items-start"
+          className="border border-primary px-3 py-1  rounded-lg mb-8 h-32 text-sm flex flex-row justify-start items-start"
+          style={{ textAlignVertical: "top", paddingTop: 8, lineHeight: 20 }}
           value={formData.bio}
           onChangeText={(text) => setFormData({ ...formData, bio: text })}
           multiline

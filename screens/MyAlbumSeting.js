@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -19,10 +19,14 @@ import { Ionicons } from "@expo/vector-icons";
 
 export default function MyAlbumScreen() {
   const navigation = useNavigation();
-  const { user: authUser } = useAuth();
-  const [selectedImages, setSelectedImages] = useState(
-    authUser?.album?.map((item) => item.url) || []
-  );
+  const { user: authUser, fullUser } = useAuth();
+  const [selectedImages, setSelectedImages] = useState([]);
+
+  useEffect(() => {
+    if (fullUser?.album) {
+      setSelectedImages(fullUser.album.map((item) => item.url));
+    }
+  }, [fullUser]);
 
   const updateUserMutation = useMutation({
     mutationFn: (updateData) =>
@@ -37,7 +41,7 @@ export default function MyAlbumScreen() {
     },
   });
 
-  const handleImagePicker = async () => {
+  const handleImagePicker = async (index) => {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -50,15 +54,15 @@ export default function MyAlbumScreen() {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       aspect: [1, 1],
       quality: 1,
-      allowsMultipleSelection: true,
-      selectionLimit: 10,
     });
 
     if (!result.canceled) {
-      const newImages = result.assets.map((asset) => asset.uri);
-      setSelectedImages((prevImages) =>
-        [...prevImages, ...newImages].slice(0, 10)
-      );
+      const newImageUri = result.assets[0].uri;
+      setSelectedImages((prevImages) => {
+        const updatedImages = [...prevImages];
+        updatedImages[index] = newImageUri;
+        return updatedImages;
+      });
     }
   };
 
@@ -100,18 +104,18 @@ export default function MyAlbumScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView className=" w-full p-4">
+      <ScrollView className="w-full p-4">
         <Text className="text-2xl font-bold mb-2">Create Album</Text>
         <Text className="text-sm text-gray-500 mb-4">
           You can upload up to 10 photos/videos.
         </Text>
 
-        <View className="flex-row flex-wrap justify-between h-[80vh]">
+        <View className="flex-row flex-wrap justify-between h-[80%]">
           {[...Array(10)].map((_, index) => (
             <TouchableOpacity
               key={index}
-              className="w-[45%] h-fit aspect-square mb-4 border-2 border-primary rounded-lg flex items-center justify-center relative"
-              onPress={selectedImages[index] ? null : handleImagePicker}
+              className="w-[45%] h-[45%] aspect-square mb-4 border-2 border-primary rounded-lg flex items-center justify-center relative"
+              onPress={() => handleImagePicker(index)}
             >
               {selectedImages[index] ? (
                 <>
@@ -120,7 +124,7 @@ export default function MyAlbumScreen() {
                     className="w-full h-full rounded-lg"
                   />
                   <TouchableOpacity
-                    className="absolute top-1 right-1 bg-red-500 rounded-full p-1"
+                    className="absolute top-1 right-1 bg-red-400 rounded-full px-2 py-1"
                     onPress={() => {
                       setSelectedImages((prevImages) =>
                         prevImages.filter((_, i) => i !== index)
