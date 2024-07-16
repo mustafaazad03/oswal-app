@@ -2,9 +2,14 @@ import React from "react";
 import { SafeAreaView, Text, TouchableOpacity } from "react-native";
 import Header from "../components/Header";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function AuthScreen() {
 	const navigation = useNavigation();
+	const token = AsyncStorage.getItem("auth");
+	if (token !== null && token !== undefined) {
+		navigation.replace("Home");
+	}
 	return (
 		<SafeAreaView className=" bg-white h-screen px-4">
 			<Header />
