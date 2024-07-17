@@ -42,7 +42,7 @@ export default function AccountPrivacyScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white ">
       <View className="bg-pink-200 p-4 flex-row items-center pt-8">
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={20} color="black" />

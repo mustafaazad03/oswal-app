@@ -1,8 +1,10 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import { Entypo } from "@expo/vector-icons";
+import { useColorScheme } from "nativewind";
 
 const SingleReview = ({ review }) => {
+  const { colorScheme } = useColorScheme();
   return (
     <View className="flex flex-col space-y-3 py-2">
       <View className="flex flex-row justify-between items-center">
@@ -16,18 +18,26 @@ const SingleReview = ({ review }) => {
             />
           )}
           <View className="flex flex-col ">
-            <Text className="font-bold text-base">{review?.user?.name}</Text>
-            <Text className="font-light text-xs">
+            <Text className="font-bold text-base dark:text-white">
+              {review?.user?.name}
+            </Text>
+            <Text className="font-light text-xs dark:text-white">
               @{review?.user?.username}
             </Text>
           </View>
         </View>
         <TouchableOpacity>
-          <Entypo name="dots-three-vertical" size={12} color="black" />
+          <Entypo
+            name="dots-three-vertical"
+            size={12}
+            color={colorScheme === "dark" ? "white" : "black"}
+          />
         </TouchableOpacity>
       </View>
-      <Text>{review?.review}</Text>
-      <Text>{new Date(review?.timestamp).toLocaleDateString()}</Text>
+      <Text className="dark:text-white">{review?.review}</Text>
+      <Text className="dark:text-white">
+        {new Date(review?.timestamp).toLocaleDateString()}
+      </Text>
     </View>
   );
 };

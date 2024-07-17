@@ -6,18 +6,24 @@ import { Ionicons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { Octicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useColorScheme } from "nativewind";
 export default function BottomNavigation({ notify }) {
   const navigation = useNavigation();
   const route = useRoute();
+  const { colorScheme } = useColorScheme();
   return (
-    <View className="flex-row justify-around items-center p-4 py-2 border-t border-gray-300 bg-[#FCF2F4]">
+    <View className="flex-row justify-around items-center p-4 py-2 border-t border-gray-300 bg-[#FCF2F4] dark:bg-[#040D12]">
       <TouchableOpacity
         className={`rounded-full p-3 z-40 ${
           route.name == "Home" ? "bg-primary " : ""
         }`}
         onPress={() => navigation.navigate("Home")}
       >
-        <Octicons name="home" size={18} color="black" />
+        <Octicons
+          name="home"
+          size={18}
+          color={colorScheme === "dark" ? "white" : "black"}
+        />
       </TouchableOpacity>
       <TouchableOpacity
         className={`rounded-full p-3 z-40 ${
@@ -25,7 +31,11 @@ export default function BottomNavigation({ notify }) {
         }`}
         onPress={() => navigation.navigate("Search")}
       >
-        <Ionicons name="search" size={18} color="black" />
+        <Ionicons
+          name="search"
+          size={18}
+          color={colorScheme === "dark" ? "white" : "black"}
+        />
       </TouchableOpacity>
       <ExpandableButton
         onRaiseEnquiry={() => {
@@ -48,7 +58,11 @@ export default function BottomNavigation({ notify }) {
         }`}
         onPress={() => navigation.navigate("Info")}
       >
-        <Feather name="info" size={18} color="black" />
+        <Feather
+          name="info"
+          size={18}
+          color={colorScheme === "dark" ? "white" : "black"}
+        />
       </TouchableOpacity>
       {notify ? (
         <TouchableOpacity
@@ -57,7 +71,11 @@ export default function BottomNavigation({ notify }) {
           }`}
           onPress={() => navigation.navigate("NotificationUser")}
         >
-          <MaterialIcons name="notifications-none" size={18} color="black" />
+          <MaterialIcons
+            name="notifications-none"
+            size={18}
+            color={colorScheme === "dark" ? "white" : "black"}
+          />
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
@@ -75,7 +93,12 @@ export default function BottomNavigation({ notify }) {
           }`}
           onPress={() => navigation.navigate("Setting")}
         >
-          <Octicons name="person" size={18} color="black" />
+          <Octicons
+            name="person"
+            size={18}
+            color={colorScheme === "dark" ? "white" : "black"}
+          />
+          />
         </TouchableOpacity>
       )}
     </View>

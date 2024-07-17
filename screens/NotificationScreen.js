@@ -42,7 +42,7 @@ export default function NotificationScreen() {
         className="w-12 h-12 rounded-full mr-4"
       />
       <View className="flex-1">
-        <Text className="text-gray-600">{item.content}</Text>
+        <Text className="text-gray-600 dark:text-white">{item.content}</Text>
       </View>
       <Text className="text-xs text-gray-400">
         {convertISODateToNormal(item.createdAt)}
@@ -67,7 +67,7 @@ export default function NotificationScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#222831]">
       <View className="flex-row justify-between items-center p-4 bg-primary pt-8">
         <Image
           source={require("../assets/icon.png")}
@@ -78,7 +78,7 @@ export default function NotificationScreen() {
           <Entypo name="dots-three-vertical" size={16} color="black" />
         </TouchableOpacity>
       </View>
-      <Text className="text-2xl font-bold p-4">Notifications</Text>
+      <Text className="text-2xl font-bold p-4 dark:text-white">Notifications</Text>
       <FlatList
         data={notifications}
         renderItem={renderNotificationItem}

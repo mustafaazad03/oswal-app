@@ -20,13 +20,14 @@ import BottomModal from "../components/BottomModal";
 import ProfileTabs from "../components/ProfileTabs";
 import { userService } from "../api/user";
 import { useAuth } from "../context/AuthContext";
+import { useColorScheme } from "nativewind";
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const queryClient = useQueryClient();
   const { user: authUser } = useAuth();
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  const { colorScheme } = useColorScheme();
   const toggleModal = () => {
     setIsModalVisible((prev) => !prev);
   };
@@ -110,7 +111,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white dark:bg-gray-600 ">
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#222831]">
       <View className="flex-row justify-between items-center p-4 bg-primary pt-8">
         <Image
           source={require("../assets/icon.png")}
@@ -134,19 +135,23 @@ export default function ProfileScreen() {
             />
             <View className="flex flex-row justify-evenly items-center space-x-5 flex-1">
               <View className="items-center">
-                <Text className="font-bold text-2xl">
+                <Text className="font-bold text-2xl dark:text-white">
                   {user?.followers?.length}
                 </Text>
-                <Text className="text-gray-600">followers</Text>
+                <Text className="text-gray-600 dark:text-gray-300">
+                  followers
+                </Text>
               </View>
               <View className="items-center">
-                <Text className="font-bold text-2xl">
+                <Text className="font-bold text-2xl dark:text-white">
                   {user?.followings?.length}
                 </Text>
-                <Text className="text-gray-600">following</Text>
+                <Text className="text-gray-600 dark:text-gray-300">
+                  following
+                </Text>
               </View>
               <View className="items-center">
-                <Text className="font-bold text-2xl">
+                <Text className="font-bold text-2xl dark:text-white">
                   {user?.ratings.length > 0
                     ? (
                         user.ratings.reduce(
@@ -157,45 +162,57 @@ export default function ProfileScreen() {
                     : "0.0"}
                   ★
                 </Text>
-                <Text className="text-gray-600">rating</Text>
+                <Text className="text-gray-600 dark:text-gray-300">rating</Text>
               </View>
             </View>
           </View>
 
           <View className="flex-col justify-between mt-2">
-            <Text className="text-lg font-bold">{user?.name}</Text>
-            <Text className="text-gray-600">@{user?.username}</Text>
+            <Text className="text-lg font-bold dark:text-white">
+              {user?.name}
+            </Text>
+            <Text className="text-gray-600 dark:text-gray-300">
+              @{user?.username}
+            </Text>
           </View>
 
-          <Text className="mt-4 text-gray-600">{user?.bio}</Text>
+          <Text className="mt-4 text-gray-600 dark:text-gray-300">
+            {user?.bio}
+          </Text>
 
           <View className="mt-4 flex-1 flex flex-row justify-center items-center space-x-2">
             <TouchableOpacity
               className="bg-[#FFD1DC] px-4 py-2 rounded-xl flex-1 border-primary/90 border"
               onPress={handleEditProfile}
             >
-              <Text className="font-semibold text-base text-center ">
+              <Text className="font-semibold text-base text-center">
                 Edit Profile
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              className="border border-black px-4 py-2 rounded-xl flex-1"
+              className="border border-black dark:border-white px-4 py-2 rounded-xl flex-1"
               onPress={() => handleShare(user?._id)}
             >
-              <Text className="font-semibold text-base text-center">Share</Text>
+              <Text className="font-semibold text-base text-center dark:text-white">
+                Share
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               className="border border-primary/60 px-2 py-2 rounded-xl"
               onPress={toggleModal}
             >
               <Text className="font-semibold">
-                <Entypo name="dots-three-vertical" size={18} color="black" />
+                <Entypo
+                  name="dots-three-vertical"
+                  size={18}
+                  color={colorScheme === "light" ? "black" : "white"}
+                />
               </Text>
             </TouchableOpacity>
           </View>
 
           {/* Contact information */}
-          <View className="mt-4 bg-[#FFD1DC]/60 p-4 flex flex-col space-y-3 rounded-lg">
+          <View className="mt-4 bg-[#FFD1DC]/60 dark:bg-[#FFD1DC] p-4 flex flex-col space-y-3 rounded-lg">
             <Text className="font-bold text-base">Contact business at:</Text>
             <View className="text-gray-800 flex flex-row justify-start items-center space-x-2">
               <Ionicons name="person-sharp" size={18} color="black" />

@@ -47,7 +47,7 @@ export default function FeedScreen() {
   const [selectedPost, setSelectedPost] = useState(null);
   const [followingUsers, setFollowingUsers] = useState(new Set());
   const [blockedUsers, setBlockedUsers] = useState(new Set());
-
+  const { colorScheme } = useColorScheme();
   useEffect(() => {
     if (fullUser) {
       setFollowingUsers(new Set(fullUser.followings));
@@ -418,7 +418,7 @@ export default function FeedScreen() {
         );
       };
       return (
-        <View className="mb-4 mx-3">
+        <View className="mb-4 mx-3 ">
           <View className="flex-row items-center p-4 px-0 justify-between">
             <TouchableOpacity
               onPress={() =>
@@ -431,15 +431,21 @@ export default function FeedScreen() {
                   className="w-10 h-10 rounded-full mr-2 border border-primary"
                 />
                 <View>
-                  <Text className="font-bold">{item.user.name}</Text>
-                  <Text className="text-gray-950 dark:text-gray-500">
+                  <Text className="font-bold dark:text-white">
+                    {item.user.name}
+                  </Text>
+                  <Text className="text-gray-950 dark:text-gray-300">
                     @{item.user.username}
                   </Text>
                 </View>
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => handleOptionsPress(item)}>
-              <Entypo name="dots-three-vertical" size={16} color="black" />
+              <Entypo
+                name="dots-three-vertical"
+                size={16}
+                color={colorScheme === "dark" ? "white" : "black"}
+              />
             </TouchableOpacity>
           </View>
           <View className="relative">
@@ -474,18 +480,30 @@ export default function FeedScreen() {
                 {likedPosts.has(item._id) ? (
                   <Feather name="thumbs-up" size={20} color="pink" />
                 ) : (
-                  <Feather name="thumbs-up" size={20} color="black" />
+                  <Feather
+                    name="thumbs-up"
+                    size={20}
+                    color={colorScheme === "dark" ? "white" : "black"}
+                  />
                 )}
               </TouchableOpacity>
               <TouchableOpacity onPress={() => handleShare(item._id)}>
-                <Octicons name="paper-airplane" size={20} color="black" />
+                <Octicons
+                  name="paper-airplane"
+                  size={20}
+                  color={colorScheme === "dark" ? "white" : "black"}
+                />
               </TouchableOpacity>
             </View>
             <View className="flex-row items-center space-x-4">
               <TouchableOpacity
                 onPress={() => handleDownloadImage(item.imageUrl)}
               >
-                <AntDesign name="download" size={20} color="black" />
+                <AntDesign
+                  name="download"
+                  size={20}
+                  color={colorScheme === "dark" ? "white" : "black"}
+                />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() =>
@@ -494,7 +512,11 @@ export default function FeedScreen() {
                   )
                 }
               >
-                <FontAwesome name="whatsapp" size={20} color="black" />
+                <FontAwesome
+                  name="whatsapp"
+                  size={20}
+                  color={colorScheme === "dark" ? "white" : "black"}
+                />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() =>
@@ -503,16 +525,22 @@ export default function FeedScreen() {
                   )
                 }
               >
-                <Feather name="phone" size={20} color="black" />
+                <Feather
+                  name="phone"
+                  size={20}
+                  color={colorScheme === "dark" ? "white" : "black"}
+                />
               </TouchableOpacity>
             </View>
           </View>
           <View className="p-2">
-            <Text className="text-xs">
+            <Text className="text-xs dark:text-white">
               Liked by{" "}
-              <Text className="font-semibold">{item.likes.length} people</Text>
+              <Text className="font-semibold dark:text-white">
+                {item.likes.length} people
+              </Text>
             </Text>
-            <Text className="font-extrabold">
+            <Text className="font-extrabold dark:text-white">
               {item.user.name}{" "}
               <Text className="font-normal">{item.caption}</Text>
             </Text>
@@ -568,7 +596,7 @@ export default function FeedScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#222831]">
       <FlatList
         data={filteredPosts}
         renderItem={renderItem}

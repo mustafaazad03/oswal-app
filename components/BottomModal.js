@@ -12,7 +12,8 @@ import ReportProblemModal from "./reportProblemModal";
 import { useColorScheme } from "nativewind";
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { logout } from "../api/auth";
-
+import { Feather } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 const BottomModal = ({ isVisible, onClose }) => {
   const navigation = useNavigation();
   const { colorScheme, toggleColorScheme } = useColorScheme();
@@ -55,9 +56,10 @@ const BottomModal = ({ isVisible, onClose }) => {
         className="flex-row items-center space-x-3 w-full"
         onPress={() => navigation.navigate("EditProfile")}
       >
-        <Image
-          source={require("../assets/Profile/settings.png")}
-          className="w-6 h-6"
+        <Feather
+          name="settings"
+          size={22}
+          color={colorScheme === "dark" ? "white" : "black"}
         />
         <Text className="text-sm font-medium text-dark dark:text-white">
           Settings
@@ -67,9 +69,10 @@ const BottomModal = ({ isVisible, onClose }) => {
         className="flex-row items-center space-x-3 w-full"
         onPress={() => navigation.navigate("SavedPost")}
       >
-        <Image
-          source={require("../assets/Profile/bookmark.png")}
-          className="w-6 h-6"
+        <Feather
+          name="bookmark"
+          size={22}
+          color={colorScheme === "dark" ? "white" : "black"}
         />
         <Text className="text-sm font-medium text-dark dark:text-white">
           Saved
@@ -79,34 +82,39 @@ const BottomModal = ({ isVisible, onClose }) => {
         className="flex-row items-center space-x-3 w-full"
         onPress={toggleColorScheme}
       >
-        <Image
-          source={require("../assets/Profile/contrast.png")}
-          className="w-6 h-6"
+        <MaterialIcons
+          name="dark-mode"
+          size={22}
+          color={colorScheme === "dark" ? "white" : "black"}
         />
         <Text className="text-sm font-medium text-dark dark:text-white">
-          {colorScheme.toUpperCase()} mode
+          {colorScheme.toUpperCase() === "DARK" ? "Light" : "Dark"} mode
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
         className="flex-row items-center space-x-3 w-full"
         onPress={() => setReportModalVisible(true)}
       >
-        <Image
-          source={require("../assets/Profile/brightness_alert.png")}
-          className="w-6 h-6"
+        <MaterialIcons
+          name="report-gmailerrorred"
+          size={22}
+          color={colorScheme === "dark" ? "white" : "black"}
         />
         <Text className="text-sm font-medium text-dark dark:text-white">
           Report a problem
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
-        className="flex-row items-center space-x-3 w-full border-t border-t-black pt-4"
+        className="flex-row items-center space-x-3 w-full border-t border-t-black dark:border-t-white pt-4"
         onPress={onLogout}
       >
-        <Image
-          source={require("../assets/Profile/move_item.png")}
-          className="w-6 h-6"
-        />
+        <View className="rotate-180">
+          <MaterialIcons
+            name="logout"
+            size={22}
+            color={colorScheme === "dark" ? "white" : "black"}
+          />
+        </View>
         <Text
           className="text-sm font-medium text-dark dark:text-white"
           onPress={logout}

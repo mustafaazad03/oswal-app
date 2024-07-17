@@ -4,14 +4,15 @@ import ReviewTab from "./ReviewTab";
 import HomeProfileFeed from "./HomeProfileFeed";
 import { Entypo } from "@expo/vector-icons";
 import PostModal from "./PostModal";
+import { useColorScheme } from "nativewind";
 
 const TABS = [
   { tab: "Home", icon: "home" },
   { tab: "Feed", icon: "grid" },
   { tab: "Reviews", icon: "star" },
 ];
-
 const ProfileTabs = ({ user, post, isSelfUser }) => {
+  const { colorScheme } = useColorScheme();
   const [activeTab, setActiveTab] = useState("Home");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [postData, setPostData] = useState(null);
@@ -107,20 +108,36 @@ const ProfileTabs = ({ user, post, isSelfUser }) => {
               flexDirection: "row",
               alignItems: "center",
               borderBottomWidth: activeTab === tab.tab ? 2 : 0,
-              borderBottomColor: activeTab === tab.tab ? "#000" : "transparent",
+              borderBottomColor:
+                activeTab === tab.tab
+                  ? colorScheme === "dark"
+                    ? "#fff"
+                    : "#000"
+                  : "transparent",
             }}
             className="space-x-1"
           >
             <Entypo
               name={tab.icon}
               size={16}
-              color={activeTab === tab.tab ? "#000" : "#ccc"}
+              color={
+                activeTab === tab.tab
+                  ? colorScheme === "dark"
+                    ? "#fff"
+                    : "#000"
+                  : "#ccc"
+              }
             />
 
             <Text
               style={{
                 fontWeight: "600",
-                color: activeTab === tab.tab ? "#000" : "#999",
+                color:
+                  activeTab === tab.tab
+                    ? colorScheme === "dark"
+                      ? "#fff"
+                      : "#000"
+                    : "#999",
               }}
             >
               {tab.tab}

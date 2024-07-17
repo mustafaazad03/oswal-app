@@ -86,12 +86,18 @@ const ReviewTab = ({ user, reviews, isSelfUser }) => {
         </View>
       )}
       <View>
-        <Text className="font-bold text-xl">Ratings & Reviews</Text>
-        <Text className="font-light">Ratings and Reviews are Verified</Text>
+        <Text className="font-bold text-xl dark:text-white">
+          Ratings & Reviews
+        </Text>
+        <Text className="font-light dark:text-white">
+          Ratings and Reviews are Verified
+        </Text>
       </View>
       <View className="flex flex-row space-x-5 flex-1">
         <View className="items-center justify-center">
-          <Text className="text-5xl font-bold">{averageRating}</Text>
+          <Text className="text-5xl font-bold dark:text-white">
+            {averageRating}
+          </Text>
           <Text className="text-primary">{reviews?.length || 0} ratings</Text>
         </View>
         <View className="flex flex-1 justify-center">
@@ -104,7 +110,7 @@ const ReviewTab = ({ user, reviews, isSelfUser }) => {
                 marginVertical: 1,
               }}
             >
-              <Text>{5 - index}</Text>
+              <Text className="dark:text-white">{5 - index}</Text>
               <View className="flex-1 h-3 justify-center rounded-xl mx-2 overflow-hidden bg-gray-100 ">
                 <View
                   className="bg-primary"
@@ -117,7 +123,7 @@ const ReviewTab = ({ user, reviews, isSelfUser }) => {
                   ]}
                 />
               </View>
-              <Text>{count}</Text>
+              <Text className="dark:text-white">{count}</Text>
             </View>
           ))}
         </View>
