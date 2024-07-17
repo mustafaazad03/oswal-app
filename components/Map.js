@@ -1,4 +1,3 @@
-// components/MapComponent.js
 import React, { useState, useRef, useEffect } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import MapView, { Marker } from "react-native-maps";
@@ -16,13 +15,13 @@ export default function MapComponent({ onLocationSelect }) {
 				Alert.alert("Permission to access location was denied");
 				return;
 			}
+			handleGetCurrentLocation();
 		})();
 	}, []);
 
 	const handleMapPress = (event) => {
 		const { coordinate } = event.nativeEvent;
 		setSelectedLocation(coordinate);
-		onLocationSelect(coordinate);
 	};
 
 	const handleGetCurrentLocation = async () => {
@@ -53,14 +52,24 @@ export default function MapComponent({ onLocationSelect }) {
 		});
 	};
 
+	const handleSaveLocation = () => {
+		if (selectedLocation) {
+			const { latitude, longitude } = selectedLocation;
+			const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+			onLocationSelect({ coordinate: selectedLocation, url: googleMapsUrl });
+		} else {
+			Alert.alert("Error", "Please select a location first");
+		}
+	};
+
 	return (
 		<View className="flex-1">
 			<MapView
 				ref={mapRef}
 				className="w-full h-full"
 				initialRegion={{
-					latitude: 51.507351,
-					longitude: -0.127758,
+					latitude: 22.507351,
+					longitude: 75.8682,
 					latitudeDelta: 0.0922,
 					longitudeDelta: 0.0421,
 				}}
@@ -95,6 +104,12 @@ export default function MapComponent({ onLocationSelect }) {
 					</Text>
 					<Text>Latitude: {selectedLocation.latitude.toFixed(6)}</Text>
 					<Text>Longitude: {selectedLocation.longitude.toFixed(6)}</Text>
+					<TouchableOpacity
+						className="bg-green-500 p-2 rounded mt-2"
+						onPress={handleSaveLocation}
+					>
+						<Text className="text-white text-center">Save Location</Text>
+					</TouchableOpacity>
 				</View>
 			)}
 		</View>

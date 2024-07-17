@@ -15,6 +15,7 @@ import Button from "../components/Button";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext";
 import { userService } from "../api/user";
+import MapView, { Marker } from "react-native-maps";
 
 export default function BusinessDetailsScreen() {
 	const navigation = useNavigation();
@@ -30,6 +31,7 @@ export default function BusinessDetailsScreen() {
 		city: "",
 		state: "",
 		country: "",
+		googleLocation: null,
 	});
 	const { user: authUser } = useAuth();
 
@@ -49,6 +51,55 @@ export default function BusinessDetailsScreen() {
 
 	const handleInputChange = (field, value) => {
 		setFormData({ ...formData, [field]: value });
+	};
+
+	const handleAddGoogleLocation = () => {
+		navigation.navigate("Map", {
+			onLocationSelect: (coordinate) => {
+				const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${coordinate.latitude},${coordinate.longitude}`;
+				setFormData({ ...formData, googleLocation: googleMapsUrl });
+			},
+		});
+	};
+
+	const renderMap = () => {
+		if (!user?.businessDetails?.googleLocation) return null;
+
+		// Extract latitude and longitude from the Google Maps URL
+		const match = user.businessDetails.googleLocation.match(
+			/query=(-?\d+\.\d+),(-?\d+\.\d+)/
+		);
+		if (!match) return null;
+
+		const latitude = parseFloat(match[1]);
+		const longitude = parseFloat(match[2]);
+
+		return (
+			<View className="mt-4">
+				<Text className="font-bold text-lg mb-2">Business Location</Text>
+				<MapView
+					style={{ width: width - 32, height: 200, borderRadius: 10 }}
+					initialRegion={{
+						latitude,
+						longitude,
+						latitudeDelta: 0.01,
+						longitudeDelta: 0.01,
+					}}
+					pitchEnabled={false}
+					rotateEnabled={false}
+					scrollEnabled={false}
+					zoomEnabled={false}
+				>
+					<Marker coordinate={{ latitude, longitude }} />
+				</MapView>
+				<TouchableOpacity
+					className="mt-2 bg-blue-500 p-2 rounded"
+					onPress={() => Linking.openURL(user.businessDetails.googleLocation)}
+				>
+					<Text className="text-white text-center">Open in Google Maps</Text>
+				</TouchableOpacity>
+			</View>
+		);
 	};
 
 	const handleSubmit = () => {
@@ -165,12 +216,20 @@ export default function BusinessDetailsScreen() {
 
 				<TouchableOpacity
 					className="bg-pink-200 p-3 rounded-lg mb-4"
-					onPress={() => {
-						/* Implement Google Location picker */
-					}}
+					onPress={handleAddGoogleLocation}
 				>
-					<Text className="text-center">Add Google Location</Text>
+					<Text className="text-center">
+						{formData.googleLocation
+							? "Update Google Location"
+							: "Add Google Location"}
+					</Text>
 				</TouchableOpacity>
+
+				{formData.googleLocation && (
+					<Text className="mb-4">
+						Google Maps URL: {formData.googleLocation}
+					</Text>
+				)}
 
 				<TextInput
 					placeholder="Business Address*"
