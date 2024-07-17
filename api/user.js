@@ -188,7 +188,7 @@ export const userService = {
 	},
 	blockUser: async (username, blockedUsername) => {
 		try {
-			const response = await apiClient.post(
+			const response = await apiClient.put(
 				`${API_URL}/user/block/${username}`,
 				{ blockedUser: blockedUsername }
 			);
@@ -200,7 +200,7 @@ export const userService = {
 	},
 	unBlockUser: async (username, blockedUsername) => {
 		try {
-			const response = await apiClient.post(
+			const response = await apiClient.put(
 				`${API_URL}/user/unblock/${username}`,
 				{ blockedUser: blockedUsername }
 			);
