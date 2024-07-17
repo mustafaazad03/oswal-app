@@ -57,12 +57,6 @@ export const AuthProvider = ({ children }) => {
     retry: 1,
   });
 
-  useEffect(() => {
-    if (userData) {
-      setFullUser(userData);
-    }
-  }, [refetch, userData]);
-
   const login = async (userData, token) => {
     await setToken(token);
     setUser(userData);
@@ -74,14 +68,23 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     navigation.navigate("Auth");
   };
-
-	return (
-		<AuthContext.Provider
-			value={{ user, login, logout, loading, fullUser, setFullUser, setUser }}
-		>
-			{children}
-		</AuthContext.Provider>
-	);
+  if (isError) {
+    logout();
+  }
+  useEffect(() => {
+    if (userData) {
+      setFullUser(userData);
+    } else {
+      logout();
+    }
+  }, [refetch, userData]);
+  return (
+    <AuthContext.Provider
+      value={{ user, login, logout, loading, fullUser, setFullUser, setUser }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => useContext(AuthContext);
