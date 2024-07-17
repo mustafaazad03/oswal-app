@@ -214,12 +214,12 @@ export default function ParticularPostScreen() {
 								</View>
 							</View>
 						</TouchableOpacity>
-						<TouchableOpacity>
+						{/* <TouchableOpacity>
 							<Image
 								source={require("../assets/menu_icon.png")}
 								className="w-6 h-6"
 							/>
-						</TouchableOpacity>
+						</TouchableOpacity> */}
 					</View>
 					<Image
 						source={{ uri: post.imageUrl }}
