@@ -6,10 +6,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function AuthScreen() {
 	const navigation = useNavigation();
-	const token = AsyncStorage.getItem("auth");
-	if (token !== null && token !== undefined) {
-		navigation.replace("Home");
-	}
 	return (
 		<SafeAreaView className=" bg-white h-screen px-4">
 			<Header />

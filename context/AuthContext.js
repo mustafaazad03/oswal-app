@@ -63,10 +63,26 @@ export const AuthProvider = ({ children }) => {
 		}
 	}, [userRefetch, userData]);
 
-	const login = async (userData, token) => {
+	const login = async (token) => {
 		await setToken(token);
-		setUser(userData);
+		const decoded = JWT.decode(token, "kvnJHKUhi7y87syhkj");
+		setUser(decoded);
+		navigation.reset({
+			index: 0,
+			routes: [{ name: "Home" }],
+		});
 		navigation.navigate("Home");
+	};
+
+	const signUp = async (token) => {
+		await setToken(token);
+		const decoded = JWT.decode(token, "kvnJHKUhi7y87syhkj");
+		setUser(decoded);
+		navigation.reset({
+			index: 0,
+			routes: [{ name: "PersonalDetails" }],
+		});
+		navigation.navigate("PersonalDetails");
 	};
 
 	const logout = async () => {
@@ -86,6 +102,7 @@ export const AuthProvider = ({ children }) => {
 				setFullUser,
 				setUser,
 				userRefetch,
+				signUp,
 			}}
 		>
 			{children}

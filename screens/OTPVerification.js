@@ -9,6 +9,7 @@ import Button from "../components/Button";
 import { API_URL } from "../api/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setToken } from "../api/auth";
+import { useAuth } from "../context/AuthContext";
 
 const verifyOTP = async (formData) => {
 	const response = await axios.post(`${API_URL}/auth/register`, formData);
@@ -20,6 +21,7 @@ export default function OTPVerification() {
 	const route = useRoute();
 	const { email, username, password, otpData } = route.params;
 	const [otp, setOtp] = useState("");
+	const { signUp } = useAuth();
 
 	const mutation = useMutation({
 		mutationFn: verifyOTP,
@@ -32,7 +34,7 @@ export default function OTPVerification() {
 				// Handle successful registration (e.g., store token, navigate to home)
 				console.log("Registration successful");
 				// store token
-				setToken(data.jwtToken);
+				signUp(data.jwtToken);
 				navigation.navigate("PersonalDetails");
 			} else {
 				// Handle error (e.g., show an error message)
