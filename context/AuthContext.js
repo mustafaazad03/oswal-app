@@ -63,34 +63,51 @@ export const AuthProvider = ({ children }) => {
     }
   }, [userRefetch, userData]);
 
-  const login = async (userData, token) => {
-    await setToken(token);
-    await setUser(userData);
-    await navigation.navigate("Home");
-  };
+	const login = async (token) => {
+		await setToken(token);
+		const decoded = JWT.decode(token, "kvnJHKUhi7y87syhkj");
+		setUser(decoded);
+		navigation.reset({
+			index: 0,
+			routes: [{ name: "Home" }],
+		});
+		navigation.navigate("Home");
+	};
 
-  const logout = async () => {
-    await setToken(null);
-    setUser(null);
-    navigation.navigate("Auth");
-  };
+	const signUp = async (token) => {
+		await setToken(token);
+		const decoded = JWT.decode(token, "kvnJHKUhi7y87syhkj");
+		setUser(decoded);
+		navigation.reset({
+			index: 0,
+			routes: [{ name: "PersonalDetails" }],
+		});
+		navigation.navigate("PersonalDetails");
+	};
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        login,
-        logout,
-        loading,
-        fullUser,
-        setFullUser,
-        setUser,
-        userRefetch,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+	const logout = async () => {
+		await setToken(null);
+		setUser(null);
+		navigation.navigate("Auth");
+	};
+
+	return (
+		<AuthContext.Provider
+			value={{
+				user,
+				login,
+				logout,
+				loading,
+				fullUser,
+				setFullUser,
+				setUser,
+				userRefetch,
+				signUp,
+			}}
+		>
+			{children}
+		</AuthContext.Provider>
+	);
 };
 
 export const useAuth = () => useContext(AuthContext);
