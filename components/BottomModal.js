@@ -1,143 +1,142 @@
-import React, { useEffect, useRef, useState } from "react";
-import { logout } from "../api/auth";
-import {
-	View,
-	Text,
-	TouchableOpacity,
-	Animated,
-	Image,
-	PanResponder,
-} from "react-native";
+import React, {
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  useEffect,
+} from "react";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
+import ReportProblemModal from "./reportProblemModal";
+import { useColorScheme } from "nativewind";
+import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import { logout } from "../api/auth";
 
 const BottomModal = ({ isVisible, onClose }) => {
-	const navigation = useNavigation();
-	const slideAnim = useRef(new Animated.Value(0)).current;
-	const [modalHeight, setModalHeight] = useState(0);
-	const { setFullUser, setUser } = useAuth();
+  const navigation = useNavigation();
+  const { colorScheme, toggleColorScheme } = useColorScheme();
+  const { setFullUser, setUser, user } = useAuth();
+  const [reportModalVisible, setReportModalVisible] = useState(false);
 
-	const onLogout = () => {
-		onClose();
-		logout();
-		setFullUser(null);
-		setUser(null);
-		navigation.navigate("Login");
-	};
+  // ref
+  const bottomSheetRef = useRef(null);
+  // variables
+  const snapPoints = useMemo(() => ["35%"], []);
 
-	const panResponder = useRef(
-		PanResponder.create({
-			onStartShouldSetPanResponder: () => true,
-			onPanResponderMove: (_, gestureState) => {
-				if (gestureState.dy > 0) {
-					slideAnim.setValue(gestureState.dy);
-				}
-			},
-			onPanResponderRelease: (_, gestureState) => {
-				if (gestureState.dy > modalHeight / 3) {
-					onClose();
-				} else {
-					Animated.spring(slideAnim, {
-						toValue: 0,
-						useNativeDriver: true,
-					}).start();
-				}
-			},
-		})
-	).current;
+  // callbacks
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log("handleSheetChanges", index);
+  }, []);
 
-	useEffect(() => {
-		if (isVisible) {
-			Animated.spring(slideAnim, {
-				toValue: 0,
-				useNativeDriver: true,
-			}).start();
-		} else {
-			Animated.spring(slideAnim, {
-				toValue: modalHeight,
-				useNativeDriver: true,
-			}).start();
-		}
-	}, [isVisible]);
+  const renderBackdrop = useCallback(
+    (props) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+      />
+    ),
+    []
+  );
 
-	const translateY = slideAnim.interpolate({
-		inputRange: [0, modalHeight],
-		outputRange: [0, modalHeight],
-		extrapolate: "clamp",
-	});
+  const onLogout = () => {
+    onClose();
+    logout();
+    setFullUser(null);
+    setUser(null);
+    navigation.navigate("Login");
+  };
 
-	// close the modal when the user swipes down
-	useEffect(() => {
-		if (isVisible) {
-			Animated.spring(slideAnim, {
-				toValue: 0,
-				useNativeDriver: true,
-			}).start();
-		} else {
-			Animated.spring(slideAnim, {
-				toValue: modalHeight,
-				useNativeDriver: true,
-			}).start();
-		}
-	}, [isVisible]);
+  // Render the content of your bottom sheet
+  const renderContent = () => (
+    <View className="p-4 space-y-4 px-4 text-dark dark:text-white bg-white dark:bg-gray-800 font-medium  h-full">
+      <TouchableOpacity
+        className="flex-row items-center space-x-3 w-full"
+        onPress={() => navigation.navigate("EditProfile")}
+      >
+        <Image
+          source={require("../assets/Profile/settings.png")}
+          className="w-6 h-6"
+        />
+        <Text className="text-sm font-medium text-dark dark:text-white">
+          Settings
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        className="flex-row items-center space-x-3 w-full"
+        onPress={() => navigation.navigate("SavedPost")}
+      >
+        <Image
+          source={require("../assets/Profile/bookmark.png")}
+          className="w-6 h-6"
+        />
+        <Text className="text-sm font-medium text-dark dark:text-white">
+          Saved
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        className="flex-row items-center space-x-3 w-full"
+        onPress={toggleColorScheme}
+      >
+        <Image
+          source={require("../assets/Profile/contrast.png")}
+          className="w-6 h-6"
+        />
+        <Text className="text-sm font-medium text-dark dark:text-white">
+          {colorScheme.toUpperCase()} mode
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        className="flex-row items-center space-x-3 w-full"
+        onPress={() => setReportModalVisible(true)}
+      >
+        <Image
+          source={require("../assets/Profile/brightness_alert.png")}
+          className="w-6 h-6"
+        />
+        <Text className="text-sm font-medium text-dark dark:text-white">
+          Report a problem
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        className="flex-row items-center space-x-3 w-full border-t border-t-black pt-4"
+        onPress={onLogout}
+      >
+        <Image
+          source={require("../assets/Profile/move_item.png")}
+          className="w-6 h-6"
+        />
+        <Text
+          className="text-sm font-medium text-dark dark:text-white"
+          onPress={logout}
+        >
+          Log Out
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
 
-	return (
-		<Animated.View
-			className="absolute bottom-0 left-0 right-0 bg-primary rounded-t-3xl shadow-lg pt-4"
-			style={{
-				transform: [{ translateY }],
-				display: isVisible ? "flex" : "none",
-			}}
-			onLayout={(event) => setModalHeight(event.nativeEvent.layout.height)}
-			{...panResponder.panHandlers}
-		>
-			<View className="w-1/5 h-1 rounded-2xl bg-dark mx-auto mb-4"></View>
-			<View className="p-4 space-y-4 px-8 text-dark font-medium">
-				<TouchableOpacity className="flex-row items-center space-x-3 w-full">
-					<Image
-						source={require("../assets/Profile/settings.png")}
-						className="w-6 h-6"
-					/>
-					<Text className="text-sm font-medium text-dark">Settings</Text>
-				</TouchableOpacity>
-				<TouchableOpacity className="flex-row items-center space-x-3 w-full">
-					<Image
-						source={require("../assets/Profile/bookmark.png")}
-						className="w-6 h-6"
-					/>
-					<Text className="text-sm font-medium text-dark">Saved</Text>
-				</TouchableOpacity>
-				<TouchableOpacity className="flex-row items-center space-x-3 w-full">
-					<Image
-						source={require("../assets/Profile/contrast.png")}
-						className="w-6 h-6"
-					/>
-					<Text className="text-sm font-medium text-dark">Dark Mode</Text>
-				</TouchableOpacity>
-				<TouchableOpacity className="flex-row items-center space-x-3 w-full">
-					<Image
-						source={require("../assets/Profile/brightness_alert.png")}
-						className="w-6 h-6"
-					/>
-					<Text className="text-sm font-medium text-dark">
-						Report a problem
-					</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					className="flex-row items-center space-x-3 w-full border-t border-t-white pt-4"
-					onPress={onLogout}
-				>
-					<Image
-						source={require("../assets/Profile/move_item.png")}
-						className="w-6 h-6"
-					/>
-					<Text className="text-sm font-medium text-dark" onPress={logout}>
-						Log Out
-					</Text>
-				</TouchableOpacity>
-			</View>
-		</Animated.View>
-	);
+  return (
+    <>
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={isVisible ? 0 : -1}
+        snapPoints={snapPoints}
+        onChange={handleSheetChanges}
+        enablePanDownToClose
+        onClose={onClose}
+        backdropComponent={renderBackdrop}
+      >
+        {renderContent()}
+      </BottomSheet>
+      <ReportProblemModal
+        isVisible={reportModalVisible}
+        onClose={() => setReportModalVisible(false)}
+        userId={user?.userId}
+      />
+    </>
+  );
 };
 
 export default BottomModal;

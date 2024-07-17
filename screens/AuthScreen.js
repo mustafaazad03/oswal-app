@@ -2,6 +2,7 @@ import React from "react";
 import { SafeAreaView, Text, TouchableOpacity } from "react-native";
 import Header from "../components/Header";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function AuthScreen() {
 	const navigation = useNavigation();

@@ -1,4 +1,4 @@
-export const categories = {
+export const categoriesOptions = {
     engineer: ['Software Engineer', 'Mechanical Engineer', 'Civil Engineer', 'Electrical Engineer', 'Chemical Engineer', 'Aerospace Engineer'],
     doctor: ['Cardiologist', 'Dermatologist', 'Pediatrician', 'Neurologist', 'Radiologist', 'Oncologist'],
     musician: ['Singer', 'Guitarist', 'Pianist', 'Drummer', 'Violinist', 'DJ'],

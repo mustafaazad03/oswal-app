@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
     isLoading,
     isError,
     error,
-    refetch,
+    refetch: userRefetch,
   } = useQuery({
     queryKey: ["user", user?.username],
     queryFn: () => userService.getSingleUser(user?.userId),
@@ -61,23 +61,49 @@ export const AuthProvider = ({ children }) => {
     if (userData) {
       setFullUser(userData);
     }
-  }, [refetch, userData]);
+  }, [userRefetch, userData]);
 
-  const login = async (userData, token) => {
-    await setToken(token);
-    setUser(userData);
-    navigation.navigate("Home");
-  };
+	const login = async (token) => {
+		await setToken(token);
+		const decoded = JWT.decode(token, "kvnJHKUhi7y87syhkj");
+		setUser(decoded);
+		navigation.reset({
+			index: 0,
+			routes: [{ name: "Home" }],
+		});
+		navigation.navigate("Home");
+	};
 
-  const logout = async () => {
-    await setToken(null);
-    setUser(null);
-    navigation.navigate("Auth");
-  };
+	const signUp = async (token) => {
+		await setToken(token);
+		const decoded = JWT.decode(token, "kvnJHKUhi7y87syhkj");
+		setUser(decoded);
+		navigation.reset({
+			index: 0,
+			routes: [{ name: "PersonalDetails" }],
+		});
+		navigation.navigate("PersonalDetails");
+	};
+
+	const logout = async () => {
+		await setToken(null);
+		setUser(null);
+		navigation.navigate("Auth");
+	};
 
 	return (
 		<AuthContext.Provider
-			value={{ user, login, logout, loading, fullUser, setFullUser, setUser }}
+			value={{
+				user,
+				login,
+				logout,
+				loading,
+				fullUser,
+				setFullUser,
+				setUser,
+				userRefetch,
+				signUp,
+			}}
 		>
 			{children}
 		</AuthContext.Provider>

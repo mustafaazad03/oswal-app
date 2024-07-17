@@ -1,3 +1,4 @@
+import { logout } from "./auth";
 import apiClient, { API_URL } from "./client";
 
 export const userService = {
@@ -17,6 +18,7 @@ export const userService = {
       return response.data;
     } catch (error) {
       console.error("Error fetching single user:", error);
+      logout();
       throw error;
     }
   },
@@ -161,6 +163,52 @@ export const userService = {
       return response.data;
     } catch (error) {
       console.error("Error getting posts from user:", error);
+      throw error;
+    }
+  },
+  getUserNotifications: async (userId) => {
+    try {
+      const response = await apiClient.get(
+        `${API_URL}/notifications/user/${userId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error getting user notifications:", error);
+      throw error;
+    }
+  },
+  getBlockedUser: async (username) => {
+    try {
+      const response = await apiClient.get(
+        `${API_URL}/user/blocked/${username}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error getting blocked user:", error);
+      throw error;
+    }
+  },
+  blockUser: async (username, blockedUsername) => {
+    try {
+      const response = await apiClient.put(
+        `${API_URL}/user/block/${username}`,
+        { blockedUser: blockedUsername }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error blocking user:", error);
+      throw error;
+    }
+  },
+  unBlockUser: async (username, blockedUsername) => {
+    try {
+      const response = await apiClient.put(
+        `${API_URL}/user/unblock/${username}`,
+        { blockedUser: blockedUsername }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error unblocking user:", error);
       throw error;
     }
   },

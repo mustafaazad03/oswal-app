@@ -10,18 +10,21 @@ import {
 import { useNavigation, useRoute } from "@react-navigation/native";
 import ExpandableButton from "../components/ExtendeblePlusButton";
 import BottomNavigation from "../components/BottomNavigation";
-
+import { Ionicons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { Octicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 const SettingItem = ({ icon, title, onPress }) => (
 	<TouchableOpacity
-		className="flex-row items-center py-3 border-b border-gray-200"
+		className="flex-row items-center py-3 border-b border-gray-200 space-x-3"
 		onPress={onPress}
 	>
-		<Image source={icon} className="w-6 h-6 mr-3" />
+		<Text>{icon}</Text>
 		<Text className="flex-1">{title}</Text>
-		<Image
-			source={require("../assets/chevron_right.png")}
-			className="w-4 h-4"
-		/>
+		<Entypo name="chevron-right" size={16} color="black" />
 	</TouchableOpacity>
 );
 
@@ -31,94 +34,99 @@ export default function SettingsScreen() {
 
 	return (
 		<SafeAreaView className="flex-1 bg-white">
-			<View className="bg-[#FFD1DC] p-4 flex-row items-center">
+			<View className="flex-row justify-start space-x-3 items-center p-4 bg-primary pt-8">
 				<TouchableOpacity onPress={() => navigation.goBack()}>
-					<Image
-						source={require("../assets/arrow_back.png")}
-						className="w-6 h-6 mr-3"
-					/>
+					<Ionicons name="arrow-back-outline" size={20} color="black" />
 				</TouchableOpacity>
 				<Text className="text-xl font-bold">Settings</Text>
-				<TouchableOpacity className="ml-auto">
-					<Image
-						source={require("../assets/menu_icon.png")}
-						className="w-6 h-6"
-					/>
-				</TouchableOpacity>
 			</View>
 
 			<ScrollView className="flex-1 p-4">
 				<SettingItem
-					icon={require("../assets/Settings/account_circle.png")}
+					icon={
+						<Ionicons name="person-circle-outline" size={20} color="black" />
+					}
 					title="Edit Profile"
 					onPress={() => navigation.navigate("EditProfile")}
 				/>
 				<SettingItem
-					icon={require("../assets/Settings/travel_explore.png")}
+					icon={<MaterialIcons name="travel-explore" size={20} color="black" />}
 					title="Explore Feed"
 					onPress={() => {
 						navigation.navigate("ExploreSetting");
 					}}
 				/>
+				{/* <SettingItem
+          icon={<FontAwesome5 name="bell" size={20} color="black" />}
+          title="Notifications"
+          onPress={() => {
+            navigation.navigate("NotificationSetting");
+          }}
+        /> */}
 				<SettingItem
-					icon={require("../assets/Settings/notifications.png")}
-					title="Notifications"
-					onPress={() => {
-						navigation.navigate("NotificationSetting");
-					}}
-				/>
-				<SettingItem
-					icon={require("../assets/Settings/error.png")}
+					icon={<AntDesign name="exclamationcircleo" size={20} color="black" />}
 					title="Enquiries"
 					onPress={() => {
 						navigation.navigate("EnquiriesSetting");
 					}}
 				/>
 				<SettingItem
-					icon={require("../assets/Settings/encrypted.png")}
+					icon={<Octicons name="shield-lock" size={20} color="black" />}
 					title="Password & Security"
 					onPress={() => {
 						navigation.navigate("PasswordSecurity");
 					}}
 				/>
 				<SettingItem
-					icon={require("../assets/Settings/shield_person.png")}
+					icon={<MaterialIcons name="privacy-tip" size={20} color="black" />}
 					title="Account Privacy"
 					onPress={() => {
 						navigation.navigate("AccountPrivacy");
 					}}
 				/>
+				{/* <SettingItem
+          icon={
+            <Ionicons name="chatbox-ellipses-outline" size={20} color="black" />
+          }
+          title="Messages"
+          onPress={() => {}}
+        /> */}
 				<SettingItem
-					icon={require("../assets/Settings/comment.png")}
-					title="Messages"
-					onPress={() => {}}
-				/>
-				<SettingItem
-					icon={require("../assets/Settings/auto_delete.png")}
+					icon={
+						<MaterialCommunityIcons
+							name="delete-clock-outline"
+							size={20}
+							color="black"
+						/>
+					}
 					title="Deleted Feeds"
 					onPress={() => {
 						navigation.navigate("DeletedFeed");
 					}}
 				/>
 				<SettingItem
-					icon={require("../assets/Settings/block.png")}
+					icon={<MaterialIcons name="block" size={20} color="black" />}
 					title="Blocked Accounts"
 					onPress={() => {
 						navigation.navigate("BlockedAccounts");
 					}}
 				/>
 				<SettingItem
-					icon={require("../assets/Settings/person_remove.png")}
+					icon={
+						<Ionicons name="person-remove-outline" size={20} color="black" />
+					}
 					title="Deactivation & Deletion"
 					onPress={() => {
 						navigation.navigate("DeactivationDeletion");
 					}}
 				/>
-				<SettingItem
-					icon={require("../assets/Settings/workspace_premium.png")}
-					title="Premium"
-					onPress={() => {}}
-				/>
+				{/* <SettingItem
+          icon={
+            <MaterialIcons name="workspace-premium" size={20} color="black" />
+          }
+          title="Premium"
+          onPress={() => {}}
+        /> */}
 			</ScrollView>
 
 			{/* Bottom Navigation */}

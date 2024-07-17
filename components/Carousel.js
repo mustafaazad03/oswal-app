@@ -9,7 +9,6 @@ const album = [
   "https://res.cloudinary.com/ddsp8i11t/image/upload/v1719031498/kjjcid5fnfbnjvrmkvly.jpg",
 ];
 function CarouselComponent(images) {
-  console.log(images);
   const width = Dimensions.get("window").width;
   return (
     <View style={{ flex: 1 }}>
@@ -18,7 +17,7 @@ function CarouselComponent(images) {
         width={width}
         height={width / 2}
         autoPlay={true}
-        data={album}
+        data={images.images}
         scrollAnimationDuration={1000}
         // onSnapToItem={(item, index) =>
         //   console.log("current index:", index, item)

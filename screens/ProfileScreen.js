@@ -28,7 +28,10 @@ export default function ProfileScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
+    setIsModalVisible((prev) => !prev);
+  };
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
   };
 
   const {
@@ -107,19 +110,21 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-gray-600 ">
       <View className="flex-row justify-between items-center p-4 bg-primary pt-8">
-        <Image source={require("../assets/icon.png")} className="w-10 h-10" />
+        <Image
+          source={require("../assets/icon.png")}
+          className="w-10 h-10 bg-white rounded-full "
+        />
         <Text className="text-lg font-bold">Freathers</Text>
         <TouchableOpacity onPress={() => navigation.navigate("Setting")}>
-          <Image
-            source={require("../assets/menu_icon.png")}
-            className="w-6 h-6"
-          />
+          <Entypo name="dots-three-vertical" size={16} color="black" />
         </TouchableOpacity>
       </View>
       <ScrollView>
-        <CarouselComponent images={user?.album.map((item) => item.url)} />
+        {user?.album && user?.album.length > 0 && (
+          <CarouselComponent images={user?.album.map((item) => item.url)} />
+        )}
         <View className="p-4">
           {/* Profile information */}
           <View className="flex-row items-center space-x-4">
@@ -166,10 +171,10 @@ export default function ProfileScreen() {
 
           <View className="mt-4 flex-1 flex flex-row justify-center items-center space-x-2">
             <TouchableOpacity
-              className="bg-[#FFD1DC] px-4 py-2 rounded-xl flex-1"
+              className="bg-[#FFD1DC] px-4 py-2 rounded-xl flex-1 border-primary/90 border"
               onPress={handleEditProfile}
             >
-              <Text className="font-semibold text-base text-center">
+              <Text className="font-semibold text-base text-center ">
                 Edit Profile
               </Text>
             </TouchableOpacity>
@@ -180,7 +185,7 @@ export default function ProfileScreen() {
               <Text className="font-semibold text-base text-center">Share</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              className="border border-[#FFD1DC] px-2 py-2 rounded-xl"
+              className="border border-primary/60 px-2 py-2 rounded-xl"
               onPress={toggleModal}
             >
               <Text className="font-semibold">
@@ -212,7 +217,7 @@ export default function ProfileScreen() {
             </View>
             <View className="text-gray-800 flex flex-row justify-start items-center space-x-2">
               <Entypo name="mail" size={18} color="black" />
-              <Text className="text-sm">{user.email}</Text>
+              <Text className="text-sm">{user?.email}</Text>
             </View>
           </View>
 
@@ -220,12 +225,17 @@ export default function ProfileScreen() {
             source={require("../assets/map.png")}
             className="w-full h-40 mt-4 rounded-lg"
           />
+          {/* <MapComponent /> */}
+          {/* <WebView
+            source={{ uri: "https://www.youtube.com/embed/cqyziA30whE" }}
+            style={{ marginTop: 20 }}
+          /> */}
 
           <ProfileTabs user={user} post={post} />
         </View>
       </ScrollView>
       <BottomNavigation notify={true} />
-      <BottomModal isVisible={isModalVisible} onClose={toggleModal} />
+      <BottomModal isVisible={isModalVisible} onClose={handleCloseModal} />
     </SafeAreaView>
   );
 }

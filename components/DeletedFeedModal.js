@@ -1,6 +1,6 @@
 import { Modal, View, TouchableOpacity, Text, Image } from "react-native";
 
-const DeleteFeedModal = ({ isVisible, onClose, onDelete, onRestore }) => {
+const DeleteFeedModal = ({ isVisible, onClose, onDelete, onRestore, item }) => {
 	return (
 		<Modal
 			animationType="fade"
@@ -26,7 +26,7 @@ const DeleteFeedModal = ({ isVisible, onClose, onDelete, onRestore }) => {
 					</View>
 
 					<Image
-						source={require("../assets/random.png")}
+						source={{ uri: item?.imageUrl }}
 						className="w-full h-40 rounded-lg mb-4"
 					/>
 

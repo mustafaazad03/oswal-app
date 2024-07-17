@@ -18,6 +18,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useMutation } from "@tanstack/react-query";
 import { postService } from "../api/feed";
 import { useAuth } from "../context/AuthContext";
+import { uploadImageToCloudinary } from "../functions/uploadImageToCloudinary";
 
 const CreateFeedScreen = () => {
 	const navigation = useNavigation();
@@ -25,7 +26,21 @@ const CreateFeedScreen = () => {
 	const [feedText, setFeedText] = useState("");
 	const [isRefineModalVisible, setIsRefineModalVisible] = useState(false);
 	const [selectedTags, setSelectedTags] = useState([]);
+	const [isUploading, setIsUploading] = useState(false);
 	const { user } = useAuth();
+
+	const uploadImage = async (imageUri) => {
+		setIsUploading(true);
+		try {
+			const imageUrl = await uploadImageToCloudinary(imageUri);
+			setImage(imageUrl);
+		} catch (error) {
+			console.error("Error uploading image:", error);
+			Alert.alert("Error", "Failed to upload image");
+		} finally {
+			setIsUploading(false);
+		}
+	};
 
 	const tags = [
 		"Nature",
@@ -54,7 +69,7 @@ const CreateFeedScreen = () => {
 		});
 
 		if (!result.canceled) {
-			setImage(result.assets[0].uri);
+			uploadImage(result.assets[0]);
 		}
 	};
 
@@ -95,7 +110,7 @@ const CreateFeedScreen = () => {
 	});
 
 	const handleSubmitPost = () => {
-		if (!image) {
+		if (!image || isUploading) {
 			Alert.alert("Error", "Please select an image");
 			return;
 		}
@@ -129,6 +144,12 @@ const CreateFeedScreen = () => {
 					) : (
 						<Text className="text-gray-500">Tap to select an image</Text>
 					)}
+					{isUploading && (
+						<View className="absolute inset-0 bg-black/50 items-center justify-center">
+							<ActivityIndicator size="large" color="#FFD1DC" />
+							<Text className="text-white mt-2">Uploading...</Text>
+						</View>
+					)}
 				</TouchableOpacity>
 
 				<TextInput
@@ -148,25 +169,23 @@ const CreateFeedScreen = () => {
 					<Ionicons name="chevron-forward" size={20} color="black" />
 				</TouchableOpacity>
 
-				<TouchableOpacity className="bg-primary p-4 rounded-md items-center">
-					<Text className="text-dark font-semibold">Buy Premium</Text>
-				</TouchableOpacity>
-
 				<TouchableOpacity
-					className="bg-primary p-4 rounded-md items-center"
+					className={`bg-primary p-4 rounded-md items-center ${
+						(isUploading || createPostMutation.isLoading) && "opacity-50"
+					}`}
 					onPress={handleSubmitPost}
-					disabled={createPostMutation.isLoading}
+					disabled={isUploading || createPostMutation.isLoading}
 				>
-					<Text className="text-dark font-semibold bg-[#FFD1DC]">
-						{createPostMutation.isLoading ? "Creating Post..." : "Create Post"}{" "}
-						{createPostMutation.isLoading && (
-							<ActivityIndicator
-								size="large"
-								color="#FFD1DC"
-								style={{ marginTop: 20 }}
-							/>
-						)}
+					<Text className="text-dark font-semibold">
+						{isUploading
+							? "Uploading Image..."
+							: createPostMutation.isLoading
+							? "Creating Post..."
+							: "Create Post"}
 					</Text>
+				</TouchableOpacity>
+				<TouchableOpacity className="border border-primary p-4 rounded-md items-center mt-4">
+					<Text className="text-dark font-semibold">Buy Premium</Text>
 				</TouchableOpacity>
 			</ScrollView>
 

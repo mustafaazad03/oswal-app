@@ -11,10 +11,12 @@ import Header from "../components/Header";
 import InputField from "../components/InputField";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../api/auth";
+import { useAuth } from "../context/AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginScreen() {
 	const navigation = useNavigation();
+	const { login: userLogin } = useAuth();
 	const [data, setData] = useState({
 		email: "",
 		password: "",
@@ -27,8 +29,7 @@ export default function LoginScreen() {
 				console.error("Login Failed");
 				return;
 			}
-			await AsyncStorage.setItem("auth", data.jwtToken);
-			navigation.replace("Home");
+			userLogin(data.jwtToken);
 		},
 		onError: (error) => {
 			console.error("Error submitting form:", error);
@@ -91,7 +92,9 @@ export default function LoginScreen() {
 				/>
 				{/* Forget Password */}
 				<View className="flex items-start justify-end mt-2">
-					<TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => navigation.navigate("ForgotPassword")}
+					>
 						<Text className="text-xs text-gray-500">Forget Password?</Text>
 					</TouchableOpacity>
 				</View>

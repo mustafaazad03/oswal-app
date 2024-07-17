@@ -18,7 +18,8 @@ import { Picker } from "@react-native-picker/picker";
 import { useAuth } from "../context/AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import { userService } from "../api/user";
-
+import { Ionicons } from "@expo/vector-icons";
+import { uploadImageToCloudinary } from "../functions/uploadImageToCloudinary";
 export default function ProfileDetailsSettingScreen() {
 	const navigation = useNavigation();
 	const { fullUser: authUser } = useAuth();
@@ -35,10 +36,9 @@ export default function ProfileDetailsSettingScreen() {
 	const [profileImage, setProfileImage] = useState(
 		authUser?.profilePic || null
 	);
-
 	const updateUserMutation = useMutation({
 		mutationFn: (updateData) =>
-			userService.updateUser(authUser?.userId, updateData),
+			userService.updateUser(authUser?._id, updateData),
 		onSuccess: () => {
 			Alert.alert("Success", "Profile details updated successfully");
 			navigation.goBack();
@@ -66,47 +66,44 @@ export default function ProfileDetailsSettingScreen() {
 		});
 
 		if (!result.cancelled) {
-			const selectedImageUri = result.assets[0].uri;
+			const selectedImageUri = uploadImageToCloudinary(result.assets[0]);
 			setProfileImage(selectedImageUri);
 		}
 	};
 
 	const handleSubmit = async () => {
 		const updateData = {
+			profilePic: profileImage,
 			name: formData.name,
-			phone: formData.mobile,
+			phone: Number(formData.mobile),
 			email: formData.email,
 			gender: formData.gender,
 			dob: formData.dob.toISOString(),
 			bio: formData.bio,
-			profilePic: profileImage,
 		};
-
 		updateUserMutation.mutate(updateData);
 	};
 
 	return (
 		<SafeAreaView className="flex-1 bg-white">
-			{/* Back Icon */}
-			<View className="bg-[#FFD1DC] p-4 flex-row items-center pt-8 w-full">
-				<TouchableOpacity onPress={() => navigation.goBack()}>
-					<Image
-						source={require("../assets/arrow_back.png")}
-						className="w-6 h-6 mr-3"
-					/>
-				</TouchableOpacity>
-				<Text className="text-xl font-bold">Personal Details</Text>
-				<TouchableOpacity
-					className="ml-auto flex items-center flex-row gap-2 w-[40%] justify-end"
-					onPress={handleSubmit}
-					disabled={updateUserMutation.isLoading}
-				>
-					<Image source={require("../assets/check.png")} className="w-6 h-6" />
-					{updateUserMutation.isLoading && (
+			<View className="bg-[#FFD1DC] p-4 flex-row items-center pt-8">
+				<View className="flex flex-row space-x-2 justify-center items-center">
+					<TouchableOpacity onPress={() => navigation.goBack()}>
+						<Ionicons name="arrow-back" size={20} color="black" />
+					</TouchableOpacity>
+					<Text className="text-xl font-bold">Personal Details</Text>
+				</View>
+				<TouchableOpacity className="ml-auto" onPress={handleSubmit}>
+					{updateUserMutation.isLoading ? (
 						<ActivityIndicator
 							size="large"
 							color="#FFD1DC"
 							style={{ marginTop: 20 }}
+						/>
+					) : (
+						<Image
+							source={require("../assets/check.png")}
+							className="w-6 h-6"
 						/>
 					)}
 				</TouchableOpacity>
@@ -155,14 +152,20 @@ export default function ProfileDetailsSettingScreen() {
 					onChangeText={(text) => setFormData({ ...formData, mobile: text })}
 					keyboardType="phone-pad"
 				/>
-				<TextInput
-					placeholder="E-mail"
-					className="border border-primary p-3 rounded-lg mb-4"
-					value={formData.email}
-					onChangeText={(text) => setFormData({ ...formData, email: text })}
-					keyboardType="email-address"
-				/>
-
+				<View className="flex flex-col space-y-1">
+					<Text className="text-gray-300 my-2">
+						Email cannot be changed because it is your unique identifier on
+						platform
+					</Text>
+					<TextInput
+						placeholder="E-mail"
+						className="border border-primary p-3 rounded-lg mb-4"
+						value={formData.email}
+						onChangeText={(text) => setFormData({ ...formData, email: text })}
+						keyboardType="email-address"
+						editable={false}
+					/>
+				</View>
 				<TouchableOpacity
 					className="border border-primary p-3 rounded-lg mb-4"
 					onPress={() => setShowGenderPicker(true)}
@@ -195,7 +198,8 @@ export default function ProfileDetailsSettingScreen() {
 				)}
 				<TextInput
 					placeholder="Bio"
-					className="border border-primary px-3 py-1 rounded-lg mb-8 h-32 text-s flex flex-row justify-start items-start"
+					className="border border-primary px-3 py-1  rounded-lg mb-8 h-32 text-sm flex flex-row justify-start items-start"
+					style={{ textAlignVertical: "top", paddingTop: 8, lineHeight: 20 }}
 					value={formData.bio}
 					onChangeText={(text) => setFormData({ ...formData, bio: text })}
 					multiline
