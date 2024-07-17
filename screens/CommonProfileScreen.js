@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	View,
 	Text,
@@ -19,12 +19,49 @@ import * as Clipboard from "expo-clipboard";
 import BottomModal from "../components/BottomModal";
 import ProfileTabs from "../components/ProfileTabs";
 import { userService } from "../api/user";
+import { useAuth } from "../context/AuthContext";
 
 export default function CommonProfileScreen() {
 	const route = useRoute();
 	const { userId } = route.params;
+	const { fullUser } = useAuth();
 	const navigation = useNavigation();
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [isFollowing, setIsFollowing] = useState(false);
+
+	useEffect(() => {
+		if (fullUser?.followings?.includes(userId)) {
+			setIsFollowing(true);
+		}
+	}, [fullUser]);
+
+	const followMutation = useMutation({
+		mutationFn: () => userService.followUser(fullUser._id, userId),
+		onSuccess: () => {
+			setIsFollowing(true);
+		},
+		onError: (error) => {
+			Alert.alert("Error", error.message);
+		},
+	});
+
+	const unfollowMutation = useMutation({
+		mutationFn: () => userService.unfollowUser(fullUser._id, userId),
+		onSuccess: () => {
+			setIsFollowing(false);
+		},
+		onError: (error) => {
+			Alert.alert("Error", error.message);
+		},
+	});
+
+	const handleFollowToggle = () => {
+		if (isFollowing) {
+			unfollowMutation.mutate();
+		} else {
+			followMutation.mutate();
+		}
+	};
 
 	const toggleModal = () => {
 		setIsModalVisible(!isModalVisible);
@@ -108,7 +145,10 @@ export default function CommonProfileScreen() {
 	return (
 		<SafeAreaView className="flex-1 bg-white">
 			<View className="flex-row justify-between items-center p-4 bg-primary pt-8">
-				<Image source={require("../assets/icon.png")} className="w-10 h-10 bg-white rounded-full" />
+				<Image
+					source={require("../assets/icon.png")}
+					className="w-10 h-10 bg-white rounded-full"
+				/>
 				<Text className="text-lg font-bold">Freathers</Text>
 				<TouchableOpacity onPress={() => navigation.navigate("Setting")}>
 					<Image
@@ -166,14 +206,27 @@ export default function CommonProfileScreen() {
 					<Text className="mt-4 text-gray-600">{user?.bio}</Text>
 
 					<View className="mt-4 flex-1 flex flex-row justify-center items-center space-x-2">
-						<TouchableOpacity
-							className="bg-[#FFD1DC] px-4 py-2 rounded-xl flex-1"
-							onPress={handleEditProfile}
-						>
-							<Text className="font-semibold text-base text-center">
-								Edit Profile
-							</Text>
-						</TouchableOpacity>
+						{fullUser?._id !== userId ? (
+							<TouchableOpacity
+								className={`px-4 py-2 rounded-xl flex-1 ${
+									isFollowing ? "bg-gray-200" : "bg-[#FFD1DC]"
+								}`}
+								onPress={handleFollowToggle}
+							>
+								<Text className="font-semibold text-base text-center">
+									{isFollowing ? "Unfollow" : "Follow"}
+								</Text>
+							</TouchableOpacity>
+						) : (
+							<TouchableOpacity
+								className="bg-[#FFD1DC] px-4 py-2 rounded-xl flex-1"
+								onPress={handleEditProfile}
+							>
+								<Text className="font-semibold text-base text-center">
+									Edit Profile
+								</Text>
+							</TouchableOpacity>
+						)}
 						<TouchableOpacity
 							className="border border-black px-4 py-2 rounded-xl flex-1"
 							onPress={() => handleShare(user?._id)}
