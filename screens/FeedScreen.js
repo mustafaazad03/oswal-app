@@ -118,7 +118,7 @@ export default function FeedScreen() {
 	const unFollowMutation = useMutation({
 		mutationFn: (targetUserId) =>
 			userService.unfollowUser(fullUser?._id, targetUserId),
-		onMutate: (data, targetUserId) => {
+		onSuccess: (targetUserId) => {
 			setFollowingUsers((prev) => {
 				const newSet = new Set(prev);
 				newSet.delete(targetUserId);
@@ -142,6 +142,13 @@ export default function FeedScreen() {
 		onSuccess: (data, userId) => {
 			setFollowingUsers((prev) => new Set(prev).add(userId));
 			queryClient.invalidateQueries(["posts"]);
+		},
+		onError: (err, userId) => {
+			setFollowingUsers((prev) => {
+				const newSet = new Set(prev);
+				newSet.delete(userId);
+				return newSet;
+			});
 		},
 	});
 
