@@ -15,6 +15,7 @@ const useBlockedUserData = (blockedAccounts) => {
 		queryFn: () => userService.getSingleUser(account),
 		enabled: !!account,
 		retry: 1,
+		staleTime: 5 * 60 * 1000, // 5 minutes
 	}));
 
 	const results = useQueries({ queries });

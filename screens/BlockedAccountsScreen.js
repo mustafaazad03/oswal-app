@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
 	View,
 	Text,
@@ -11,46 +11,61 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import BlockedAccountsList from "../components/BlockedAccountsList";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useBlockedUserData from "../hooks/useBlockUserData";
 import { userService } from "../api/user";
 
 const BlockedAccountsScreen = () => {
 	const navigation = useNavigation();
 	const { fullUser, userRefetch } = useAuth();
+	const queryClient = useQueryClient();
 
 	useEffect(() => {
 		userRefetch();
 	}, []);
 
 	const {
-		data: accounts,
+		data: blockedAccounts,
 		isLoading,
 		isError,
 		error,
 		refetch,
 	} = useBlockedUserData(fullUser?.blockList || []);
 
-	const mutation = useMutation({
-		mutationFn: (blockedAccountList) =>
-			userService.updateUser(fullUser._id, {
-				blockList: blockedAccountList,
-			}),
-		onSuccess: () => {
+	const unblockUserMutation = useMutation({
+		mutationFn: (targetUsername) =>
+			userService.unBlockUser(fullUser?.username, targetUsername),
+		onSuccess: (_, unblockedUsername) => {
+			queryClient.setQueryData(["blockedUsers"], (oldData) =>
+				oldData.filter((user) => user.username !== unblockedUsername)
+			);
 			Alert.alert("Success", "User unblocked successfully");
-			refetch();
 		},
-		onError: (error) => {
-			Alert.alert("Error", error.message);
+		onError: (err) => {
+			Alert.alert("Error", err.message);
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries(["blockedUsers"]);
+			refetch();
 		},
 	});
 
-	const handleUnblock = (id) => {
-		const updatedAccountIds = accounts
-			.filter((account) => account.id !== id)
-			.map((account) => account.id);
-		mutation.mutate(updatedAccountIds);
-	};
+	const handleUnblock = useCallback(
+		(username) => {
+			Alert.alert(
+				"Unblock User",
+				"Are you sure you want to unblock this user?",
+				[
+					{ text: "Cancel", style: "cancel" },
+					{
+						text: "Unblock",
+						onPress: () => unblockUserMutation.mutate(username),
+					},
+				]
+			);
+		},
+		[unblockUserMutation]
+	);
 
 	if (isLoading) {
 		return (
@@ -79,13 +94,13 @@ const BlockedAccountsScreen = () => {
 				</TouchableOpacity>
 				<Text className="text-xl font-bold ml-4">Blocked Accounts</Text>
 			</View>
-			{accounts && accounts.length === 0 ? (
+			{blockedAccounts && blockedAccounts.length === 0 ? (
 				<View className="flex-1 justify-center items-center bg-white">
 					<Text>No blocked accounts</Text>
 				</View>
 			) : (
 				<BlockedAccountsList
-					accounts={accounts || []}
+					accounts={blockedAccounts || []}
 					onUnblock={handleUnblock}
 				/>
 			)}

@@ -36,7 +36,7 @@ import { userService } from "../api/user";
 export default function FeedScreen() {
 	const navigation = useNavigation();
 	const queryClient = useQueryClient();
-	const { user, fullUser } = useAuth();
+	const { user, fullUser, userRefetch } = useAuth();
 	const [likedPosts, setLikedPosts] = useState(new Set());
 	const [filteredPosts, setFilteredPosts] = useState([]);
 	const [sideModalVisible, setSideModalVisible] = useState(false);
@@ -50,7 +50,7 @@ export default function FeedScreen() {
 			setFollowingUsers(new Set(fullUser.followings));
 			setBlockedUsers(new Set(fullUser.blockList));
 		}
-	}, [fullUser]);
+	}, [fullUser, userRefetch]);
 
 	const handleOptionsPress = (item) => {
 		setSelectedPost(item);
