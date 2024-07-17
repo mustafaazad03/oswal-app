@@ -35,18 +35,15 @@ const BlockedAccountsScreen = () => {
 	const unblockUserMutation = useMutation({
 		mutationFn: (targetUsername) =>
 			userService.unBlockUser(fullUser?.username, targetUsername),
-		onSuccess: (_, unblockedUsername) => {
-			queryClient.setQueryData(["blockedUsers"], (oldData) =>
-				oldData.filter((user) => user.username !== unblockedUsername)
-			);
-			Alert.alert("Success", "User unblocked successfully");
+		onSuccess: (_, targetUsername) => {
+			Alert.alert("Success", `${targetUsername} unblocked successfully`);
 		},
 		onError: (err) => {
 			Alert.alert("Error", err.message);
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries(["blockedUsers"]);
-			refetch();
+			userRefetch();
 		},
 	});
 
