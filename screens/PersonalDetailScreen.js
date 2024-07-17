@@ -24,7 +24,7 @@ export default function ProfileDetailsScreen() {
   const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
-    mobile: "",
+    phone: "",
     email: "",
     gender: "",
     dob: new Date(),
@@ -92,7 +92,7 @@ export default function ProfileDetailsScreen() {
         phone,
         email,
         gender,
-        dob: new Date(dob),
+        dob: new Date(),
         bio,
       });
     }
@@ -102,7 +102,7 @@ export default function ProfileDetailsScreen() {
     // Check if all required fields are filled
     if (
       !formData.name ||
-      !formData.mobile ||
+      !formData.phone ||
       !formData.dob ||
       !formData.email ||
       !formData.gender ||
@@ -110,6 +110,7 @@ export default function ProfileDetailsScreen() {
     ) {
       return;
     }
+    console.log(formData);
     mutation.mutate(formData);
   };
 
@@ -162,10 +163,10 @@ export default function ProfileDetailsScreen() {
           onChangeText={(text) => setFormData({ ...formData, name: text })}
         />
         <TextInput
-          placeholder="Mobile Number*"
+          placeholder="phone Number*"
           className="border border-primary p-3 rounded-lg mb-4"
-          value={formData.mobile}
-          onChangeText={(text) => setFormData({ ...formData, mobile: text })}
+          value={formData.phone}
+          onChangeText={(text) => setFormData({ ...formData, phone: text })}
           keyboardType="phone-pad"
         />
         <TextInput
@@ -234,9 +235,9 @@ export default function ProfileDetailsScreen() {
               }
             >
               <Picker.Item label="Select Gender" value="" />
-              <Picker.Item label="Male" value="male" />
-              <Picker.Item label="Female" value="female" />
-              <Picker.Item label="Other" value="other" />
+              <Picker.Item label="Male" value="MALE" />
+              <Picker.Item label="Female" value="FEMALE" />
+              <Picker.Item label="Other" value="OTHER" />
             </Picker>
           </View>
         </View>
