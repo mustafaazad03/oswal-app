@@ -38,6 +38,7 @@ import CommonProfileScreen from "./screens/CommonProfileScreen";
 import ParticularPostScreen from "./screens/PerticularPostScreen";
 import NotificationScreen from "./screens/NotificationScreen";
 import ForgetPasswordScreen from "./screens/ForgetPasswordScreen";
+import SavedPostsScreen from "./screens/SavedPostScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -346,6 +347,14 @@ function App() {
 							<Stack.Screen
 								name="ForgotPassword"
 								component={ForgetPasswordScreen}
+								options={{
+									headerShown: false,
+									presentation: "fullScreenModal",
+								}}
+							/>
+							<Stack.Screen
+								name="SavedPost"
+								component={SavedPostsScreen}
 								options={{
 									headerShown: false,
 									presentation: "fullScreenModal",

@@ -10,12 +10,14 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
+import ReportProblemModal from "./reportProblemModal";
 
 const BottomModal = ({ isVisible, onClose }) => {
 	const navigation = useNavigation();
 	const slideAnim = useRef(new Animated.Value(0)).current;
 	const [modalHeight, setModalHeight] = useState(0);
-	const { setFullUser, setUser } = useAuth();
+	const { setFullUser, setUser, user } = useAuth();
+	const [reportModalVisible, setReportModalVisible] = useState(false);
 
 	const onLogout = () => {
 		onClose();
@@ -93,14 +95,20 @@ const BottomModal = ({ isVisible, onClose }) => {
 		>
 			<View className="w-1/5 h-1 rounded-2xl bg-dark mx-auto mb-4"></View>
 			<View className="p-4 space-y-4 px-8 text-dark font-medium">
-				<TouchableOpacity className="flex-row items-center space-x-3 w-full">
+				<TouchableOpacity
+					className="flex-row items-center space-x-3 w-full"
+					onPress={() => navigation.navigate("EditProfile")}
+				>
 					<Image
 						source={require("../assets/Profile/settings.png")}
 						className="w-6 h-6"
 					/>
 					<Text className="text-sm font-medium text-dark">Settings</Text>
 				</TouchableOpacity>
-				<TouchableOpacity className="flex-row items-center space-x-3 w-full">
+				<TouchableOpacity
+					className="flex-row items-center space-x-3 w-full"
+					onPress={() => navigation.navigate("SavedPost")}
+				>
 					<Image
 						source={require("../assets/Profile/bookmark.png")}
 						className="w-6 h-6"
@@ -114,7 +122,10 @@ const BottomModal = ({ isVisible, onClose }) => {
 					/>
 					<Text className="text-sm font-medium text-dark">Dark Mode</Text>
 				</TouchableOpacity>
-				<TouchableOpacity className="flex-row items-center space-x-3 w-full">
+				<TouchableOpacity
+					className="flex-row items-center space-x-3 w-full"
+					onPress={() => setReportModalVisible(true)}
+				>
 					<Image
 						source={require("../assets/Profile/brightness_alert.png")}
 						className="w-6 h-6"
@@ -136,6 +147,11 @@ const BottomModal = ({ isVisible, onClose }) => {
 					</Text>
 				</TouchableOpacity>
 			</View>
+			<ReportProblemModal
+				isVisible={reportModalVisible}
+				onClose={() => setReportModalVisible(false)}
+				userId={user?.userId}
+			/>
 		</Animated.View>
 	);
 };
