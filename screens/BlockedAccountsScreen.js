@@ -17,7 +17,11 @@ import { userService } from "../api/user";
 
 const BlockedAccountsScreen = () => {
 	const navigation = useNavigation();
-	const { fullUser } = useAuth();
+	const { fullUser, userRefetch } = useAuth();
+
+	useEffect(() => {
+		userRefetch();
+	}, []);
 
 	const {
 		data: accounts,
@@ -29,7 +33,7 @@ const BlockedAccountsScreen = () => {
 
 	const mutation = useMutation({
 		mutationFn: (blockedAccountList) =>
-			userService.updateUser(fullUser.userId, {
+			userService.updateUser(fullUser._id, {
 				blockList: blockedAccountList,
 			}),
 		onSuccess: () => {
