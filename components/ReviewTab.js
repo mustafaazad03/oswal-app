@@ -7,7 +7,7 @@ import WriteReview from "./WriteReview";
 import { userService } from "../api/user";
 import { useAuth } from "../context/AuthContext";
 
-const ReviewTab = ({ user, reviews }) => {
+const ReviewTab = ({ user, reviews, isSelfUser }) => {
   const { user: currentUser } = useAuth();
   const queryClient = useQueryClient();
   const [userRating, setUserRating] = useState(0);
@@ -72,15 +72,19 @@ const ReviewTab = ({ user, reviews }) => {
   // console.log(reviews);
   return (
     <ScrollView className="flex flex-col space-y-5">
-      <View>
-        <Text className="font-bold text-xl">Rate this Business</Text>
-        <Text className="font-light">Tell others what you think</Text>
-      </View>
-      <RatingComponent rating={userRating} onRatingChange={setUserRating} />
-      <WriteReview
-        onSubmit={handleSubmitReview}
-        isLoading={createRatingMutation.isLoading}
-      />
+      {isSelfUser && (
+        <View>
+          <View>
+            <Text className="font-bold text-xl">Rate this Business</Text>
+            <Text className="font-light">Tell others what you think</Text>
+          </View>
+          <RatingComponent rating={userRating} onRatingChange={setUserRating} />
+          <WriteReview
+            onSubmit={handleSubmitReview}
+            isLoading={createRatingMutation.isLoading}
+          />
+        </View>
+      )}
       <View>
         <Text className="font-bold text-xl">Ratings & Reviews</Text>
         <Text className="font-light">Ratings and Reviews are Verified</Text>

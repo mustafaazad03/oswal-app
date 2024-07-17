@@ -110,13 +110,11 @@ export default function ProfileDetailsScreen() {
     ) {
       return;
     }
-    console.log(user);
     mutation.mutate(formData);
   };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      {/* Back Icon */}
       <TouchableOpacity
         className="absolute top-10 left-4 z-50"
         onPress={() => navigation.goBack()}

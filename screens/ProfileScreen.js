@@ -22,85 +22,87 @@ import { userService } from "../api/user";
 import { useAuth } from "../context/AuthContext";
 
 export default function ProfileScreen() {
-	const navigation = useNavigation();
-	const queryClient = useQueryClient();
-	const { user: authUser } = useAuth();
-	const [isModalVisible, setIsModalVisible] = useState(false);
-	
-	const toggleModal = () => {
-		setIsModalVisible(!isModalVisible);
-	};
-	
-	const {
-		data: user,
-		isLoading,
-		isError,
-		error,
-		refetch,
-	} = useQuery({
-		queryKey: ["user", authUser?.username],
-		queryFn: () => userService.getSingleUser(authUser?.userId),
-		enabled: !!authUser,
-	});
-	const { data: post, isPostLoading } = useQuery({
-		queryKey: ["post", authUser?.username],
-		queryFn: () => userService.getAllPostsFromUser(authUser?.userId),
-		enabled: !!authUser,
-	});
-	const handleEditProfile = () => {
-		navigation.navigate("EditProfile");
-	};
-	
-	const handleShare = async (userId) => {
-		try {
-			const url = `https://www.freathers.com/user/${userId}`;
-			
-			try {
-				const result = await Share.share({
-					message: `Check out this profile on freathers: ${url}`,
-					url: url, // iOS only
-				});
-				if (result.action === Share.sharedAction) {
-					if (result.activityType) {
-					} else {
-					}
-				} else if (result.action === Share.dismissedAction) {
-					// dismissed by user
-					return;
-				}
-			} catch (error) {
-				console.log("Error with native share:", error.message);
-				
-				// If native share fails, fall back to copying to clipboard
-				await Clipboard.setStringAsync(url);
-				Alert.alert(
-					"Link Copied",
-					"The post link has been copied to your clipboard."
-				);
-			}
-		} catch (error) {
-			console.error("Error sharing:", error);
-			Alert.alert("Error", "Failed to share the post");
-		}
-	};
-	
-	
-	if (isLoading) {
-		return (
-			<SafeAreaView className="flex-1 justify-center items-center bg-white">
+  const navigation = useNavigation();
+  const queryClient = useQueryClient();
+  const { user: authUser } = useAuth();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const toggleModal = () => {
+    setIsModalVisible((prev) => !prev);
+  };
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+  };
+
+  const {
+    data: user,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["user", authUser?.username],
+    queryFn: () => userService.getSingleUser(authUser?.userId),
+    enabled: !!authUser,
+  });
+  const { data: post, isPostLoading } = useQuery({
+    queryKey: ["post", authUser?.username],
+    queryFn: () => userService.getAllPostsFromUser(authUser?.userId),
+    enabled: !!authUser,
+  });
+  const handleEditProfile = () => {
+    navigation.navigate("EditProfile");
+  };
+
+  const handleShare = async (userId) => {
+    try {
+      const url = `https://www.freathers.com/user/${userId}`;
+
+      try {
+        const result = await Share.share({
+          message: `Check out this profile on freathers: ${url}`,
+          url: url, // iOS only
+        });
+        if (result.action === Share.sharedAction) {
+          if (result.activityType) {
+          } else {
+          }
+        } else if (result.action === Share.dismissedAction) {
+          // dismissed by user
+          return;
+        }
+      } catch (error) {
+        console.log("Error with native share:", error.message);
+
+        // If native share fails, fall back to copying to clipboard
+        await Clipboard.setStringAsync(url);
+        Alert.alert(
+          "Link Copied",
+          "The post link has been copied to your clipboard."
+        );
+      }
+    } catch (error) {
+      console.error("Error sharing:", error);
+      Alert.alert("Error", "Failed to share the post");
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <SafeAreaView className="flex-1 justify-center items-center bg-white">
         <ActivityIndicator size="large" color="#FFD1DC" />
       </SafeAreaView>
     );
-}
+  }
 
-if (isError) {
-	return (
-		<SafeAreaView className="flex-1 justify-center items-center bg-white">
+  if (isError) {
+    return (
+      <SafeAreaView className="flex-1 justify-center items-center bg-white">
         <Text>Error: {error.message}</Text>
         <TouchableOpacity
           onPress={refetch}
           className="mt-4 bg-primary p-2 rounded"
-		  >
+        >
           <Text className="text-white">Try Again</Text>
         </TouchableOpacity>
       </SafeAreaView>
@@ -108,7 +110,7 @@ if (isError) {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-gray-600 ">
       <View className="flex-row justify-between items-center p-4 bg-primary pt-8">
         <Image
           source={require("../assets/icon.png")}
@@ -233,7 +235,7 @@ if (isError) {
         </View>
       </ScrollView>
       <BottomNavigation notify={true} />
-      <BottomModal isVisible={isModalVisible} onClose={toggleModal} />
+      <BottomModal isVisible={isModalVisible} onClose={handleCloseModal} />
     </SafeAreaView>
   );
 }

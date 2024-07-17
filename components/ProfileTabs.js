@@ -11,7 +11,7 @@ const TABS = [
   { tab: "Reviews", icon: "star" },
 ];
 
-const ProfileTabs = ({ user, post }) => {
+const ProfileTabs = ({ user, post, isSelfUser }) => {
   const [activeTab, setActiveTab] = useState("Home");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [postData, setPostData] = useState(null);
@@ -72,7 +72,13 @@ const ProfileTabs = ({ user, post }) => {
       case "Feed":
         return renderFeed();
       case "Reviews": // Adjusted to match TABS array
-        return <ReviewTab reviews={user.ratings || []} user={user} />;
+        return (
+          <ReviewTab
+            reviews={user.ratings || []}
+            user={user}
+            isSelfUser={isSelfUser}
+          />
+        );
       default:
         return null;
     }
