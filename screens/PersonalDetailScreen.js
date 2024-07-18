@@ -38,7 +38,6 @@ export default function ProfileDetailsScreen() {
 	const uploadImage = async (imageUri) => {
 		try {
 			const imageUrl = await uploadImageToCloudinary(imageUri);
-			console.log(imageUrl);
 			setProfileImage(imageUrl);
 		} catch (error) {
 			console.error("Error uploading image:", error);
@@ -63,7 +62,6 @@ export default function ProfileDetailsScreen() {
 		});
 
 		if (!result.cancelled) {
-			console.log(result.assets[0]);
 			uploadImage(result.assets[0]);
 		}
 	};
