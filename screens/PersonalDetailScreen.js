@@ -83,9 +83,7 @@ export default function ProfileDetailsScreen() {
 
 	const mutation = useMutation({
 		mutationFn: (data) => userService.updateUser(user?.userId, data),
-		onSuccess: (data) => {
-			console.log(data);
-			//   queryClient.invalidateQueries({ queryKey: ["userData", user?.userId] });
+		onSuccess: () => {
 			navigation.navigate("BusinessDetails");
 		},
 		onError: (error) => {
@@ -120,7 +118,6 @@ export default function ProfileDetailsScreen() {
 		) {
 			return;
 		}
-		console.log(formData);
 		mutation.mutate(formData);
 	};
 

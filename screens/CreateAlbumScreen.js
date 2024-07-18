@@ -14,6 +14,7 @@ import Button from "../components/Button";
 import { useAuth } from "../context/AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import { userService } from "../api/user";
+import { uploadImageToCloudinary } from "../functions/uploadImageToCloudinary";
 
 export default function CreateAlbumScreen() {
 	const navigation = useNavigation();
@@ -57,13 +58,39 @@ export default function CreateAlbumScreen() {
 		}
 	};
 
+	const uploadImage = async (imageInfo) => {
+		try {
+			const imageUrl = await uploadImageToCloudinary(imageInfo);
+			return imageUrl;
+		} catch (error) {
+			console.error("Error uploading image:", error);
+			Alert.alert("Error", "Failed to upload image");
+		}
+	};
+
 	const handleSubmit = async () => {
 		if (selectedImages.length === 0) {
 			Alert.alert("Error", "Please select at least one image");
 			return;
 		}
-		const albumData = selectedImages.map((imageUrl, index) => ({
-			url: imageUrl,
+
+		// upload images to cloudinary
+		const data = await Promise.all(
+			selectedImages.map((imageUrl) => {
+				if (!imageUrl.startsWith("file://")) {
+					return imageUrl;
+				}
+				const imageInfo = {
+					uri: imageUrl,
+					mimeType: "image/jpeg",
+					fileName: `album-image.jpeg`,
+				};
+				return uploadImage(imageInfo);
+			})
+		);
+
+		const albumData = data.map((url, index) => ({
+			url,
 			title: `Image ${index + 1}`,
 		}));
 
