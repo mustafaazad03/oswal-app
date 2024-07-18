@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "OswalApp",
-    "slug": "OswalApp",
+    "name": "Freathers",
+    "slug": "Freathers",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -12,14 +12,22 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mohitaasirwal.Freathers"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_MEDIA_LOCATION"
+      ],
+      "package": "com.mohitaasirwal.Freathers"
     },
     "web": {
       "favicon": "./assets/icon.png"
@@ -33,6 +41,11 @@
           "isAccessMediaLocationEnabled": true
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "ba4ae36b-ce0f-464c-a6e8-a2e19f49a634"
+      }
+    }
   }
 }
