@@ -39,7 +39,7 @@ export default function PasswordSecurityScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#222831]">
       <View className="bg-pink-200 p-4 flex-row items-center pt-8">
         <View className="flex flex-row space-x-2 justify-center items-center">
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -50,7 +50,7 @@ export default function PasswordSecurityScreen() {
       </View>
 
       <View className="p-4 flex-1">
-        <View className="flex-row items-center bg-pink-100 p-4 rounded-lg">
+        <View className="flex-row items-center bg-pink-100 p-4 rounded-lg dark:bg-primary">
           <Image
             source={{ uri: userData?.profilePic }}
             className="w-16 h-16 rounded-full mr-4"
@@ -70,7 +70,7 @@ export default function PasswordSecurityScreen() {
         </View>
       </View>
 
-      <BottomNavigation notify={false} />
+      {/* <BottomNavigation notify={false} /> */}
     </SafeAreaView>
   );
 }

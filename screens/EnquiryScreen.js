@@ -13,6 +13,7 @@ import { styled } from "nativewind";
 import BottomNavigation from "../components/BottomNavigation";
 import { useQuery } from "@tanstack/react-query";
 import { enquiryService } from "../api/enquiry";
+import { Entypo } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -34,7 +35,7 @@ const TableRow = ({ item, index }) => {
   return (
     <StyledView
       className={`flex-row p-3 space-x-7 ${
-        index % 2 === 0 ? "bg-primary/50" : "bg-white"
+        index % 2 === 0 ? "bg-primary/50 dark:bg-primary" : "bg-white "
       }`}
     >
       <StyledText className=" text-dark truncate">
@@ -50,10 +51,7 @@ const TableRow = ({ item, index }) => {
       <TouchableOpacity
         onPress={() => navigation.navigate("EnquirySetting", { enquiry: item })}
       >
-        <Image
-          source={require("../assets/arrow_back.png")}
-          className="w-6 h-6 mr-3"
-        />
+        <Entypo name="dots-three-vertical" size={15} color="black" />
       </TouchableOpacity>
     </StyledView>
   );
@@ -78,7 +76,7 @@ export default function EnquiriesScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#222831]">
       <View className="bg-pink-200 p-4 flex-row items-center pt-8">
         <View className="flex flex-row space-x-2 justify-center items-center">
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -100,7 +98,7 @@ export default function EnquiriesScreen() {
         />
       </StyledView>
 
-      <BottomNavigation notify={false} />
+      {/* <BottomNavigation notify={false} /> */}
     </SafeAreaView>
   );
 }

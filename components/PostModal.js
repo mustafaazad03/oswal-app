@@ -19,6 +19,7 @@ import { Entypo } from "@expo/vector-icons";
 import { Octicons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
+import { useColorScheme } from "nativewind";
 
 const PostModal = ({ onClose, isVisible, data, user }) => {
   const [likedPosts, setLikedPosts] = useState(new Set());
@@ -26,6 +27,7 @@ const PostModal = ({ onClose, isVisible, data, user }) => {
   const navigation = useNavigation();
   const queryClient = useQueryClient();
   const { user: authUser } = useAuth();
+  const { colorScheme } = useColorScheme();
   const { data: post, isPostLoading } = useQuery({
     queryKey: ["post", authUser?.username],
     queryFn: () => userService.getAllPostsFromUser(authUser?.userId),
@@ -121,7 +123,7 @@ const PostModal = ({ onClose, isVisible, data, user }) => {
         onPress={onClose}
       >
         <Pressable
-          className="w-11/12 bg-white rounded-lg py-3 shadow-lg space-y-3"
+          className="w-11/12 bg-white dark:bg-[#222831] rounded-lg py-3 shadow-lg space-y-3"
           onPress={(e) => e.stopPropagation()} // Prevent closing when pressing inside the modal
         >
           <View className="flex flex-row justify-between items-center px-3">
@@ -132,14 +134,18 @@ const PostModal = ({ onClose, isVisible, data, user }) => {
                 resizeMode="cover"
               />
               <View className="flex flex-col space-y-px">
-                <Text className="text-black">{user?.name}</Text>
-                <Text className="text-black text-xs">
+                <Text className="text-black dark:text-white">{user?.name}</Text>
+                <Text className="text-black text-xs dark:text-gray-200">
                   {`@` + user?.username}
                 </Text>
               </View>
             </View>
             <TouchableOpacity>
-              <Entypo name="dots-three-vertical" size={16} color="black" />
+              <Entypo
+                name="dots-three-vertical"
+                size={16}
+                color={colorScheme === "dark" ? "white" : "black"}
+              />
             </TouchableOpacity>
           </View>
           <View className="relative">
@@ -168,20 +174,32 @@ const PostModal = ({ onClose, isVisible, data, user }) => {
                 {likedPosts.has(data._id) ? (
                   <Feather name="thumbs-up" size={20} color="pink" />
                 ) : (
-                  <Feather name="thumbs-up" size={20} color="black" />
+                  <Feather
+                    name="thumbs-up"
+                    size={20}
+                    color={colorScheme === "dark" ? "white" : "black"}
+                  />
                 )}
               </TouchableOpacity>
               <TouchableOpacity
               //  onPress={() => handleShare(item._id)}
               >
-                <Octicons name="paper-airplane" size={20} color="black" />
+                <Octicons
+                  name="paper-airplane"
+                  size={20}
+                  color={colorScheme === "dark" ? "white" : "black"}
+                />
               </TouchableOpacity>
             </View>
             <View className="flex-row items-center space-x-4">
               <TouchableOpacity
               // onPress={() => handleDownloadImage(item.imageUrl)}
               >
-                <AntDesign name="download" size={20} color="black" />
+                <AntDesign
+                  name="download"
+                  size={20}
+                  color={colorScheme === "dark" ? "white" : "black"}
+                />
               </TouchableOpacity>
               <TouchableOpacity
               // onPress={() =>
@@ -190,7 +208,11 @@ const PostModal = ({ onClose, isVisible, data, user }) => {
               //   )
               // }
               >
-                <FontAwesome name="whatsapp" size={20} color="black" />
+                <FontAwesome
+                  name="whatsapp"
+                  size={20}
+                  color={colorScheme === "dark" ? "white" : "black"}
+                />
               </TouchableOpacity>
               <TouchableOpacity
               // onPress={() =>
@@ -199,16 +221,20 @@ const PostModal = ({ onClose, isVisible, data, user }) => {
               //   )
               // }
               >
-                <Feather name="phone" size={20} color="black" />
+                <Feather
+                  name="phone"
+                  size={20}
+                  color={colorScheme === "dark" ? "white" : "black"}
+                />
               </TouchableOpacity>
             </View>
           </View>
           <View className="px-2">
-            <Text className="text-xs">
+            <Text className="text-xs dark:text-white">
               Liked by{" "}
               <Text className="font-semibold">{data.likes.length} people</Text>
             </Text>
-            <Text className="font-extrabold">
+            <Text className="font-extrabold dark:text-white">
               {data.user.name}{" "}
               <Text className="font-normal">{data.caption}</Text>
             </Text>

@@ -1,16 +1,17 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
-	View,
-	Text,
-	TouchableOpacity,
-	TextInput,
-	Image,
-	Animated,
-	Easing,
-	Keyboard,
-	TouchableWithoutFeedback,
-	Alert,
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  Image,
+  Animated,
+  Easing,
+  Keyboard,
+  TouchableWithoutFeedback,
+  Alert,
 } from "react-native";
+import { useColorScheme } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "@react-navigation/native";
@@ -18,155 +19,161 @@ import { useMutation } from "@tanstack/react-query";
 import { authService } from "../api/settings";
 import { logout } from "../api/auth";
 import { useAuth } from "../context/AuthContext";
-
+import { Ionicons } from "@expo/vector-icons";
 const ChangePasswordModal = () => {
-	const navigation = useNavigation();
-	const [currentPassword, setCurrentPassword] = useState("");
-	const [newPassword, setNewPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
-	const [logOutAll, setLogOutAll] = useState(false);
-	const slideAnim = useRef(new Animated.Value(0)).current;
-	const { user } = useAuth();
+  const navigation = useNavigation();
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [logOutAll, setLogOutAll] = useState(false);
+  const slideAnim = useRef(new Animated.Value(0)).current;
+  const { user } = useAuth();
+  const { colorScheme } = useColorScheme();
+  useEffect(() => {
+    Animated.timing(slideAnim, {
+      toValue: 1,
+      duration: 300,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
-	useEffect(() => {
-		Animated.timing(slideAnim, {
-			toValue: 1,
-			duration: 300,
-			easing: Easing.out(Easing.ease),
-			useNativeDriver: true,
-		}).start();
-	}, []);
+  const closeModal = () => {
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 300,
+      easing: Easing.in(Easing.ease),
+      useNativeDriver: true,
+    }).start(() => navigation.goBack());
+  };
 
-	const closeModal = () => {
-		Animated.timing(slideAnim, {
-			toValue: 0,
-			duration: 300,
-			easing: Easing.in(Easing.ease),
-			useNativeDriver: true,
-		}).start(() => navigation.goBack());
-	};
+  const mutation = useMutation({
+    mutationFn: (changePasswordData) =>
+      authService.changePassword(
+        changePasswordData.email,
+        changePasswordData.password
+      ),
+    onSuccess: () => {
+      Alert.alert(
+        "Success",
+        "Your Password Update Successfully. Please login again."
+      );
+      logout();
+      navigation.navigate("Login");
+    },
+    onError: (error) => {
+      Alert.alert("Error", error.message);
+    },
+  });
 
-	const mutation = useMutation({
-		mutationFn: (changePasswordData) =>
-			authService.changePassword(
-				changePasswordData.email,
-				changePasswordData.password
-			),
-		onSuccess: () => {
-			Alert.alert(
-				"Success",
-				"Your Password Update Successfully. Please login again."
-			);
-			logout();
-			navigation.navigate("Login");
-		},
-		onError: (error) => {
-			Alert.alert("Error", error.message);
-		},
-	});
+  const handleChangePassword = () => {
+    if (
+      newPassword !== confirmPassword ||
+      newPassword === "" ||
+      confirmPassword === ""
+    ) {
+      Alert.alert("Error", "Passwords do not match");
+      return;
+    }
 
-	const handleChangePassword = () => {
-		if (
-			newPassword !== confirmPassword ||
-			newPassword === "" ||
-			confirmPassword === ""
-		) {
-			Alert.alert("Error", "Passwords do not match");
-			return;
-		}
+    mutation.mutate({
+      email: user.email,
+      password: newPassword,
+    });
 
-		mutation.mutate({
-			email: user.email,
-			password: newPassword,
-		});
+    closeModal();
+  };
 
-		closeModal();
-	};
+  return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SafeAreaView className="flex-1 bg-pink-100 ">
+        <StatusBar style="dark" />
+        <Animated.View
+          className="flex-1 bg-white rounded-t-3xl dark:bg-[#222831]"
+          style={{
+            transform: [
+              {
+                translateY: slideAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [300, 0],
+                }),
+              },
+            ],
+          }}
+        >
+          <View className="p-4 ">
+            <TouchableOpacity onPress={closeModal} className="self-start mb-4">
+              <Ionicons
+                name="arrow-back"
+                size={20}
+                color={colorScheme === "dark" ? "white" : "black"}
+              />
+            </TouchableOpacity>
+            <Text className="text-xl font-bold mb-6 dark:text-white">
+              Change password
+            </Text>
 
-	return (
-		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-			<SafeAreaView className="flex-1 bg-pink-100">
-				<StatusBar style="dark" />
-				<Animated.View
-					className="flex-1 bg-white rounded-t-3xl"
-					style={{
-						transform: [
-							{
-								translateY: slideAnim.interpolate({
-									inputRange: [0, 1],
-									outputRange: [300, 0],
-								}),
-							},
-						],
-					}}
-				>
-					<View className="p-4">
-						<TouchableOpacity onPress={closeModal} className="self-start mb-4">
-							<Image
-								source={require("../assets/arrow_back.png")}
-								className="w-6 h-6"
-							/>
-						</TouchableOpacity>
-						<Text className="text-xl font-bold mb-6">Change password</Text>
+            <Text className="text-sm text-gray-600 mb-4 dark:text-gray-200">
+              Password must be at least 8 Characters and must contain at least a
+              Capital Letter, a Number and a Special Character.
+            </Text>
 
-						<Text className="text-sm text-gray-600 mb-4">
-							Password must be at least 8 Characters and must contain at least a
-							Capital Letter, a Number and a Special Character.
-						</Text>
+            <View className="space-y-4 mb-6">
+              <TextInput
+                className="bg-gray-100 p-3 rounded-lg "
+                placeholder="Current Password"
+                secureTextEntry
+                value={currentPassword}
+                onChangeText={setCurrentPassword}
+                colorScheme={colorScheme}
+              />
+              <TextInput
+                className="bg-gray-100 p-3 rounded-lg"
+                placeholder="Enter new Password"
+                secureTextEntry
+                value={newPassword}
+                onChangeText={setNewPassword}
+              />
+              <TextInput
+                className="bg-gray-100 p-3 rounded-lg"
+                placeholder="Confirm new Password"
+                secureTextEntry
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+              />
+            </View>
 
-						<View className="space-y-4 mb-6">
-							<TextInput
-								className="bg-gray-100 p-3 rounded-lg"
-								placeholder="Current Password"
-								secureTextEntry
-								value={currentPassword}
-								onChangeText={setCurrentPassword}
-							/>
-							<TextInput
-								className="bg-gray-100 p-3 rounded-lg"
-								placeholder="Enter new Password"
-								secureTextEntry
-								value={newPassword}
-								onChangeText={setNewPassword}
-							/>
-							<TextInput
-								className="bg-gray-100 p-3 rounded-lg"
-								placeholder="Confirm new Password"
-								secureTextEntry
-								value={confirmPassword}
-								onChangeText={setConfirmPassword}
-							/>
-						</View>
+            <TouchableOpacity>
+              <Text className="text-dark/80 mb-4 dark:text-white">
+                Forgot Password?
+              </Text>
+            </TouchableOpacity>
 
-						<TouchableOpacity>
-							<Text className="text-dark/80 mb-4">Forgot Password?</Text>
-						</TouchableOpacity>
+            <View className="flex-row items-center mb-6">
+              <TouchableOpacity
+                className="w-6 h-6 border-2 border-gray-400 rounded-full mr-2"
+                onPress={() => setLogOutAll(!logOutAll)}
+              >
+                {logOutAll && (
+                  <View className="flex-1 bg-primary m-0.5 rounded-full" />
+                )}
+              </TouchableOpacity>
+              <Text className="dark:text-white">Log out of all devices</Text>
+            </View>
 
-						<View className="flex-row items-center mb-6">
-							<TouchableOpacity
-								className="w-6 h-6 border-2 border-gray-400 rounded-full mr-2"
-								onPress={() => setLogOutAll(!logOutAll)}
-							>
-								{logOutAll && (
-									<View className="flex-1 bg-primary m-0.5 rounded-full" />
-								)}
-							</TouchableOpacity>
-							<Text>Log out of all devices</Text>
-						</View>
-
-						<TouchableOpacity
-							className="bg-primary p-4 rounded-lg"
-							onPress={handleChangePassword}
-						>
-							<Text className="text-dark text-center font-bold">
-								Change Password
-							</Text>
-						</TouchableOpacity>
-					</View>
-				</Animated.View>
-			</SafeAreaView>
-		</TouchableWithoutFeedback>
-	);
+            <TouchableOpacity
+              className="bg-primary p-4 rounded-lg"
+              onPress={handleChangePassword}
+            >
+              <Text className="text-dark text-center font-bold">
+                Change Password
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
+  );
 };
 
 export default ChangePasswordModal;

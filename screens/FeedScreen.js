@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  Image,
-  FlatList,
-  RefreshControl,
-  Alert,
-  Linking,
-  Platform,
-  Share,
-  Pressable,
+	View,
+	Text,
+	SafeAreaView,
+	TouchableOpacity,
+	Image,
+	FlatList,
+	RefreshControl,
+	Alert,
+	Linking,
+	Platform,
+	Share,
+	Pressable,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -47,7 +47,7 @@ export default function FeedScreen() {
   const [selectedPost, setSelectedPost] = useState(null);
   const [followingUsers, setFollowingUsers] = useState(new Set());
   const [blockedUsers, setBlockedUsers] = useState(new Set());
-
+  const { colorScheme } = useColorScheme();
   useEffect(() => {
     if (fullUser) {
       setFollowingUsers(new Set(fullUser.followings));
@@ -55,352 +55,352 @@ export default function FeedScreen() {
     }
   }, [fullUser, userRefetch]);
 
-  const handleOptionsPress = (item) => {
-    setSelectedPost(item);
-    setSideModalVisible(true);
-  };
+	const handleOptionsPress = (item) => {
+		setSelectedPost(item);
+		setSideModalVisible(true);
+	};
 
-  const handleOptionSelect = (option) => {
-    setSideModalVisible(false);
-    switch (option) {
-      case "Rate":
-        navigation.navigate("CommonProfile", { userId: selectedPost.user._id });
-        break;
-      case "Review":
-        navigation.navigate("CommonProfile", { userId: selectedPost.user._id });
-        break;
-      case "View Profile":
-        navigation.navigate("CommonProfile", { userId: selectedPost.user._id });
-        break;
-      case "Follow":
-        followUserMutation.mutate(selectedPost.user?._id);
-        break;
-      case "Unfollow":
-        unFollowMutation.mutate(selectedPost.user?._id);
-        break;
-      case "Block":
-        blockUserMutation.mutate(selectedPost.user.username);
-        break;
-      case "Unblock":
-        unblockUserMutation.mutate(selectedPost.user.username);
-        break;
-      case "Report a problem":
-        setReportModalVisible(true);
-        break;
-      default:
-        break;
-    }
-  };
+	const handleOptionSelect = (option) => {
+		setSideModalVisible(false);
+		switch (option) {
+			case "Rate":
+				navigation.navigate("CommonProfile", { userId: selectedPost.user._id });
+				break;
+			case "Review":
+				navigation.navigate("CommonProfile", { userId: selectedPost.user._id });
+				break;
+			case "View Profile":
+				navigation.navigate("CommonProfile", { userId: selectedPost.user._id });
+				break;
+			case "Follow":
+				followUserMutation.mutate(selectedPost.user?._id);
+				break;
+			case "Unfollow":
+				unFollowMutation.mutate(selectedPost.user?._id);
+				break;
+			case "Block":
+				blockUserMutation.mutate(selectedPost.user.username);
+				break;
+			case "Unblock":
+				unblockUserMutation.mutate(selectedPost.user.username);
+				break;
+			case "Report a problem":
+				setReportModalVisible(true);
+				break;
+			default:
+				break;
+		}
+	};
 
-  const blockUserMutation = useMutation({
-    mutationFn: (targetUsername) =>
-      userService.blockUser(fullUser?.username, targetUsername),
-    onSuccess: () => {
-      setBlockedUsers((prev) => new Set(prev).add(selectedPost.user._id));
-    },
-    onError: (err) => {
-      Alert.alert("Error", err.message);
-    },
-  });
+	const blockUserMutation = useMutation({
+		mutationFn: (targetUsername) =>
+			userService.blockUser(fullUser?.username, targetUsername),
+		onSuccess: () => {
+			setBlockedUsers((prev) => new Set(prev).add(selectedPost.user._id));
+		},
+		onError: (err) => {
+			Alert.alert("Error", err.message);
+		},
+	});
 
-  const unblockUserMutation = useMutation({
-    mutationFn: (targetUsername) =>
-      userService.unBlockUser(fullUser?.username, targetUsername),
-    onSuccess: () => {
-      setBlockedUsers((prev) => {
-        const newSet = new Set(prev);
-        newSet.delete(selectedPost.user._id);
-        return newSet;
-      });
-    },
-    onError: (err) => {
-      Alert.alert("Error", err.message);
-    },
-  });
+	const unblockUserMutation = useMutation({
+		mutationFn: (targetUsername) =>
+			userService.unBlockUser(fullUser?.username, targetUsername),
+		onSuccess: () => {
+			setBlockedUsers((prev) => {
+				const newSet = new Set(prev);
+				newSet.delete(selectedPost.user._id);
+				return newSet;
+			});
+		},
+		onError: (err) => {
+			Alert.alert("Error", err.message);
+		},
+	});
 
-  const unFollowMutation = useMutation({
-    mutationFn: (targetUserId) =>
-      userService.unfollowUser(fullUser?._id, targetUserId),
-    onSuccess: (targetUserId) => {
-      setFollowingUsers((prev) => {
-        const newSet = new Set(prev);
-        newSet.delete(targetUserId);
-        return newSet;
-      });
-    },
-    onError: (err, userId, context) => {
-      setFollowingUsers((prev) => {
-        const newSet = new Set(prev);
-        newSet.add(userId);
-        return newSet;
-      });
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries(["posts"]);
-    },
-  });
+	const unFollowMutation = useMutation({
+		mutationFn: (targetUserId) =>
+			userService.unfollowUser(fullUser?._id, targetUserId),
+		onSuccess: (targetUserId) => {
+			setFollowingUsers((prev) => {
+				const newSet = new Set(prev);
+				newSet.delete(targetUserId);
+				return newSet;
+			});
+		},
+		onError: (err, userId, context) => {
+			setFollowingUsers((prev) => {
+				const newSet = new Set(prev);
+				newSet.add(userId);
+				return newSet;
+			});
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries(["posts"]);
+		},
+	});
 
-  const followUserMutation = useMutation({
-    mutationFn: (userId) => userService.followUser(user?.userId, userId),
-    onSuccess: (data, userId) => {
-      setFollowingUsers((prev) => new Set(prev).add(userId));
-      queryClient.invalidateQueries(["posts"]);
-    },
-    onError: (err, userId) => {
-      setFollowingUsers((prev) => {
-        const newSet = new Set(prev);
-        newSet.delete(userId);
-        return newSet;
-      });
-    },
-  });
+	const followUserMutation = useMutation({
+		mutationFn: (userId) => userService.followUser(user?.userId, userId),
+		onSuccess: (data, userId) => {
+			setFollowingUsers((prev) => new Set(prev).add(userId));
+			queryClient.invalidateQueries(["posts"]);
+		},
+		onError: (err, userId) => {
+			setFollowingUsers((prev) => {
+				const newSet = new Set(prev);
+				newSet.delete(userId);
+				return newSet;
+			});
+		},
+	});
 
-  const {
-    data: posts,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["posts"],
-    queryFn: postService.getAllFeed,
-  });
+	const {
+		data: posts,
+		isLoading,
+		isError,
+		error,
+		refetch,
+	} = useQuery({
+		queryKey: ["posts"],
+		queryFn: postService.getAllFeed,
+	});
 
-  useEffect(() => {
-    if (user && posts) {
-      const likedPostIds = new Set(
-        posts
-          .filter((post) =>
-            post.likes.some((like) => like.username === user.username)
-          )
-          .map((post) => post._id)
-      );
-      setLikedPosts(likedPostIds);
-    }
-  }, [posts, user]);
+	useEffect(() => {
+		if (user && posts) {
+			const likedPostIds = new Set(
+				posts
+					.filter((post) =>
+						post.likes.some((like) => like.username === user.username)
+					)
+					.map((post) => post._id)
+			);
+			setLikedPosts(likedPostIds);
+		}
+	}, [posts, user]);
 
-  useEffect(() => {
-    if (posts) {
-      let sorted = [...posts]
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        .map((post) => ({ ...post, imageOrientation: "contain" }));
-      setFilteredPosts(sorted);
-    }
-  }, [posts]);
+	useEffect(() => {
+		if (posts) {
+			let sorted = [...posts]
+				.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+				.map((post) => ({ ...post, imageOrientation: "contain" }));
+			setFilteredPosts(sorted);
+		}
+	}, [posts]);
 
-  const applyFilter = useCallback(
-    (filter) => {
-      if (!posts) return;
+	const applyFilter = useCallback(
+		(filter) => {
+			if (!posts) return;
 
-      let filtered = [...posts].sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-      );
+			let filtered = [...posts].sort(
+				(a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+			);
 
-      const userState = "new_york";
-      const userCity = "Near IGI, New Delhi"
-        ?.split(",")
-        .pop()
-        .trim()
-        .toLowerCase();
+			const userState = "new_york";
+			const userCity = "Near IGI, New Delhi"
+				?.split(",")
+				.pop()
+				.trim()
+				.toLowerCase();
 
-      switch (filter) {
-        case "myCity":
-          filtered = filtered.filter((post) => {
-            const postCity = post.user.businessDetails?.address?.city
-              ?.split(",")
-              .pop()
-              .trim()
-              .toLowerCase();
-            return postCity === userCity;
-          });
-          break;
-        case "nearby":
-          filtered = filtered.filter((post) => {
-            // console.log(userState);
-            const postState =
-              post.user.businessDetails?.address?.state?.toLowerCase();
-            return postState === userState;
-          });
-          break;
-        case "mostLiked":
-          filtered.sort((a, b) => b.likes.length - a.likes.length);
-          break;
-        case "today":
-          filtered = filtered.filter(
-            (post) =>
-              new Date(post.createdAt).toDateString() ===
-              new Date().toDateString()
-          );
-          break;
-        case "lastWeek":
-          const oneWeekAgo = new Date();
-          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-          filtered = filtered.filter(
-            (post) => new Date(post.createdAt) >= oneWeekAgo
-          );
-          break;
-        case "lastMonth":
-          const oneMonthAgo = new Date();
-          oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-          filtered = filtered.filter(
-            (post) => new Date(post.createdAt) >= oneMonthAgo
-          );
-          break;
-        default:
-          break;
-      }
+			switch (filter) {
+				case "myCity":
+					filtered = filtered.filter((post) => {
+						const postCity = post.user.businessDetails?.address?.city
+							?.split(",")
+							.pop()
+							.trim()
+							.toLowerCase();
+						return postCity === userCity;
+					});
+					break;
+				case "nearby":
+					filtered = filtered.filter((post) => {
+						// console.log(userState);
+						const postState =
+							post.user.businessDetails?.address?.state?.toLowerCase();
+						return postState === userState;
+					});
+					break;
+				case "mostLiked":
+					filtered.sort((a, b) => b.likes.length - a.likes.length);
+					break;
+				case "today":
+					filtered = filtered.filter(
+						(post) =>
+							new Date(post.createdAt).toDateString() ===
+							new Date().toDateString()
+					);
+					break;
+				case "lastWeek":
+					const oneWeekAgo = new Date();
+					oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+					filtered = filtered.filter(
+						(post) => new Date(post.createdAt) >= oneWeekAgo
+					);
+					break;
+				case "lastMonth":
+					const oneMonthAgo = new Date();
+					oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+					filtered = filtered.filter(
+						(post) => new Date(post.createdAt) >= oneMonthAgo
+					);
+					break;
+				default:
+					break;
+			}
 
-      setFilteredPosts(filtered);
-    },
-    [posts]
-  );
+			setFilteredPosts(filtered);
+		},
+		[posts]
+	);
 
-  const toggleLikeMutation = useMutation({
-    mutationFn: ({ postId, username, isLiked }) =>
-      isLiked
-        ? postService.unlikePost(postId, username)
-        : postService.likePost(postId, username),
-    onMutate: ({ postId, isLiked }) => {
-      const previousPosts = queryClient.getQueryData(["posts"]);
-      queryClient.setQueryData(["posts"], (old) =>
-        old.map((post) =>
-          post._id === postId
-            ? {
-                ...post,
-                likes: isLiked
-                  ? post.likes.filter((like) => like.username !== user.username)
-                  : [...post.likes, { username: user.username }],
-              }
-            : post
-        )
-      );
-      setLikedPosts((prev) => {
-        const newSet = new Set(prev);
-        if (isLiked) {
-          newSet.delete(postId);
-        } else {
-          newSet.add(postId);
-        }
-        return newSet;
-      });
-      return { previousPosts };
-    },
-    onError: (err, { postId }, context) => {
-      queryClient.setQueryData(["posts"], context.previousPosts);
-      setLikedPosts((prev) => {
-        const newSet = new Set(prev);
-        if (newSet.has(postId)) {
-          newSet.delete(postId);
-        } else {
-          newSet.add(postId);
-        }
-        return newSet;
-      });
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries(["posts"]);
-    },
-  });
+	const toggleLikeMutation = useMutation({
+		mutationFn: ({ postId, username, isLiked }) =>
+			isLiked
+				? postService.unlikePost(postId, username)
+				: postService.likePost(postId, username),
+		onMutate: ({ postId, isLiked }) => {
+			const previousPosts = queryClient.getQueryData(["posts"]);
+			queryClient.setQueryData(["posts"], (old) =>
+				old.map((post) =>
+					post._id === postId
+						? {
+								...post,
+								likes: isLiked
+									? post.likes.filter((like) => like.username !== user.username)
+									: [...post.likes, { username: user.username }],
+						  }
+						: post
+				)
+			);
+			setLikedPosts((prev) => {
+				const newSet = new Set(prev);
+				if (isLiked) {
+					newSet.delete(postId);
+				} else {
+					newSet.add(postId);
+				}
+				return newSet;
+			});
+			return { previousPosts };
+		},
+		onError: (err, { postId }, context) => {
+			queryClient.setQueryData(["posts"], context.previousPosts);
+			setLikedPosts((prev) => {
+				const newSet = new Set(prev);
+				if (newSet.has(postId)) {
+					newSet.delete(postId);
+				} else {
+					newSet.add(postId);
+				}
+				return newSet;
+			});
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries(["posts"]);
+		},
+	});
 
-  const handleToggleLike = useCallback(
-    (postId) => {
-      if (user) {
-        const isLiked = likedPosts.has(postId);
-        toggleLikeMutation.mutate({
-          postId,
-          username: user.username,
-          isLiked,
-        });
-      } else {
-        // Handle the case when the user is not logged in
-        Alert.alert("Error", "Please log in to like posts");
-      }
-    },
-    [user, likedPosts, toggleLikeMutation]
-  );
+	const handleToggleLike = useCallback(
+		(postId) => {
+			if (user) {
+				const isLiked = likedPosts.has(postId);
+				toggleLikeMutation.mutate({
+					postId,
+					username: user.username,
+					isLiked,
+				});
+			} else {
+				// Handle the case when the user is not logged in
+				Alert.alert("Error", "Please log in to like posts");
+			}
+		},
+		[user, likedPosts, toggleLikeMutation]
+	);
 
-  const handleDownloadImage = useCallback(async (imageUrl) => {
-    try {
-      const { status } = await MediaLibrary.requestPermissionsAsync();
-      if (status === "granted") {
-        const fileUri = `${FileSystem.cacheDirectory}temp_image.jpg`;
-        const downloadResumable = FileSystem.createDownloadResumable(
-          imageUrl,
-          fileUri,
-          {}
-        );
-        const { uri } = await downloadResumable.downloadAsync();
-        const asset = await MediaLibrary.createAssetAsync(uri);
-        await MediaLibrary.createAlbumAsync("Freathers", asset, false);
-        Alert.alert("Success", "Image saved to gallery!");
-      }
-    } catch (error) {
-      console.error("Error downloading image:", error);
-      Alert.alert("Error", "Failed to save image");
-    }
-  }, []);
+	const handleDownloadImage = useCallback(async (imageUrl) => {
+		try {
+			const { status } = await MediaLibrary.requestPermissionsAsync();
+			if (status === "granted") {
+				const fileUri = `${FileSystem.cacheDirectory}temp_image.jpg`;
+				const downloadResumable = FileSystem.createDownloadResumable(
+					imageUrl,
+					fileUri,
+					{}
+				);
+				const { uri } = await downloadResumable.downloadAsync();
+				const asset = await MediaLibrary.createAssetAsync(uri);
+				await MediaLibrary.createAlbumAsync("Freathers", asset, false);
+				Alert.alert("Success", "Image saved to gallery!");
+			}
+		} catch (error) {
+			console.error("Error downloading image:", error);
+			Alert.alert("Error", "Failed to save image");
+		}
+	}, []);
 
-  const handleWhatsAppRedirect = useCallback((phoneNumber) => {
-    const url = `whatsapp://send?phone=${phoneNumber}`;
-    Linking.canOpenURL(url)
-      .then((supported) => {
-        if (supported) {
-          return Linking.openURL(url);
-        } else {
-          Alert.alert("Error", "WhatsApp is not installed on this device");
-        }
-      })
-      .catch((err) => console.error("Error opening WhatsApp:", err));
-  }, []);
+	const handleWhatsAppRedirect = useCallback((phoneNumber) => {
+		const url = `whatsapp://send?phone=${phoneNumber}`;
+		Linking.canOpenURL(url)
+			.then((supported) => {
+				if (supported) {
+					return Linking.openURL(url);
+				} else {
+					Alert.alert("Error", "WhatsApp is not installed on this device");
+				}
+			})
+			.catch((err) => console.error("Error opening WhatsApp:", err));
+	}, []);
 
-  const handlePhoneCall = useCallback((phoneNumber) => {
-    const url =
-      Platform.OS === "android"
-        ? `tel:${phoneNumber}`
-        : `telprompt:${phoneNumber}`;
-    Linking.canOpenURL(url)
-      .then((supported) => {
-        if (supported) {
-          return Linking.openURL(url);
-        } else {
-          Alert.alert("Error", "Phone call not supported on this device");
-        }
-      })
-      .catch((err) => console.error("Error making phone call:", err));
-  }, []);
+	const handlePhoneCall = useCallback((phoneNumber) => {
+		const url =
+			Platform.OS === "android"
+				? `tel:${phoneNumber}`
+				: `telprompt:${phoneNumber}`;
+		Linking.canOpenURL(url)
+			.then((supported) => {
+				if (supported) {
+					return Linking.openURL(url);
+				} else {
+					Alert.alert("Error", "Phone call not supported on this device");
+				}
+			})
+			.catch((err) => console.error("Error making phone call:", err));
+	}, []);
 
-  const handleShare = async (postId) => {
-    try {
-      const url = `https://www.freathers.com/post/${postId}`;
+	const handleShare = async (postId) => {
+		try {
+			const url = `https://www.freathers.com/post/${postId}`;
 
-      try {
-        const result = await Share.share({
-          message: `Check out this post: ${url}`,
-          url: url, // iOS only
-        });
-        if (result.action === Share.sharedAction) {
-          if (result.activityType) {
-          } else {
-          }
-        } else if (result.action === Share.dismissedAction) {
-          // dismissed by user
-          return;
-        }
-      } catch (error) {
-        console.log("Error with native share:", error.message);
+			try {
+				const result = await Share.share({
+					message: `Check out this post: ${url}`,
+					url: url, // iOS only
+				});
+				if (result.action === Share.sharedAction) {
+					if (result.activityType) {
+					} else {
+					}
+				} else if (result.action === Share.dismissedAction) {
+					// dismissed by user
+					return;
+				}
+			} catch (error) {
+				console.log("Error with native share:", error.message);
 
-        // If native share fails, fall back to copying to clipboard
-        await Clipboard.setStringAsync(url);
-        Alert.alert(
-          "Link Copied",
-          "The post link has been copied to your clipboard."
-        );
-      }
-    } catch (error) {
-      console.error("Error sharing:", error);
-      Alert.alert("Error", "Failed to share the post");
-    }
-  };
+				// If native share fails, fall back to copying to clipboard
+				await Clipboard.setStringAsync(url);
+				Alert.alert(
+					"Link Copied",
+					"The post link has been copied to your clipboard."
+				);
+			}
+		} catch (error) {
+			console.error("Error sharing:", error);
+			Alert.alert("Error", "Failed to share the post");
+		}
+	};
 
   const renderItem = useCallback(
     ({ item }) => {
@@ -418,7 +418,7 @@ export default function FeedScreen() {
         );
       };
       return (
-        <View className="mb-4 mx-3">
+        <View className="mb-4 mx-3 ">
           <View className="flex-row items-center p-4 px-0 justify-between">
             <TouchableOpacity
               onPress={() =>
@@ -431,15 +431,21 @@ export default function FeedScreen() {
                   className="w-10 h-10 rounded-full mr-2 border border-primary"
                 />
                 <View>
-                  <Text className="font-bold">{item.user.name}</Text>
-                  <Text className="text-gray-950 dark:text-gray-500">
+                  <Text className="font-bold dark:text-white">
+                    {item.user.name}
+                  </Text>
+                  <Text className="text-gray-950 dark:text-gray-300">
                     @{item.user.username}
                   </Text>
                 </View>
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => handleOptionsPress(item)}>
-              <Entypo name="dots-three-vertical" size={16} color="black" />
+              <Entypo
+                name="dots-three-vertical"
+                size={16}
+                color={colorScheme === "dark" ? "white" : "black"}
+              />
             </TouchableOpacity>
           </View>
           <View className="relative">
@@ -474,18 +480,30 @@ export default function FeedScreen() {
                 {likedPosts.has(item._id) ? (
                   <Feather name="thumbs-up" size={20} color="pink" />
                 ) : (
-                  <Feather name="thumbs-up" size={20} color="black" />
+                  <Feather
+                    name="thumbs-up"
+                    size={20}
+                    color={colorScheme === "dark" ? "white" : "black"}
+                  />
                 )}
               </TouchableOpacity>
               <TouchableOpacity onPress={() => handleShare(item._id)}>
-                <Octicons name="paper-airplane" size={20} color="black" />
+                <Octicons
+                  name="paper-airplane"
+                  size={20}
+                  color={colorScheme === "dark" ? "white" : "black"}
+                />
               </TouchableOpacity>
             </View>
             <View className="flex-row items-center space-x-4">
               <TouchableOpacity
                 onPress={() => handleDownloadImage(item.imageUrl)}
               >
-                <AntDesign name="download" size={20} color="black" />
+                <AntDesign
+                  name="download"
+                  size={20}
+                  color={colorScheme === "dark" ? "white" : "black"}
+                />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() =>
@@ -494,7 +512,11 @@ export default function FeedScreen() {
                   )
                 }
               >
-                <FontAwesome name="whatsapp" size={20} color="black" />
+                <FontAwesome
+                  name="whatsapp"
+                  size={20}
+                  color={colorScheme === "dark" ? "white" : "black"}
+                />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() =>
@@ -503,16 +525,22 @@ export default function FeedScreen() {
                   )
                 }
               >
-                <Feather name="phone" size={20} color="black" />
+                <Feather
+                  name="phone"
+                  size={20}
+                  color={colorScheme === "dark" ? "white" : "black"}
+                />
               </TouchableOpacity>
             </View>
           </View>
           <View className="p-2">
-            <Text className="text-xs">
+            <Text className="text-xs dark:text-white">
               Liked by{" "}
-              <Text className="font-semibold">{item.likes.length} people</Text>
+              <Text className="font-semibold dark:text-white">
+                {item.likes.length} people
+              </Text>
             </Text>
-            <Text className="font-extrabold">
+            <Text className="font-extrabold dark:text-white">
               {item.user.name}{" "}
               <Text className="font-normal">{item.caption}</Text>
             </Text>
@@ -529,46 +557,46 @@ export default function FeedScreen() {
     ]
   );
 
-  const ListEmptyComponent = useCallback(
-    () => (
-      <View className="flex-1 justify-center items-center">
-        <Text>No posts available</Text>
-      </View>
-    ),
-    []
-  );
+	const ListEmptyComponent = useCallback(
+		() => (
+			<View className="flex-1 justify-center items-center">
+				<Text>No posts available</Text>
+			</View>
+		),
+		[]
+	);
 
-  const ListHeaderComponent = useCallback(() => {
-    return (
-      <View className="flex-row justify-between items-center p-4 bg-primary pt-8">
-        <Image
-          source={require("../assets/icon.png")}
-          className="w-10 h-10 bg-white rounded-full"
-        />
-        <Text className="text-lg font-bold">Freathers</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Setting")}>
-          <Octicons name="person" size={24} color="black" />
-        </TouchableOpacity>
-      </View>
-    );
-  }, [navigation]);
+	const ListHeaderComponent = useCallback(() => {
+		return (
+			<View className="flex-row justify-between items-center p-4 bg-primary pt-8">
+				<Image
+					source={require("../assets/icon.png")}
+					className="w-10 h-10 bg-white rounded-full"
+				/>
+				<Text className="text-lg font-bold">Freathers</Text>
+				<TouchableOpacity onPress={() => navigation.navigate("Setting")}>
+					<Octicons name="person" size={24} color="black" />
+				</TouchableOpacity>
+			</View>
+		);
+	}, [navigation]);
 
-  if (isError) {
-    return (
-      <SafeAreaView className="flex-1 justify-center items-center">
-        <Text>Error: {error.message}</Text>
-        <TouchableOpacity
-          onPress={refetch}
-          className="mt-4 bg-primary p-2 rounded"
-        >
-          <Text className="text-white">Try Again</Text>
-        </TouchableOpacity>
-      </SafeAreaView>
-    );
-  }
+	if (isError) {
+		return (
+			<SafeAreaView className="flex-1 justify-center items-center">
+				<Text>Error: {error.message}</Text>
+				<TouchableOpacity
+					onPress={refetch}
+					className="mt-4 bg-primary p-2 rounded"
+				>
+					<Text className="text-white">Try Again</Text>
+				</TouchableOpacity>
+			</SafeAreaView>
+		);
+	}
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#222831]">
       <FlatList
         data={filteredPosts}
         renderItem={renderItem}

@@ -3,9 +3,11 @@ import { Image, Text, View } from "react-native";
 
 export default function Header() {
   return (
-    <View className="bg-white h-16 flex items-center justify-center flex-1">
+    <View className="bg-white h-16 flex items-center justify-center flex-1 dark:bg-[#222831]">
       <Image source={require("../assets/icon.png")} className="w-24 h-24" />
-      <Text className="text-black font-bold text-xl">Freathers</Text>
+      <Text className="text-black font-bold text-xl dark:text-white">
+        Freathers
+      </Text>
     </View>
   );
 }

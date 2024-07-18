@@ -184,7 +184,7 @@ export default function ParticularPostScreen() {
 	}
 
 	return (
-		<SafeAreaView className="flex-1 bg-white pt-12">
+		<SafeAreaView className="flex-1 bg-white pt-12 ">
 			<ScrollView>
 				<TouchableOpacity
 					className="absolute top-0 left-4 z-50"

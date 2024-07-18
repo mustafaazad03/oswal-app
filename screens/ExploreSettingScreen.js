@@ -14,6 +14,7 @@ import { StatusBar } from "expo-status-bar";
 import { categoriesOptions } from "../functions/categories";
 import { exploreItems } from "../functions/subCategories";
 import BottomNavigation from "../components/BottomNavigation";
+import { useColorScheme } from "nativewind";
 
 const categories = [
   { id: "1", name: "Wallpapers", image: require("../assets/random.png") },
@@ -131,7 +132,7 @@ export default function ExploreSettingScreen() {
   }, [category, subCategory]);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#222831]">
       <StatusBar style="dark" />
       <Header navigation={navigation} />
       <FlatList
@@ -143,26 +144,36 @@ export default function ExploreSettingScreen() {
         columnWrapperStyle={{ justifyContent: "space-between" }}
         contentContainerStyle={{ padding: 16 }}
       />
-      <BottomNavigation notify={false} />
+      {/* <BottomNavigation notify={false} /> */}
     </SafeAreaView>
   );
 }
-const PickerSection = ({ label, value, onValueChange, items }) => (
-  <View className="mb-4">
-    <Text className="mb-2 text-gray-700 font-medium">{label}</Text>
-    <View className="border border-primary rounded-lg">
-      <Picker
-        selectedValue={value}
-        onValueChange={onValueChange}
-        className="h-8"
-      >
-        {items.map((item) => (
-          <Picker.Item key={item.value} label={item.label} value={item.value} />
-        ))}
-      </Picker>
+const PickerSection = ({ label, value, onValueChange, items }) => {
+  const { colorScheme } = useColorScheme();
+  return (
+    <View className="mb-4">
+      <Text className="mb-2 text-gray-700 font-medium dark:text-gray-200">
+        {label}
+      </Text>
+      <View className="border border-primary rounded-lg">
+        <Picker
+          selectedValue={value}
+          onValueChange={onValueChange}
+          className="h-8 dark:text-white"
+          style={{ color: colorScheme === "dark" ? "white" : "black" }}
+        >
+          {items.map((item) => (
+            <Picker.Item
+              key={item.value}
+              label={item.label}
+              value={item.value}
+            />
+          ))}
+        </Picker>
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 const Header = ({ navigation }) => (
   <View className="bg-[#FFD1DC] p-4 flex-row items-center pt-8">

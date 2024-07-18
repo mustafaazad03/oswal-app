@@ -49,6 +49,16 @@ export default function ProfileDetailsSettingScreen() {
 		},
 	});
 
+	const uploadImage = async (imageUri) => {
+		try {
+			const imageUrl = await uploadImageToCloudinary(imageUri);
+			setProfileImage(imageUrl);
+		} catch (error) {
+			console.error("Error uploading image:", error);
+			Alert.alert("Error", "Failed to upload image");
+		}
+	};
+
 	const handleImagePicker = async () => {
 		const permissionResult =
 			await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -66,8 +76,7 @@ export default function ProfileDetailsSettingScreen() {
 		});
 
 		if (!result.cancelled) {
-			const selectedImageUri = uploadImageToCloudinary(result.assets[0]);
-			setProfileImage(selectedImageUri);
+			uploadImage(result.assets[0]);
 		}
 	};
 
@@ -85,7 +94,7 @@ export default function ProfileDetailsSettingScreen() {
 	};
 
 	return (
-		<SafeAreaView className="flex-1 bg-white">
+		<SafeAreaView className="flex-1 bg-white dark:bg-[#222831]">
 			<View className="bg-[#FFD1DC] p-4 flex-row items-center pt-8">
 				<View className="flex flex-row space-x-2 justify-center items-center">
 					<TouchableOpacity onPress={() => navigation.goBack()}>
@@ -110,10 +119,10 @@ export default function ProfileDetailsSettingScreen() {
 			</View>
 
 			<ScrollView className="w-full p-4">
-				<Text className="text-2xl font-bold mb-2">
+				<Text className="text-2xl font-bold mb-2 dark:text-white">
 					Enter your Personal Details
 				</Text>
-				<Text className="text-sm text-gray-500 mb-4">
+				<Text className="text-sm text-gray-500 mb-4 dark:text-gray-200">
 					You can always change this later.
 				</Text>
 
@@ -141,13 +150,13 @@ export default function ProfileDetailsSettingScreen() {
 
 				<TextInput
 					placeholder="Your name/Business Name*"
-					className="border border-primary p-3 rounded-lg mb-4"
+					className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
 					value={formData.name}
 					onChangeText={(text) => setFormData({ ...formData, name: text })}
 				/>
 				<TextInput
 					placeholder="Mobile Number*"
-					className="border border-primary p-3 rounded-lg mb-4"
+					className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
 					value={formData.mobile}
 					onChangeText={(text) => setFormData({ ...formData, mobile: text })}
 					keyboardType="phone-pad"
@@ -159,7 +168,7 @@ export default function ProfileDetailsSettingScreen() {
 					</Text>
 					<TextInput
 						placeholder="E-mail"
-						className="border border-primary p-3 rounded-lg mb-4"
+						className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
 						value={formData.email}
 						onChangeText={(text) => setFormData({ ...formData, email: text })}
 						keyboardType="email-address"
@@ -167,19 +176,27 @@ export default function ProfileDetailsSettingScreen() {
 					/>
 				</View>
 				<TouchableOpacity
-					className="border border-primary p-3 rounded-lg mb-4"
+					className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
 					onPress={() => setShowGenderPicker(true)}
 				>
-					<Text className={formData.gender ? "text-black" : "text-gray-400"}>
+					<Text
+						className={
+							formData.gender ? "text-black dark:text-white" : "text-gray-400"
+						}
+					>
 						{formData.gender || "Select Gender"}
 					</Text>
 				</TouchableOpacity>
 
 				<TouchableOpacity
 					onPress={() => setShowDatePicker(true)}
-					className="border border-primary p-3 rounded-lg mb-4"
+					className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
 				>
-					<Text className={formData.dob ? "text-black" : "text-gray-400"}>
+					<Text
+						className={
+							formData.dob ? "text-black dark:text-white" : "text-gray-400"
+						}
+					>
 						{formData.dob ? formData.dob.toLocaleDateString() : "DD/MM/YYYY"}
 					</Text>
 				</TouchableOpacity>
@@ -198,7 +215,7 @@ export default function ProfileDetailsSettingScreen() {
 				)}
 				<TextInput
 					placeholder="Bio"
-					className="border border-primary px-3 py-1  rounded-lg mb-8 h-32 text-sm flex flex-row justify-start items-start"
+					className="border border-primary px-3 py-1  rounded-lg mb-8 h-32 text-sm flex flex-row justify-start items-start dark:text-white"
 					style={{ textAlignVertical: "top", paddingTop: 8, lineHeight: 20 }}
 					value={formData.bio}
 					onChangeText={(text) => setFormData({ ...formData, bio: text })}
@@ -223,9 +240,9 @@ export default function ProfileDetailsSettingScreen() {
 							}
 						>
 							<Picker.Item label="Select Gender" value="" />
-							<Picker.Item label="Male" value="male" />
-							<Picker.Item label="Female" value="female" />
-							<Picker.Item label="Other" value="other" />
+							<Picker.Item label="Male" value="MALE" />
+							<Picker.Item label="Female" value="fEMALE" />
+							<Picker.Item label="Other" value="OTHER" />
 						</Picker>
 					</View>
 				</View>

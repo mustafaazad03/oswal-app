@@ -2,10 +2,11 @@ import React, { useState, useRef } from "react";
 import { View, TouchableOpacity, Text, Animated, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
+import { useColorScheme } from "nativewind";
 const ExpandableButton = ({ onRaiseEnquiry, onUploadMedia, onUploadPDF }) => {
   const [isOpen, setIsOpen] = useState(false);
   const animation = useRef(new Animated.Value(0)).current;
-
+  const { colorScheme } = useColorScheme();
   const toggleMenu = () => {
     const toValue = isOpen ? 0 : 1;
     Animated.spring(animation, {
@@ -54,7 +55,11 @@ const ExpandableButton = ({ onRaiseEnquiry, onUploadMedia, onUploadPDF }) => {
         onPress={toggleMenu}
       >
         <Animated.View style={rotation}>
-          <AntDesign name="plus" size={24} color="black" />
+          <AntDesign
+            name="plus"
+            size={24}
+            color={colorScheme === "dark" ? "white" : "black"}
+          />
         </Animated.View>
       </TouchableOpacity>
       <Animated.View
