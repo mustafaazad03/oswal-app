@@ -83,7 +83,7 @@ export default function EditProfileScreen() {
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <BottomNavigation notify={false} />
+      {/* <BottomNavigation notify={false} /> */}
     </SafeAreaView>
   );
 }

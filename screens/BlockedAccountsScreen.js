@@ -81,7 +81,7 @@ const BlockedAccountsScreen = () => {
 	}
 
 	return (
-		<SafeAreaView className="flex-1 bg-white">
+		<SafeAreaView className="flex-1 bg-white dark:bg-[#222831]">
 			<View className="flex-row items-center p-4 border-b border-gray-200 bg-primary mb-1">
 				<TouchableOpacity onPress={() => navigation.goBack()}>
 					<Image
@@ -92,7 +92,7 @@ const BlockedAccountsScreen = () => {
 				<Text className="text-xl font-bold ml-4">Blocked Accounts</Text>
 			</View>
 			{blockedAccounts && blockedAccounts.length === 0 ? (
-				<View className="flex-1 justify-center items-center bg-white">
+				<View className="flex-1 justify-center items-center bg-white dark:bg-[#222831]">
 					<Text>No blocked accounts</Text>
 				</View>
 			) : (

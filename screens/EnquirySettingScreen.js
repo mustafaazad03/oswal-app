@@ -14,13 +14,14 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { enquiryService } from "../api/enquiry";
+import { useColorScheme } from "nativewind";
 
 export default function EnquirySettingScreen() {
   const navigation = useNavigation();
   const router = useRoute();
   const { enquiry } = router.params;
   const queryClient = useQueryClient();
-
+  const { colorScheme } = useColorScheme();
   const deleteMutation = useMutation({
     mutationFn: enquiryService.deleteEnquiry,
     onSuccess: () => {
@@ -84,12 +85,16 @@ export default function EnquirySettingScreen() {
             className="w-12 h-12 rounded-full"
           />
           <View className="ml-4">
-            <Text className="font-semibold">{enquiry.fromUser?.name}</Text>
-            <Text className="text-gray-500">@{enquiry.fromUser?.username}</Text>
+            <Text className="font-semibold dark:text-white">
+              {enquiry.fromUser?.name}
+            </Text>
+            <Text className="text-gray-500 dark:text-gray-200">
+              @{enquiry.fromUser?.username}
+            </Text>
           </View>
         </TouchableOpacity>
 
-        <View className="space-y-4">
+        <View className=" flex flex-col flex-1">
           <InfoItem label="Category" value={enquiry?.category} />
           <InfoItem label="Sub-Category" value={enquiry?.subCategory} />
           <InfoItem
@@ -115,8 +120,14 @@ export default function EnquirySettingScreen() {
           className="border border-primary rounded-md py-3 mt-4 mb-8 flex-row items-center justify-center"
           onPress={handleDelete}
         >
-          <Ionicons name="trash" size={24} color="black" />
-          <Text className="text-center font-semibold ml-2">Delete Enquiry</Text>
+          <Ionicons
+            name="trash"
+            size={24}
+            color={colorScheme === "dark" ? "white" : "black"}
+          />
+          <Text className="text-center font-semibold ml-2 dark:text-white">
+            Delete Enquiry
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -124,8 +135,10 @@ export default function EnquirySettingScreen() {
 }
 
 const InfoItem = ({ label, value }) => (
-  <View>
-    <Text className="text-gray-600 mb-1">{label}</Text>
-    <Text className="border border-primary rounded-md p-2">{value}</Text>
+  <View className="flex flex-col space-y-1 my-2">
+    <Text className="text-gray-600 mb-1 dark:text-white">{label}</Text>
+    <Text className="border border-primary rounded-md px-2 dark:text-white py-3">
+      {value}
+    </Text>
   </View>
 );

@@ -42,7 +42,7 @@ export default function AccountPrivacyScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white ">
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#222831]">
       <View className="bg-pink-200 p-4 flex-row items-center pt-8">
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={20} color="black" />
@@ -52,7 +52,9 @@ export default function AccountPrivacyScreen() {
 
       <View className="p-4 flex-1">
         <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-lg font-bold">Lock Account</Text>
+          <Text className="text-lg font-bold dark:text-white">
+            Lock Account
+          </Text>
           <Switch
             trackColor={{ false: "#767577", true: "#EEC0C8" }}
             thumbColor={isLocked ? "#EEB0C0" : "#f4f3f4"}
@@ -61,14 +63,14 @@ export default function AccountPrivacyScreen() {
             value={isLocked}
           />
         </View>
-        <Text className="text-gray-600">
+        <Text className="text-gray-600 dark:text-gray-200">
           When your account is locked, only the followers that you approve can
           see what you share, including your album and feed, and your followers
           & following lists.
         </Text>
       </View>
 
-      <BottomNavigation notify={false} />
+      {/* <BottomNavigation notify={false} /> */}
     </SafeAreaView>
   );
 }

@@ -127,7 +127,7 @@ export default function BusinessDetailsScreen() {
 	};
 
 	return (
-		<SafeAreaView className="flex-1 bg-white">
+		<SafeAreaView className="flex-1 bg-white dark:bg-[#222831]">
 			<TouchableOpacity
 				className="absolute top-10 left-4 z-50"
 				onPress={() => navigation.goBack()}

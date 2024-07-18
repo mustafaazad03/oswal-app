@@ -13,6 +13,7 @@ import { styled } from "nativewind";
 import BottomNavigation from "../components/BottomNavigation";
 import { useQuery } from "@tanstack/react-query";
 import { enquiryService } from "../api/enquiry";
+import { Entypo } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -21,11 +22,11 @@ const StyledText = styled(Text);
 
 const TableHeader = () => (
   <StyledView className="flex-row bg-primary/80 p-3 gap-8 text-left">
-    <StyledText className=" font-bold text-dark dark:text-white">Sr. No.</StyledText>
-    <StyledText className=" font-bold text-dark dark:text-white">Username</StyledText>
-    <StyledText className="font-bold text-dark dark:text-white">Enquiry</StyledText>
-    <StyledText className="font-bold text-dark dark:text-white">Category</StyledText>
-    <StyledText className="font-bold text-dark dark:text-white"></StyledText>
+    <StyledText className=" font-bold text-dark">Sr. No.</StyledText>
+    <StyledText className=" font-bold text-dark">Username</StyledText>
+    <StyledText className="font-bold text-dark">Enquiry</StyledText>
+    <StyledText className="font-bold text-dark">Category</StyledText>
+    <StyledText className="font-bold text-dark"></StyledText>
   </StyledView>
 );
 
@@ -34,26 +35,23 @@ const TableRow = ({ item, index }) => {
   return (
     <StyledView
       className={`flex-row p-3 space-x-7 ${
-        index % 2 === 0 ? "bg-primary/50 dark:bg-primary" : "bg-white dark:bg-black"
+        index % 2 === 0 ? "bg-primary/50 dark:bg-primary" : "bg-white "
       }`}
     >
-      <StyledText className=" text-dark dark:text-white truncate">
+      <StyledText className=" text-dark truncate">
         {item?._id.substring(0, 4)}
       </StyledText>
-      <StyledText className=" text-dark dark:text-white truncate">
+      <StyledText className=" text-dark truncate">
         {item?.fromUser.name}
       </StyledText>
-      <StyledText className=" text-dark dark:text-white truncate">
+      <StyledText className=" text-dark truncate">
         {item?.description.substring(0, 10)}...{" "}
       </StyledText>
-      <StyledText className=" text-dark dark:text-white truncate">{item?.category}</StyledText>
+      <StyledText className=" text-dark truncate">{item?.category}</StyledText>
       <TouchableOpacity
         onPress={() => navigation.navigate("EnquirySetting", { enquiry: item })}
       >
-        <Image
-          source={require("../assets/arrow_back.png")}
-          className="w-6 h-6 mr-3"
-        />
+        <Entypo name="dots-three-vertical" size={15} color="black" />
       </TouchableOpacity>
     </StyledView>
   );
@@ -100,7 +98,7 @@ export default function EnquiriesScreen() {
         />
       </StyledView>
 
-      <BottomNavigation notify={false} />
+      {/* <BottomNavigation notify={false} /> */}
     </SafeAreaView>
   );
 }

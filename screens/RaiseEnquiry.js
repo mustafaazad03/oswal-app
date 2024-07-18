@@ -51,7 +51,7 @@ export default function RaiseEnquiryScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-primary/30">
+    <SafeAreaView className="flex-1 bg-primary/30 dark:bg-[#222831]">
       <View className="flex-row justify-start space-x-3 items-center p-4 bg-primary pt-8">
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back-outline" size={20} color="black" />
