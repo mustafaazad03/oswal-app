@@ -75,8 +75,8 @@ const ReviewTab = ({ user, reviews, isSelfUser }) => {
       {isSelfUser && (
         <View>
           <View>
-            <Text className="font-bold text-xl">Rate this Business</Text>
-            <Text className="font-light">Tell others what you think</Text>
+            <Text className="font-bold text-xl dark:text-white">Rate this Business</Text>
+            <Text className="font-light dark:text-white">Tell others what you think</Text>
           </View>
           <RatingComponent rating={userRating} onRatingChange={setUserRating} />
           <WriteReview

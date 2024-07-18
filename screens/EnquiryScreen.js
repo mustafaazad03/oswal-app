@@ -21,11 +21,11 @@ const StyledText = styled(Text);
 
 const TableHeader = () => (
   <StyledView className="flex-row bg-primary/80 p-3 gap-8 text-left">
-    <StyledText className=" font-bold text-dark">Sr. No.</StyledText>
-    <StyledText className=" font-bold text-dark">Username</StyledText>
-    <StyledText className="font-bold text-dark">Enquiry</StyledText>
-    <StyledText className="font-bold text-dark">Category</StyledText>
-    <StyledText className="font-bold text-dark"></StyledText>
+    <StyledText className=" font-bold text-dark dark:text-white">Sr. No.</StyledText>
+    <StyledText className=" font-bold text-dark dark:text-white">Username</StyledText>
+    <StyledText className="font-bold text-dark dark:text-white">Enquiry</StyledText>
+    <StyledText className="font-bold text-dark dark:text-white">Category</StyledText>
+    <StyledText className="font-bold text-dark dark:text-white"></StyledText>
   </StyledView>
 );
 
@@ -34,19 +34,19 @@ const TableRow = ({ item, index }) => {
   return (
     <StyledView
       className={`flex-row p-3 space-x-7 ${
-        index % 2 === 0 ? "bg-primary/50" : "bg-white"
+        index % 2 === 0 ? "bg-primary/50 dark:bg-primary" : "bg-white dark:bg-black"
       }`}
     >
-      <StyledText className=" text-dark truncate">
+      <StyledText className=" text-dark dark:text-white truncate">
         {item?._id.substring(0, 4)}
       </StyledText>
-      <StyledText className=" text-dark truncate">
+      <StyledText className=" text-dark dark:text-white truncate">
         {item?.fromUser.name}
       </StyledText>
-      <StyledText className=" text-dark truncate">
+      <StyledText className=" text-dark dark:text-white truncate">
         {item?.description.substring(0, 10)}...{" "}
       </StyledText>
-      <StyledText className=" text-dark truncate">{item?.category}</StyledText>
+      <StyledText className=" text-dark dark:text-white truncate">{item?.category}</StyledText>
       <TouchableOpacity
         onPress={() => navigation.navigate("EnquirySetting", { enquiry: item })}
       >
@@ -78,7 +78,7 @@ export default function EnquiriesScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#222831]">
       <View className="bg-pink-200 p-4 flex-row items-center pt-8">
         <View className="flex flex-row space-x-2 justify-center items-center">
           <TouchableOpacity onPress={() => navigation.goBack()}>

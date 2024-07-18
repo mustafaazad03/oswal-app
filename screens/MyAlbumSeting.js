@@ -80,7 +80,7 @@ export default function MyAlbumScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white h-screen">
+    <SafeAreaView className="flex-1 bg-white h-screen dark:bg-[#222831]">
       <View className="bg-[#FFD1DC] p-4 flex-row items-center pt-8">
         <View className="flex flex-row space-x-2 justify-center items-center">
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -105,8 +105,10 @@ export default function MyAlbumScreen() {
       </View>
 
       <ScrollView className="w-full p-4">
-        <Text className="text-2xl font-bold mb-2">Create Album</Text>
-        <Text className="text-sm text-gray-500 mb-4">
+        <Text className="text-2xl font-bold mb-2 dark:text-white">
+          Create Album
+        </Text>
+        <Text className="text-sm text-gray-500 mb-4 dark:text-gray-200">
           You can upload up to 10 photos/videos.
         </Text>
 

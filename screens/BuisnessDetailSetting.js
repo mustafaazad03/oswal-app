@@ -16,6 +16,8 @@ import { useAuth } from "../context/AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import { userService } from "../api/user";
 import { Ionicons } from "@expo/vector-icons";
+import MapView, { Marker } from "react-native-maps";
+import { useColorScheme } from "nativewind";
 
 export default function BusinessDetailsSettingScreen() {
   const navigation = useNavigation();
@@ -32,7 +34,55 @@ export default function BusinessDetailsSettingScreen() {
     state: fullUser.businessDetails?.address?.state || "",
     country: fullUser.businessDetails?.address?.country || "",
   });
+  const { colorScheme } = useColorScheme();
+  const handleAddGoogleLocation = () => {
+    navigation.navigate("Map", {
+      onLocationSelect: (coordinate) => {
+        const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${coordinate.latitude},${coordinate.longitude}`;
+        setFormData({ ...formData, googleLocation: googleMapsUrl });
+      },
+    });
+  };
 
+  const renderMap = () => {
+    if (!user?.businessDetails?.googleLocation) return null;
+
+    // Extract latitude and longitude from the Google Maps URL
+    const match = user.businessDetails.googleLocation.match(
+      /query=(-?\d+\.\d+),(-?\d+\.\d+)/
+    );
+    if (!match) return null;
+
+    const latitude = parseFloat(match[1]);
+    const longitude = parseFloat(match[2]);
+
+    return (
+      <View className="mt-4">
+        <Text className="font-bold text-lg mb-2">Business Location</Text>
+        <MapView
+          style={{ width: width - 32, height: 200, borderRadius: 10 }}
+          initialRegion={{
+            latitude,
+            longitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          }}
+          pitchEnabled={false}
+          rotateEnabled={false}
+          scrollEnabled={false}
+          zoomEnabled={false}
+        >
+          <Marker coordinate={{ latitude, longitude }} />
+        </MapView>
+        <TouchableOpacity
+          className="mt-2 bg-blue-500 p-2 rounded"
+          onPress={() => Linking.openURL(user.businessDetails.googleLocation)}
+        >
+          <Text className="text-white text-center">Open in Google Maps</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
   const updateUserMutation = useMutation({
     mutationFn: (updateData) =>
       userService.updateUser(authUser?.userId, updateData),
@@ -75,7 +125,7 @@ export default function BusinessDetailsSettingScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#222831]">
       <View className="bg-[#FFD1DC] p-4 flex-row items-center pt-8">
         <View className="flex flex-row space-x-2 justify-center items-center">
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -100,17 +150,18 @@ export default function BusinessDetailsSettingScreen() {
       </View>
 
       <ScrollView className="w-full p-4 h-screen pb-20">
-        <Text className="text-2xl font-bold mb-2">
+        <Text className="text-2xl font-bold mb-2 dark:text-white">
           Enter your Business or Profession Details
         </Text>
-        <Text className="text-sm text-gray-500 mb-4">
+        <Text className="text-sm text-gray-500 mb-4 dark:text-gray-200">
           You can always change this later.
         </Text>
 
-        <View className="border border-primary rounded-lg mb-4">
+        <View className="border border-primary rounded-lg mb-4 dark:text-white">
           <Picker
             selectedValue={formData.category}
             onValueChange={(value) => handleInputChange("category", value)}
+            style={{ color: colorScheme === "dark" ? "white" : "black" }}
           >
             <Picker.Item label="Select Product/Service Category" value="" />
             {/* Add more category options here */}
@@ -133,10 +184,11 @@ export default function BusinessDetailsSettingScreen() {
           </Picker>
         </View>
 
-        <View className="border border-primary rounded-lg mb-4">
+        <View className="border border-primary rounded-lg mb-4 dark:text-white">
           <Picker
             selectedValue={formData.subCategory}
             onValueChange={(value) => handleInputChange("subCategory", value)}
+            style={{ color: colorScheme === "dark" ? "white" : "black" }}
           >
             <Picker.Item label="Select Product/Service Sub-Category" value="" />
             {/* Add more sub-category options here */}
@@ -170,7 +222,7 @@ export default function BusinessDetailsSettingScreen() {
 
         <TextInput
           placeholder="About Us"
-          className="border border-primary p-3 rounded-lg mb-4"
+          className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
           value={formData.aboutUs}
           onChangeText={(text) => handleInputChange("aboutUs", text)}
           multiline
@@ -178,46 +230,55 @@ export default function BusinessDetailsSettingScreen() {
 
         <TouchableOpacity
           className="bg-pink-200 p-3 rounded-lg mb-4"
-          onPress={() => {
-            /* Implement Google Location picker */
-          }}
+          onPress={handleAddGoogleLocation}
         >
-          <Text className="text-center">Add Google Location</Text>
+          <Text className="text-center ">
+            {formData.googleLocation
+              ? "Update Google Location"
+              : "Add Google Location"}
+          </Text>
         </TouchableOpacity>
+
+        {formData.googleLocation && (
+          <Text className="mb-4 dark:text-white">
+            Google Maps URL: {formData.googleLocation}
+          </Text>
+        )}
 
         <TextInput
           placeholder="Office number/Floor*"
-          className="border border-primary p-3 rounded-lg mb-4"
+          className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
           value={formData.officeNumber}
           onChangeText={(text) => handleInputChange("officeNumber", text)}
         />
 
         <TextInput
           placeholder="Tower/Block*"
-          className="border border-primary p-3 rounded-lg mb-4"
+          className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
           value={formData.tower}
           onChangeText={(text) => handleInputChange("tower", text)}
         />
 
         <TextInput
           placeholder="Nearby Landmark (Optional)"
-          className="border border-primary p-3 rounded-lg mb-4"
+          className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
           value={formData.landmark}
           onChangeText={(text) => handleInputChange("landmark", text)}
         />
 
         <TextInput
           placeholder="Pincode"
-          className="border border-primary p-3 rounded-lg mb-4"
+          className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
           value={formData.pincode}
           onChangeText={(text) => handleInputChange("pincode", text)}
           keyboardType="numeric"
         />
 
-        <View className="border border-primary rounded-lg mb-4">
+        <View className="border border-primary rounded-lg mb-4 dark:text-white">
           <Picker
             selectedValue={formData.city}
             onValueChange={(value) => handleInputChange("city", value)}
+            style={{ color: colorScheme === "dark" ? "white" : "black" }}
           >
             <Picker.Item label="Select City" value="" />
             {/* Add city options here: indore, bhopal, other mp states */}
@@ -233,10 +294,11 @@ export default function BusinessDetailsSettingScreen() {
           </Picker>
         </View>
 
-        <View className="border border-primary rounded-lg mb-4">
+        <View className="border border-primary rounded-lg mb-4 dark:text-white">
           <Picker
             selectedValue={formData.state}
             onValueChange={(value) => handleInputChange("state", value)}
+            style={{ color: colorScheme === "dark" ? "white" : "black" }}
           >
             <Picker.Item label="Select State" value="" />
             {/* Add state options here: maharashtra, madhya pardesh and all other */}
@@ -286,6 +348,7 @@ export default function BusinessDetailsSettingScreen() {
           <Picker
             selectedValue={formData.country}
             onValueChange={(value) => handleInputChange("country", value)}
+            style={{ color: colorScheme === "dark" ? "white" : "black" }}
           >
             <Picker.Item label="Select Country" value="" />
             {/* Add country options here */}

@@ -16,10 +16,12 @@ import { useAuth } from "../context/AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import { userService } from "../api/user";
 import { Ionicons } from "@expo/vector-icons";
+import { useColorScheme } from "nativewind";
 
 export default function ContactDetailSettingScreen() {
   const navigation = useNavigation();
   const { user: authUser, fullUser } = useAuth();
+  const { colorScheme } = useColorScheme();
   const [formData, setFormData] = useState({
     workingSince: fullUser.contactDetails?.workingSince || "",
     workingHours: fullUser.contactDetails?.workingHours || "",
@@ -84,7 +86,7 @@ export default function ContactDetailSettingScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#222831]">
       <View className="bg-[#FFD1DC] p-4 flex-row items-center pt-8">
         <View className="flex flex-row space-x-2 justify-center items-center">
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -109,10 +111,10 @@ export default function ContactDetailSettingScreen() {
       </View>
 
       <ScrollView className="w-full p-4 mb-6">
-        <Text className="text-2xl font-bold mb-2">
+        <Text className="text-2xl font-bold mb-2 dark:text-white">
           Enter your Business Contact Details
         </Text>
-        <Text className="text-sm text-gray-500 mb-4">
+        <Text className="text-sm text-gray-500 mb-4 dark:text-gray-200">
           You can always change this later.
         </Text>
 
@@ -120,6 +122,7 @@ export default function ContactDetailSettingScreen() {
           <Picker
             selectedValue={formData.workingSince}
             onValueChange={(value) => handleInputChange("workingSince", value)}
+            style={{ color: colorScheme === "dark" ? "white" : "black" }}
           >
             <Picker.Item label="Working Since" value="" />
             {/* Add year options here */}
@@ -145,6 +148,7 @@ export default function ContactDetailSettingScreen() {
           <Picker
             selectedValue={formData.workingHours}
             onValueChange={(value) => handleInputChange("workingHours", value)}
+            style={{ color: colorScheme === "dark" ? "white" : "black" }}
           >
             <Picker.Item label="Business Working Hours" value="" />
             {/* Add working hours options here */}
@@ -158,21 +162,21 @@ export default function ContactDetailSettingScreen() {
 
         <TextInput
           placeholder="Contact Person Name"
-          className="border border-primary p-3 rounded-lg mb-4"
+          className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
           value={formData.contactPersonName}
           onChangeText={(text) => handleInputChange("contactPersonName", text)}
         />
 
         <TextInput
           placeholder="Designation"
-          className="border border-primary p-3 rounded-lg mb-4"
+          className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
           value={formData.designation}
           onChangeText={(text) => handleInputChange("designation", text)}
         />
 
         <TextInput
           placeholder="Mobile Number"
-          className="border border-primary p-3 rounded-lg mb-4"
+          className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
           value={formData.mobileNumber}
           onChangeText={(text) => handleInputChange("mobileNumber", text)}
           keyboardType="phone-pad"
@@ -180,7 +184,7 @@ export default function ContactDetailSettingScreen() {
 
         <TextInput
           placeholder="Whatsapp Number"
-          className="border border-primary p-3 rounded-lg mb-4"
+          className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
           value={formData.whatsappNumber}
           onChangeText={(text) => handleInputChange("whatsappNumber", text)}
           keyboardType="phone-pad"
@@ -188,45 +192,46 @@ export default function ContactDetailSettingScreen() {
 
         <TextInput
           placeholder="Business E-mail"
-          className="border border-primary p-3 rounded-lg mb-4"
+          className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
           value={authUser?.email}
-          
           keyboardType="email-address"
         />
 
-        <Text className="font-bold mb-2">Social Media Links:</Text>
+        <Text className="font-bold mb-2 dark:text-white">
+          Social Media Links:
+        </Text>
 
         <TextInput
           placeholder="Website"
-          className="border border-primary p-3 rounded-lg mb-4"
+          className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
           value={formData.website}
           onChangeText={(text) => handleInputChange("website", text)}
         />
 
         <TextInput
           placeholder="Instagram"
-          className="border border-primary p-3 rounded-lg mb-4"
+          className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
           value={formData.instagram}
           onChangeText={(text) => handleInputChange("instagram", text)}
         />
 
         <TextInput
           placeholder="Twitter"
-          className="border border-primary p-3 rounded-lg mb-4"
+          className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
           value={formData.twitter}
           onChangeText={(text) => handleInputChange("twitter", text)}
         />
 
         <TextInput
           placeholder="Facebook"
-          className="border border-primary p-3 rounded-lg mb-4"
+          className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
           value={formData.facebook}
           onChangeText={(text) => handleInputChange("facebook", text)}
         />
 
         <TextInput
           placeholder="Pinterest"
-          className="border border-primary p-3 rounded-lg mb-4"
+          className="border border-primary p-3 rounded-lg mb-4 dark:text-white"
           value={formData.pinterest}
           onChangeText={(text) => handleInputChange("pinterest", text)}
         />

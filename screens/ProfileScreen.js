@@ -21,10 +21,15 @@ import ProfileTabs from "../components/ProfileTabs";
 import { userService } from "../api/user";
 import { useAuth } from "../context/AuthContext";
 import { useColorScheme } from "nativewind";
+import MapView, { Marker } from "react-native-maps";
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const queryClient = useQueryClient();
+  const [location, setLocation] = useState({
+    latitude: 37.78825,
+    longitude: -122.4324,
+  });
   const { user: authUser } = useAuth();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { colorScheme } = useColorScheme();
@@ -34,6 +39,17 @@ export default function ProfileScreen() {
   const handleCloseModal = () => {
     setIsModalVisible(false);
   };
+
+  function extractCoordinatesFromLink(link) {
+    const markerRegex = /marker=([\d.]+),([\d.]+)/;
+    const match = link.match(markerRegex);
+    if (match) {
+      const latitude = parseFloat(match[1]);
+      const longitude = parseFloat(match[2]);
+      return { latitude, longitude };
+    }
+    return null;
+  }
 
   const {
     data: user,
@@ -45,7 +61,20 @@ export default function ProfileScreen() {
     queryKey: ["user", authUser?.username],
     queryFn: () => userService.getSingleUser(authUser?.userId),
     enabled: !!authUser,
+    onSuccess: (data) => {
+      console.log("this is the data logged", data);
+      const coordinates = extractCoordinatesFromLink(
+        data.businessDetails.address.googleMapLink
+      );
+      if (coordinates) {
+        setLocation({
+          latitude: coordinates.latitude,
+          longitude: coordinates.longitude,
+        });
+      }
+    },
   });
+
   const { data: post, isPostLoading } = useQuery({
     queryKey: ["post", authUser?.username],
     queryFn: () => userService.getAllPostsFromUser(authUser?.userId),
@@ -54,11 +83,9 @@ export default function ProfileScreen() {
   const handleEditProfile = () => {
     navigation.navigate("EditProfile");
   };
-
   const handleShare = async (userId) => {
     try {
       const url = `https://www.freathers.com/user/${userId}`;
-
       try {
         const result = await Share.share({
           message: `Check out this profile on freathers: ${url}`,
@@ -90,7 +117,7 @@ export default function ProfileScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView className="flex-1 justify-center items-center bg-white">
+      <SafeAreaView className="flex-1 justify-center items-center bg-white dark:bg-[#222831]">
         <ActivityIndicator size="large" color="#FFD1DC" />
       </SafeAreaView>
     );
@@ -98,7 +125,7 @@ export default function ProfileScreen() {
 
   if (isError) {
     return (
-      <SafeAreaView className="flex-1 justify-center items-center bg-white">
+      <SafeAreaView className="flex-1 justify-center items-center bg-white dark:bg-[#222831]">
         <Text>Error: {error.message}</Text>
         <TouchableOpacity
           onPress={refetch}
@@ -238,10 +265,27 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          <Image
+          {/* <Image
             source={require("../assets/map.png")}
             className="w-full h-40 mt-4 rounded-lg"
-          />
+          /> */}
+          <MapView
+            style={{ width: -32, height: 200, borderRadius: 10 }}
+            pitchEnabled={true}
+            rotateEnabled={false}
+            scrollEnabled={true}
+            zoomEnabled={true}
+            // mapType="satellite"
+            className="w-full h-40 mt-4 rounded-lg"
+            initialRegion={{
+              latitude: location.latitude,
+              longitude: location.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          >
+            <Marker coordinate={location} />
+          </MapView>
           {/* <MapComponent /> */}
           {/* <WebView
             source={{ uri: "https://www.youtube.com/embed/cqyziA30whE" }}
