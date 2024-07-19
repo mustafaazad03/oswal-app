@@ -37,23 +37,24 @@ import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
 
 export default function FeedScreen() {
-  const navigation = useNavigation();
-  const queryClient = useQueryClient();
-  const { user, fullUser, userRefetch } = useAuth();
-  const [likedPosts, setLikedPosts] = useState(new Set());
-  const [filteredPosts, setFilteredPosts] = useState([]);
-  const [sideModalVisible, setSideModalVisible] = useState(false);
-  const [reportModalVisible, setReportModalVisible] = useState(false);
-  const [selectedPost, setSelectedPost] = useState(null);
-  const [followingUsers, setFollowingUsers] = useState(new Set());
-  const [blockedUsers, setBlockedUsers] = useState(new Set());
-  const { colorScheme } = useColorScheme();
-  useEffect(() => {
-    if (fullUser) {
-      setFollowingUsers(new Set(fullUser.followings));
-      setBlockedUsers(new Set(fullUser.blockList));
-    }
-  }, [fullUser, userRefetch]);
+	const navigation = useNavigation();
+	const queryClient = useQueryClient();
+	const { user, fullUser, userRefetch } = useAuth();
+	const [likedPosts, setLikedPosts] = useState(new Set());
+	const [filteredPosts, setFilteredPosts] = useState([]);
+	const [sideModalVisible, setSideModalVisible] = useState(false);
+	const [reportModalVisible, setReportModalVisible] = useState(false);
+	const [selectedPost, setSelectedPost] = useState(null);
+	const [followingUsers, setFollowingUsers] = useState(new Set());
+	const [blockedUsers, setBlockedUsers] = useState(new Set());
+	const [bookmarkedPosts, setBookmarkedPosts] = useState(new Set());
+	const { colorScheme } = useColorScheme();
+	useEffect(() => {
+		if (fullUser) {
+			setFollowingUsers(new Set(fullUser.followings));
+			setBlockedUsers(new Set(fullUser.blockList));
+		}
+	}, [fullUser, userRefetch]);
 
 	const handleOptionsPress = (item) => {
 		setSelectedPost(item);
@@ -176,6 +177,10 @@ export default function FeedScreen() {
 					.map((post) => post._id)
 			);
 			setLikedPosts(likedPostIds);
+
+			// Initialize bookmarked posts
+			const bookmarkedPostIds = new Set(fullUser?.savedPosts || []);
+			setBookmarkedPosts(bookmarkedPostIds);
 		}
 	}, [posts, user]);
 
@@ -402,160 +407,225 @@ export default function FeedScreen() {
 		}
 	};
 
-  const renderItem = useCallback(
-    ({ item }) => {
-      const toggleImageOrientation = () => {
-        setFilteredPosts((prevPosts) =>
-          prevPosts.map((post) =>
-            post._id === item._id
-              ? {
-                  ...post,
-                  imageOrientation:
-                    post.imageOrientation === "contain" ? "cover" : "contain",
-                }
-              : post
-          )
-        );
-      };
-      return (
-        <View className="mb-4 mx-3 ">
-          <View className="flex-row items-center p-4 px-0 justify-between">
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("CommonProfile", { userId: item.user._id })
-              }
-            >
-              <View className="flex-row items-center">
-                <Image
-                  source={{ uri: item.user.profilePic }}
-                  className="w-10 h-10 rounded-full mr-2 border border-primary"
-                />
-                <View>
-                  <Text className="font-bold dark:text-white">
-                    {item.user.name}
-                  </Text>
-                  <Text className="text-gray-950 dark:text-gray-300">
-                    @{item.user.username}
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleOptionsPress(item)}>
-              <Entypo
-                name="dots-three-vertical"
-                size={16}
-                color={colorScheme === "dark" ? "white" : "black"}
-              />
-            </TouchableOpacity>
-          </View>
-          <View className="relative">
-            <Pressable className="absolute right-0 w-10 h-10 top-6 z-10">
-              {item.imageOrientation === "contain" ? (
-                <TouchableOpacity onPress={toggleImageOrientation}>
-                  <FontAwesome name="expand" size={18} color="pink" />
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity onPress={toggleImageOrientation}>
-                  <FontAwesome5 name="expand" size={18} color="pink" />
-                </TouchableOpacity>
-              )}
-            </Pressable>
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("ParticularPost", {
-                  postId: item?._id,
-                })
-              }
-            >
-              <Image
-                source={{ uri: item.imageUrl }}
-                className="w-full h-80 object-cover"
-                resizeMode={item.imageOrientation}
-              />
-            </TouchableOpacity>
-          </View>
-          <View className="flex-row justify-between p-2 pt-4">
-            <View className="flex-row items-center space-x-4">
-              <TouchableOpacity onPress={() => handleToggleLike(item._id)}>
-                {likedPosts.has(item._id) ? (
-                  <Feather name="thumbs-up" size={20} color="pink" />
-                ) : (
-                  <Feather
-                    name="thumbs-up"
-                    size={20}
-                    color={colorScheme === "dark" ? "white" : "black"}
-                  />
-                )}
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleShare(item._id)}>
-                <Octicons
-                  name="paper-airplane"
-                  size={20}
-                  color={colorScheme === "dark" ? "white" : "black"}
-                />
-              </TouchableOpacity>
-            </View>
-            <View className="flex-row items-center space-x-4">
-              <TouchableOpacity
-                onPress={() => handleDownloadImage(item.imageUrl)}
-              >
-                <AntDesign
-                  name="download"
-                  size={20}
-                  color={colorScheme === "dark" ? "white" : "black"}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() =>
-                  handleWhatsAppRedirect(
-                    item.user.contactDetails.contactNumber?.whatsapp
-                  )
-                }
-              >
-                <FontAwesome
-                  name="whatsapp"
-                  size={20}
-                  color={colorScheme === "dark" ? "white" : "black"}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() =>
-                  handlePhoneCall(
-                    item.user.contactDetails.contactNumber?.mobile
-                  )
-                }
-              >
-                <Feather
-                  name="phone"
-                  size={20}
-                  color={colorScheme === "dark" ? "white" : "black"}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View className="p-2">
-            <Text className="text-xs dark:text-white">
-              Liked by{" "}
-              <Text className="font-semibold dark:text-white">
-                {item.likes.length} people
-              </Text>
-            </Text>
-            <Text className="font-extrabold dark:text-white">
-              {item.user.name}{" "}
-              <Text className="font-normal">{item.caption}</Text>
-            </Text>
-          </View>
-        </View>
-      );
-    },
-    [
-      handleToggleLike,
-      likedPosts,
-      handleDownloadImage,
-      handleWhatsAppRedirect,
-      handlePhoneCall,
-    ]
-  );
+	const toggleBookmarkMutation = useMutation({
+		mutationFn: ({ postId, username, isBookmarked }) =>
+			isBookmarked
+				? postService.unbookmarkPost(postId, username)
+				: postService.bookmarkPost(postId, username),
+		onMutate: ({ postId, isBookmarked }) => {
+			const previousPosts = queryClient.getQueryData(["posts"]);
+			setBookmarkedPosts((prev) => {
+				const newSet = new Set(prev);
+				if (isBookmarked) {
+					newSet.delete(postId);
+				} else {
+					newSet.add(postId);
+				}
+				return newSet;
+			});
+			return { previousPosts };
+		},
+		onError: (err, { postId }, context) => {
+			queryClient.setQueryData(["posts"], context.previousPosts);
+			setBookmarkedPosts((prev) => {
+				const newSet = new Set(prev);
+				if (newSet.has(postId)) {
+					newSet.delete(postId);
+				} else {
+					newSet.add(postId);
+				}
+				return newSet;
+			});
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries(["posts"]);
+			userRefetch(); // Refetch user data to update savedPosts
+		},
+	});
+
+	const handleToggleBookmark = useCallback(
+		(postId) => {
+			if (user) {
+				const isBookmarked = bookmarkedPosts.has(postId);
+				toggleBookmarkMutation.mutate({
+					postId,
+					username: user.username,
+					isBookmarked,
+				});
+			} else {
+				Alert.alert("Error", "Please log in to bookmark posts");
+			}
+		},
+		[user, bookmarkedPosts, toggleBookmarkMutation]
+	);
+
+	const renderItem = useCallback(
+		({ item }) => {
+			const toggleImageOrientation = () => {
+				setFilteredPosts((prevPosts) =>
+					prevPosts.map((post) =>
+						post._id === item._id
+							? {
+									...post,
+									imageOrientation:
+										post.imageOrientation === "contain" ? "cover" : "contain",
+							  }
+							: post
+					)
+				);
+			};
+			return (
+				<View className="mb-4 mx-3 ">
+					<View className="flex-row items-center p-4 px-0 justify-between">
+						<TouchableOpacity
+							onPress={() =>
+								navigation.navigate("CommonProfile", { userId: item.user._id })
+							}
+						>
+							<View className="flex-row items-center">
+								<Image
+									source={{ uri: item.user.profilePic }}
+									className="w-10 h-10 rounded-full mr-2 border border-primary"
+								/>
+								<View>
+									<Text className="font-bold dark:text-white">
+										{item.user.name}
+									</Text>
+									<Text className="text-gray-950 dark:text-gray-300">
+										@{item.user.username}
+									</Text>
+								</View>
+							</View>
+						</TouchableOpacity>
+						<TouchableOpacity onPress={() => handleOptionsPress(item)}>
+							<Entypo
+								name="dots-three-vertical"
+								size={16}
+								color={colorScheme === "dark" ? "white" : "black"}
+							/>
+						</TouchableOpacity>
+					</View>
+					<View className="relative">
+						<Pressable className="absolute right-0 w-10 h-10 top-6 z-10">
+							{item.imageOrientation === "contain" ? (
+								<TouchableOpacity onPress={toggleImageOrientation}>
+									<FontAwesome name="expand" size={18} color="pink" />
+								</TouchableOpacity>
+							) : (
+								<TouchableOpacity onPress={toggleImageOrientation}>
+									<FontAwesome5 name="expand" size={18} color="pink" />
+								</TouchableOpacity>
+							)}
+						</Pressable>
+						<TouchableOpacity
+							onPress={() =>
+								navigation.navigate("ParticularPost", {
+									postId: item?._id,
+								})
+							}
+						>
+							<Image
+								source={{ uri: item.imageUrl }}
+								className="w-full h-80 object-cover"
+								resizeMode={item.imageOrientation}
+							/>
+						</TouchableOpacity>
+					</View>
+					<View className="flex-row justify-between p-2 pt-4">
+						<View className="flex-row items-center space-x-4">
+							<TouchableOpacity onPress={() => handleToggleLike(item._id)}>
+								{likedPosts.has(item._id) ? (
+									<Feather name="thumbs-up" size={20} color="pink" />
+								) : (
+									<Feather
+										name="thumbs-up"
+										size={20}
+										color={colorScheme === "dark" ? "white" : "black"}
+									/>
+								)}
+							</TouchableOpacity>
+							<TouchableOpacity onPress={() => handleShare(item._id)}>
+								<Octicons
+									name="paper-airplane"
+									size={20}
+									color={colorScheme === "dark" ? "white" : "black"}
+								/>
+							</TouchableOpacity>
+						</View>
+						<View className="flex-row items-center space-x-4">
+							{/* Bookmark */}
+							<TouchableOpacity onPress={() => handleToggleBookmark(item._id)}>
+								<FontAwesome
+									name={
+										bookmarkedPosts.has(item._id) ? "bookmark" : "bookmark-o"
+									}
+									size={20}
+									color={colorScheme === "dark" ? "white" : "black"}
+								/>
+							</TouchableOpacity>
+							<TouchableOpacity
+								onPress={() => handleDownloadImage(item.imageUrl)}
+							>
+								<AntDesign
+									name="download"
+									size={20}
+									color={colorScheme === "dark" ? "white" : "black"}
+								/>
+							</TouchableOpacity>
+							<TouchableOpacity
+								onPress={() =>
+									handleWhatsAppRedirect(
+										item.user.contactDetails.contactNumber?.whatsapp
+									)
+								}
+							>
+								<FontAwesome
+									name="whatsapp"
+									size={20}
+									color={colorScheme === "dark" ? "white" : "black"}
+								/>
+							</TouchableOpacity>
+							<TouchableOpacity
+								onPress={() =>
+									handlePhoneCall(
+										item.user.contactDetails.contactNumber?.mobile
+									)
+								}
+							>
+								<Feather
+									name="phone"
+									size={20}
+									color={colorScheme === "dark" ? "white" : "black"}
+								/>
+							</TouchableOpacity>
+						</View>
+					</View>
+					<View className="p-2">
+						<Text className="text-xs dark:text-white">
+							Liked by{" "}
+							<Text className="font-semibold dark:text-white">
+								{item.likes.length} people
+							</Text>
+						</Text>
+						<Text className="font-extrabold dark:text-white">
+							{item.user.name}{" "}
+							<Text className="font-normal">{item.caption}</Text>
+						</Text>
+					</View>
+				</View>
+			);
+		},
+		[
+			handleToggleLike,
+			likedPosts,
+			handleDownloadImage,
+			handleWhatsAppRedirect,
+			handlePhoneCall,
+			handleToggleBookmark,
+			bookmarkedPosts,
+			colorScheme,
+		]
+	);
 
 	const ListEmptyComponent = useCallback(
 		() => (
@@ -595,39 +665,39 @@ export default function FeedScreen() {
 		);
 	}
 
-  return (
-    <SafeAreaView className="flex-1 bg-white dark:bg-[#222831]">
-      <FlatList
-        data={filteredPosts}
-        renderItem={renderItem}
-        keyExtractor={(item) => item._id}
-        contentContainerStyle={{ flexGrow: 1 }}
-        ListHeaderComponent={ListHeaderComponent}
-        ListEmptyComponent={
-          isLoading ? <SkeletonLoading /> : ListEmptyComponent
-        }
-        refreshControl={
-          <RefreshControl refreshing={isLoading} onRefresh={refetch} />
-        }
-        windowSize={5}
-        maxToRenderPerBatch={10}
-        removeClippedSubviews={true}
-      />
-      <SideModal
-        isVisible={sideModalVisible}
-        onClose={() => setSideModalVisible(false)}
-        onOptionPress={handleOptionSelect}
-        isFollowing={selectedPost && followingUsers.has(selectedPost.user._id)}
-        isBlocked={selectedPost && blockedUsers.has(selectedPost.user._id)}
-        isCurrentUser={selectedPost && selectedPost.user._id === fullUser?._id}
-      />
-      <ReportProblemModal
-        isVisible={reportModalVisible}
-        onClose={() => setReportModalVisible(false)}
-        userId={user?.userId}
-      />
-      <FilterComponent onFilterChange={applyFilter} />
-      <BottomNavigation notify={true} />
-    </SafeAreaView>
-  );
+	return (
+		<SafeAreaView className="flex-1 bg-white dark:bg-[#222831]">
+			<FlatList
+				data={filteredPosts}
+				renderItem={renderItem}
+				keyExtractor={(item) => item._id}
+				contentContainerStyle={{ flexGrow: 1 }}
+				ListHeaderComponent={ListHeaderComponent}
+				ListEmptyComponent={
+					isLoading ? <SkeletonLoading /> : ListEmptyComponent
+				}
+				refreshControl={
+					<RefreshControl refreshing={isLoading} onRefresh={refetch} />
+				}
+				windowSize={5}
+				maxToRenderPerBatch={10}
+				removeClippedSubviews={true}
+			/>
+			<SideModal
+				isVisible={sideModalVisible}
+				onClose={() => setSideModalVisible(false)}
+				onOptionPress={handleOptionSelect}
+				isFollowing={selectedPost && followingUsers.has(selectedPost.user._id)}
+				isBlocked={selectedPost && blockedUsers.has(selectedPost.user._id)}
+				isCurrentUser={selectedPost && selectedPost.user._id === fullUser?._id}
+			/>
+			<ReportProblemModal
+				isVisible={reportModalVisible}
+				onClose={() => setReportModalVisible(false)}
+				userId={user?.userId}
+			/>
+			<FilterComponent onFilterChange={applyFilter} />
+			<BottomNavigation notify={true} />
+		</SafeAreaView>
+	);
 }
