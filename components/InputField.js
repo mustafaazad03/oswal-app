@@ -7,6 +7,7 @@ export default function InputField({
   onChange,
   value,
   colorScheme,
+  secureTextEntry,
 }) {
   return (
     <View
@@ -23,6 +24,7 @@ export default function InputField({
         keyboardType={keyboardType}
         className=" placeholder:pl-2 pr-8 placeholder:text-dark w-full h-full text-dark bg-transparent placeholder:flex placeholder:flex-row placeholder:items-center placeholder:justify-center dark:text-white dark:placeholder-white"
         onChange={onChange}
+        secureTextEntry={secureTextEntry}
         value={value}
       />
     </View>

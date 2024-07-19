@@ -46,7 +46,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView className=" bg-white h-screen dark:bg-[#222831]">
+    <SafeAreaView className=" bg-white h-full dark:bg-[#222831]">
       {/* Back Icon */}
       <TouchableOpacity
         onPress={() => navigation.goBack()}
@@ -93,6 +93,7 @@ export default function LoginScreen() {
           value={data.password}
           keyboardType="default"
           colorScheme={colorScheme}
+          secureTextEntry={true}
         />
         {/* Forget Password */}
         <View className="flex items-start justify-end mt-2">
@@ -115,7 +116,7 @@ export default function LoginScreen() {
         </TouchableOpacity>
         <View className=" mt-3 mx-3 flex-row items-center space-x-2 justify-center">
           <Text className=" text-grayish text-xs dark:text-white">
-            Don’t have an account ?
+            Don&apos;t have an account ?
           </Text>
           <TouchableOpacity onPress={() => navigation.navigate("Register")}>
             <Text className=" text-grayish text-xs dark:text-blue-500">
