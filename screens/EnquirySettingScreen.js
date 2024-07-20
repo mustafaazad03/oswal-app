@@ -63,10 +63,7 @@ export default function EnquirySettingScreen() {
     <SafeAreaView className="flex-1 bg-white dark:bg-[#222831]">
       <View className="bg-primary py-4 px-4 flex-row items-center">
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image
-            source={require("../assets/arrow_back.png")}
-            className="w-6 h-6"
-          />
+          <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
         <Text className="text-lg font-semibold ml-4">Enquiry Details</Text>
       </View>

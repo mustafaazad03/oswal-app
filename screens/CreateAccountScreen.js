@@ -64,7 +64,7 @@ export default function CreateAccount() {
     });
   };
   return (
-    <SafeAreaView className=" bg-white h-screen dark:bg-[#222831]">
+    <SafeAreaView className=" bg-white h-full py-5 dark:bg-[#222831]">
       {/* Back Icon */}
       <TouchableOpacity
         onPress={() => navigation.goBack()}
@@ -123,6 +123,7 @@ export default function CreateAccount() {
           colorScheme={colorScheme}
           value={data.password}
           keyboardType="default"
+          secureTextEntry={true}
         />
         <Text className=" text-xs text-gray-500 mt-2 w-full text-justify dark:text-gray-200">
           Password must be at least{" "}

@@ -33,7 +33,7 @@ export default function ProfileDetailsScreen() {
 	});
 	const [showDatePicker, setShowDatePicker] = useState(false);
 	const [showGenderPicker, setShowGenderPicker] = useState(false);
-	const [profileImage, setProfileImage] = useState(null);
+	const [profileImage, setProfileImage] = useState("");
 
 	const uploadImage = async (imageUri) => {
 		try {

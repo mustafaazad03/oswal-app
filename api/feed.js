@@ -99,4 +99,32 @@ export const postService = {
 			throw error;
 		}
 	},
+	bookmarkPost: async (postId, username) => {
+		try {
+			const response = await apiClient.put(
+				`${API_URL}/user/savePost/${username}`,
+				{
+					postId,
+				}
+			);
+			return response.data;
+		} catch (error) {
+			console.error("Error bookmarking post:", error);
+			throw error;
+		}
+	},
+	unbookmarkPost: async (postId, username) => {
+		try {
+			const response = await apiClient.put(
+				`${API_URL}/user/removePost/${username}`,
+				{
+					postId,
+				}
+			);
+			return response.data;
+		} catch (error) {
+			console.error("Error unbookmarking post:", error);
+			throw error;
+		}
+	},
 };

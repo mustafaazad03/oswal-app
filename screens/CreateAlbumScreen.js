@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import {
-	View,
-	Text,
-	SafeAreaView,
-	TouchableOpacity,
-	Image,
-	ScrollView,
-	Alert,
+  View,
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
@@ -17,135 +17,135 @@ import { userService } from "../api/user";
 import { uploadImageToCloudinary } from "../functions/uploadImageToCloudinary";
 
 export default function CreateAlbumScreen() {
-	const navigation = useNavigation();
-	const [selectedImages, setSelectedImages] = useState([]);
+  const navigation = useNavigation();
+  const [selectedImages, setSelectedImages] = useState([]);
 
-	const { user: authUser } = useAuth();
+  const { user: authUser } = useAuth();
 
-	const updateUserMutation = useMutation({
-		mutationFn: (updateData) =>
-			userService.updateUser(authUser?.userId, updateData),
-		onSuccess: () => {
-			Alert.alert("Success", "Album updated successfully");
-			navigation.navigate("Home");
-		},
-		onError: (error) => {
-			console.error("Error updating user:", error);
-			Alert.alert("Error", "Failed to update album");
-		},
-	});
+  const updateUserMutation = useMutation({
+    mutationFn: (updateData) =>
+      userService.updateUser(authUser?.userId, updateData),
+    onSuccess: () => {
+      Alert.alert("Success", "Album updated successfully");
+      navigation.navigate("Home");
+    },
+    onError: (error) => {
+      console.error("Error updating user:", error);
+      Alert.alert("Error", "Failed to update album");
+    },
+  });
 
-	const handleImagePicker = async () => {
-		const permissionResult =
-			await ImagePicker.requestMediaLibraryPermissionsAsync();
+  const handleImagePicker = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-		if (permissionResult.granted === false) {
-			alert("Permission to access camera roll is required!");
-			return;
-		}
+    if (permissionResult.granted === false) {
+      alert("Permission to access camera roll is required!");
+      return;
+    }
 
-		const result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.Images,
-			aspect: [1, 1],
-			quality: 1,
-			allowsMultipleSelection: true,
-			selectionLimit: 10,
-		});
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      aspect: [1, 1],
+      quality: 1,
+      allowsMultipleSelection: true,
+      selectionLimit: 10,
+    });
 
-		if (!result.canceled) {
-			const newImages = result.assets.map((asset) => asset.uri);
-			setSelectedImages([...selectedImages, ...newImages].slice(0, 10));
-		}
-	};
+    if (!result.canceled) {
+      const newImages = result.assets.map((asset) => asset.uri);
+      setSelectedImages([...selectedImages, ...newImages].slice(0, 10));
+    }
+  };
 
-	const uploadImage = async (imageInfo) => {
-		try {
-			const imageUrl = await uploadImageToCloudinary(imageInfo);
-			return imageUrl;
-		} catch (error) {
-			console.error("Error uploading image:", error);
-			Alert.alert("Error", "Failed to upload image");
-		}
-	};
+  const uploadImage = async (imageInfo) => {
+    try {
+      const imageUrl = await uploadImageToCloudinary(imageInfo);
+      return imageUrl;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      Alert.alert("Error", "Failed to upload image");
+    }
+  };
 
-	const handleSubmit = async () => {
-		if (selectedImages.length === 0) {
-			Alert.alert("Error", "Please select at least one image");
-			return;
-		}
+  const handleSubmit = async () => {
+    if (selectedImages.length === 0) {
+      Alert.alert("Error", "Please select at least one image");
+      return;
+    }
 
-		// upload images to cloudinary
-		const data = await Promise.all(
-			selectedImages.map((imageUrl) => {
-				if (!imageUrl.startsWith("file://")) {
-					return imageUrl;
-				}
-				const imageInfo = {
-					uri: imageUrl,
-					mimeType: "image/jpeg",
-					fileName: `album-image.jpeg`,
-				};
-				return uploadImage(imageInfo);
-			})
-		);
+    // upload images to cloudinary
+    const data = await Promise.all(
+      selectedImages.map((imageUrl) => {
+        if (!imageUrl.startsWith("file://")) {
+          return imageUrl;
+        }
+        const imageInfo = {
+          uri: imageUrl,
+          mimeType: "image/jpeg",
+          fileName: `album-image.jpeg`,
+        };
+        return uploadImage(imageInfo);
+      })
+    );
 
-		const albumData = data.map((url, index) => ({
-			url,
-			title: `Image ${index + 1}`,
-		}));
+    const albumData = data.map((url, index) => ({
+      url,
+      title: `Image ${index + 1}`,
+    }));
 
-		const updateData = {
-			album: albumData,
-		};
+    const updateData = {
+      album: albumData,
+    };
 
-		updateUserMutation.mutate(updateData);
-	};
+    updateUserMutation.mutate(updateData);
+  };
 
-	return (
-		<SafeAreaView className="flex-1 bg-white h-screen">
-			<TouchableOpacity
-				className="absolute top-10 left-4 z-50"
-				onPress={() => navigation.goBack()}
-			>
-				<Image
-					source={require("../assets/arrow_back.png")}
-					className="w-6 h-6"
-				/>
-			</TouchableOpacity>
+  return (
+    <SafeAreaView className="flex-1 bg-white h-full">
+      <TouchableOpacity
+        className="absolute top-10 left-4 z-50"
+        onPress={() => navigation.goBack()}
+      >
+        <Image
+          source={require("../assets/arrow_back.png")}
+          className="w-6 h-6"
+        />
+      </TouchableOpacity>
 
-			<ScrollView className="mt-16 w-full p-4">
-				<Text className="text-2xl font-bold mb-2">Create Album</Text>
-				<Text className="text-sm text-gray-500 mb-4">
-					You can upload up to 10 photos/videos.
-				</Text>
+      <ScrollView className="mt-16 w-full p-4">
+        <Text className="text-2xl font-bold mb-2">Create Album</Text>
+        <Text className="text-sm text-gray-500 mb-4">
+          You can upload up to 10 photos/videos.
+        </Text>
 
-				<View className="flex-row flex-wrap justify-between h-[80vh]">
-					{[...Array(10)].map((_, index) => (
-						<TouchableOpacity
-							key={index}
-							className="w-[45%] h-fit aspect-square mb-4 border-2 border-primary rounded-lg flex items-center justify-center"
-							onPress={handleImagePicker}
-						>
-							{selectedImages[index] ? (
-								<Image
-									source={{ uri: selectedImages[index] }}
-									className="w-full h-full rounded-lg"
-								/>
-							) : (
-								<Image
-									source={require("../assets/upload.png")}
-									className="w-12 h-12"
-								/>
-							)}
-						</TouchableOpacity>
-					))}
-				</View>
-				<Button
-					title={updateUserMutation.isLoading ? "Updating..." : "Next"}
-					onPress={handleSubmit}
-					disabled={updateUserMutation.isLoading || selectedImages.length === 0}
-				/>
-			</ScrollView>
-		</SafeAreaView>
-	);
+        <View className="flex-row flex-wrap justify-between h-full">
+          {[...Array(10)].map((_, index) => (
+            <TouchableOpacity
+              key={index}
+              className="w-[45%] h-[45%] aspect-square mb-4 border-2 border-primary rounded-lg flex items-center justify-center"
+              onPress={handleImagePicker}
+            >
+              {selectedImages[index] ? (
+                <Image
+                  source={{ uri: selectedImages[index] }}
+                  className="w-full h-full rounded-lg"
+                />
+              ) : (
+                <Image
+                  source={require("../assets/upload.png")}
+                  className="w-12 h-12"
+                />
+              )}
+            </TouchableOpacity>
+          ))}
+        </View>
+        <Button
+          title={updateUserMutation.isLoading ? "Updating..." : "Next"}
+          onPress={handleSubmit}
+          disabled={updateUserMutation.isLoading || selectedImages.length === 0}
+        />
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
